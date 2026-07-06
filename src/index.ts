@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
-import { createApp, getPortFromEnv } from './server';
+import { app, getPortFromEnv } from './server';
 
 dotenv.config();
 
-const app = createApp();
 const PORT = getPortFromEnv();
 
 app.listen(PORT, () => {

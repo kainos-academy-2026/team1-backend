@@ -1,12 +1,10 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
-import { createApp, getPortFromEnv } from '../src/server';
+import { app, getPortFromEnv } from '../src/server';
 
 describe('GET /health', () => {
   it('returns service health details', async () => {
-    const app = createApp();
-
     const response = await request(app).get('/health');
 
     expect(response.status).toBe(200);
