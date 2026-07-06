@@ -21,8 +21,19 @@ describe('getPortFromEnv', () => {
     expect(getPortFromEnv('8080')).toBe(8080);
   });
 
-  it('uses the default port when undefined', () => {
-    expect(getPortFromEnv(undefined)).toBe(3000);
+  it('uses the default port when PORT is not set', () => {
+    const originalPort = process.env.PORT;
+    delete process.env.PORT;
+
+    try {
+      expect(getPortFromEnv()).toBe(3000);
+    } finally {
+      if (typeof originalPort === 'undefined') {
+        delete process.env.PORT;
+      } else {
+        process.env.PORT = originalPort;
+      }
+    }
   });
 
   it('throws for non-integer values', () => {
