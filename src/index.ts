@@ -1,4 +1,7 @@
+import dotenv from 'dotenv';
 import { createApp, getPortFromEnv } from './server';
+
+dotenv.config();
 
 const app = createApp();
 const PORT = getPortFromEnv();

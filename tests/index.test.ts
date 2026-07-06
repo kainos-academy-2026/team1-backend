@@ -29,6 +29,12 @@ describe('getPortFromEnv', () => {
     expect(() => getPortFromEnv('abc')).toThrow(
       'Invalid PORT value "abc". PORT must be an integer between 1 and 65535.',
     );
+    expect(() => getPortFromEnv('8080abc')).toThrow(
+      'Invalid PORT value "8080abc". PORT must be an integer between 1 and 65535.',
+    );
+    expect(() => getPortFromEnv('3000.5')).toThrow(
+      'Invalid PORT value "3000.5". PORT must be an integer between 1 and 65535.',
+    );
   });
 
   it('throws for values outside the valid range', () => {
