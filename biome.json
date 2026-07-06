@@ -6,7 +6,7 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": true
 	},
 	"formatter": {
 		"enabled": true,
@@ -20,7 +20,7 @@
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "single"
 		}
 	},
 	"assist": {
