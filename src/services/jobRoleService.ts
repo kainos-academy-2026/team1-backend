@@ -1,9 +1,7 @@
 export interface JobRole {
-  id: number;
-  name: string;
-  status: string;
+	id: number;
+	name: string;
+	status: string;
 }
 
-export class JobRoleService {
-
-}
+export class JobRoleService {}
