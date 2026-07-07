@@ -1,3 +1,8 @@
+export enum JobRoleStatus {
+  OPEN = "open",
+  CLOSED = "closed",
+}
+
 export class JobRole {
 	constructor(
 		public readonly jobRoleId: number,
