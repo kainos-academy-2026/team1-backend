@@ -1,5 +1,5 @@
 import type { JobRoleResponse } from '../dtos/jobRoleResponse';
-import { JobRole } from '../models/jobRole';
+import { JobRole, JobRoleStatus } from '../models/jobRole';
 
 type JobRoleRow = {
     jobRoleId: number;
@@ -8,7 +8,7 @@ type JobRoleRow = {
     capabilityId: number;
     bandId: number;
     closingDate: Date;
-    status: string;
+    status: JobRoleStatus;
 };
 
 export function toJobRoleResponse(jobRole: JobRole): JobRoleResponse {

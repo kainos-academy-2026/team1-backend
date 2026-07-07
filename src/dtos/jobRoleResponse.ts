@@ -1,3 +1,5 @@
+import { JobRoleStatus } from "../models/jobRole";
+
 export interface JobRoleResponse {
 	id: number;
 	roleName: string;
@@ -5,5 +7,5 @@ export interface JobRoleResponse {
 	capabilityId: number;
 	bandId: number;
 	closingDate: Date;
-	status: string;
+	status: JobRoleStatus;
 }
