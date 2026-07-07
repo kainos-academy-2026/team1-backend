@@ -1,6 +1,6 @@
 export enum JobRoleStatus {
-  OPEN = "open",
-  CLOSED = "closed",
+	OPEN = 'open',
+	CLOSED = 'closed',
 }
 
 export class JobRole {

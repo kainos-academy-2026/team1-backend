@@ -3,9 +3,9 @@ import express, { type Request, type Response } from 'express';
 import { JobRoleController } from './controllers/jobRoleController';
 import { PrismaJobRoleDao } from './daos/prismaJobRoleDao';
 import { PrismaClient } from './generated/prisma/client';
+import jobRoleMapper from './mappers/jobRoleMapper';
 import { createJobRoleRouter } from './routes/jobRoleRouter';
 import { JobRoleService } from './services/jobRoleService';
-import jobRoleMapper from './mappers/jobRoleMapper';
 
 export const app = express();
 
