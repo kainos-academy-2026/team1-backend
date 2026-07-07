@@ -1,6 +1,6 @@
 export class JobRole {
 	constructor(
-		public readonly jobRoleId	: number,
+		public readonly jobRoleId: number,
 		public readonly roleName: string,
 		public readonly location: string,
 		public readonly capabilityId: number,
