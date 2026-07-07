@@ -1,12 +1,24 @@
 import express, { type Request, type Response } from 'express';
+import type { JobRoleController } from './controllers/jobRoleController';
+import { JobRoleRouter } from './routes/jobRoleRouter';
 
-export const app = express();
+export function createApp(jobRoleController?: JobRoleController) {
+	const app = express();
 
-app.use(express.json());
+	app.use(express.json());
 
-app.get('/health', (_req: Request, res: Response) => {
-	res.json({
-		status: 'UP',
-		time: new Date().toISOString(),
+	app.get('/health', (_req: Request, res: Response) => {
+		res.json({
+			status: 'UP',
+			time: new Date().toISOString(),
+		});
 	});
-});
+
+	if (jobRoleController) {
+    	app.use(JobRoleRouter(jobRoleController));
+	}
+
+	return app;
+}
+
+export const app = createApp();

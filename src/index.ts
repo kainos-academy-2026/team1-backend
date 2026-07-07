@@ -1,25 +1,29 @@
 import dotenv from 'dotenv';
-import express, { type Request, type Response } from 'express';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 dotenv.config();
 
-const app = express();
-const PORT = Number.parseInt(process.env.PORT ?? '3000', 10);
+import { createApp } from './app';
+import { JobRoleController } from './controllers/jobRoleController';
+import { PrismaJobRoleDao } from './daos/prismaJobRoleDao';
+import { PrismaClient } from './generated/prisma/client';
+import JobRoleMapper from './mappers/jobRoleMapper';
+import { JobRoleService } from './services/jobRoleService';
 
-if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
-	throw new Error(
-		`Invalid PORT value "${process.env.PORT}". PORT must be an integer between 1 and 65535.`,
-	);
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+	throw new Error('DATABASE_URL is not set');
 }
 
-app.use(express.json());
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
-app.get('/health', (_req: Request, res: Response) => {
-	res.json({
-		status: 'UP',
-		time: new Date().toISOString(),
-	});
-});
+const jobRoleDao = new PrismaJobRoleDao(prisma);
+const jobRoleService = new JobRoleService(jobRoleDao, new JobRoleMapper());
+const jobRoleController = new JobRoleController(jobRoleService);
+const app = createApp(jobRoleController);
+
+const PORT = Number(process.env.PORT ?? '3001');
 
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);
