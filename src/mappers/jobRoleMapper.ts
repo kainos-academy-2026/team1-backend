@@ -9,7 +9,7 @@ export default class JobRoleMapper {
 			location: jobRole.location,
 			capabilityId: jobRole.capabilityId,
 			bandId: jobRole.bandId,
-			closingDate: jobRole.closingDate,
+			closingDate: new Date(jobRole.closingDate),
 			status: jobRole.status as JobRoleResponse['status'],
 		};
 	}
