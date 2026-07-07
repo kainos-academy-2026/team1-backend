@@ -5,7 +5,7 @@ export class JobRole {
 		public readonly location: string,
 		public readonly capabilityId: number,
 		public readonly bandId: number,
-		public readonly closingDate: string,
+		public readonly closingDate: Date,
 		public readonly status: string,
 	) {
 		if (jobRoleId <= 0) {

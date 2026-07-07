@@ -7,7 +7,7 @@ type JobRoleRow = {
     location: string;
     capabilityId: number;
     bandId: number;
-    closingDate: string;
+    closingDate: Date;
     status: string;
 };
 
