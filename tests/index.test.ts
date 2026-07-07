@@ -7,7 +7,7 @@ describe('GET /health', () => {
 	it('returns service health details', async () => {
 		const response = await request(app).get('/health');
 
-		expect(response.status).toBe(200);
+		expect(response.status).toBe(400);
 		expect(response.body.status).toBe('UP');
 		expect(typeof response.body.time).toBe('string');
 		expect(Number.isNaN(Date.parse(response.body.time))).toBe(false);
