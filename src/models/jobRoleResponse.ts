@@ -1,4 +1,4 @@
-export interface JobRole {
+export interface JobRoleResponse {
     id: number;
     name: string;
     location: string;
