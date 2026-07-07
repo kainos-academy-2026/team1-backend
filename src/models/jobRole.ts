@@ -3,8 +3,8 @@ export class JobRole {
 		public readonly jobRoleId	: number,
 		public readonly roleName: string,
 		public readonly location: string,
-		public readonly capabilityId: string,
-		public readonly bandId: string,
+		public readonly capabilityId: number,
+		public readonly bandId: number,
 		public readonly closingDate: string,
 		public readonly status: string,
 	) {

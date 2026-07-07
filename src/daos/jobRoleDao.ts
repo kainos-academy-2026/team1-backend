@@ -3,8 +3,8 @@ import type { JobRole } from '../models/jobRole';
 export interface CreateJobRoleInput {
     roleName: string;
     location: string;
-    capabilityId: string;
-    bandId: string;
+    capabilityId: number;
+    bandId: number;
     closingDate: string;
     status: string;
 }
@@ -12,8 +12,8 @@ export interface CreateJobRoleInput {
 export interface UpdateJobRoleInput {
     roleName?: string;
     location?: string;
-    capabilityId?: string;
-    bandId?: string;
+    capabilityId?: number;
+    bandId?: number;
     closingDate?: string;
     status?: string;
 }
