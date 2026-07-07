@@ -13,11 +13,34 @@ datasource db {
 }
 
 model JobRole {
-  id          Int      @id @default(autoincrement())
-  name        String
-  location    String
-  capability  String
-  band        String
-  closingDate String
-  status      String
+  jobRoleId    Int         @id @default(autoincrement())
+  roleName     String
+  location     String
+  capabilityId Int
+  bandId       Int
+  closingDate  String
+  status       String
+
+  capability   Capability  @relation(fields: [capabilityId], references: [capabilityId])
+  band         Band        @relation(fields: [bandId], references: [bandId])
+
+  @@map("job_roles")
+}
+
+model Capability {
+  capabilityId   Int       @id @default(autoincrement())
+  capabilityName String
+
+  jobRoles       JobRole[]
+
+  @@map("capability")
+}
+
+model Band {
+  bandId     Int       @id @default(autoincrement())
+  bandName   String
+
+  jobRoles   JobRole[]
+
+  @@map("band")
 }
