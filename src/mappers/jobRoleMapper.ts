@@ -1,5 +1,5 @@
-import type { JobRole } from '../models/jobRole';
 import type { JobRoleResponse } from '../dtos/jobRoleResponse';
+import type { JobRole } from '../models/jobRole';
 
 export function toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
 	return {
