@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
-import { app, getPortFromEnv } from './server';
+import { app } from './app';
+import { getPortFromEnv } from './port';
 
 dotenv.config();
 

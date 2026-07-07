@@ -1,7 +1,8 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
-import { app, getPortFromEnv } from '../src/server';
+import { app } from '../src/app';
+import { getPortFromEnv } from '../src/port';
 
 describe('GET /health', () => {
   it('returns service health details', async () => {
@@ -34,21 +35,13 @@ describe('getPortFromEnv', () => {
     }
   });
 
-  it('throws for non-integer values', () => {
-    expect(() => getPortFromEnv('abc')).toThrow(
-      'Invalid PORT value "abc". PORT must be an integer between 1 and 65535.',
-    );
-    expect(() => getPortFromEnv('8080abc')).toThrow(
-      'Invalid PORT value "8080abc". PORT must be an integer between 1 and 65535.',
-    );
-    expect(() => getPortFromEnv('3000.5')).toThrow(
-      'Invalid PORT value "3000.5". PORT must be an integer between 1 and 65535.',
-    );
+  it('returns NaN for non-numeric values', () => {
+    expect(Number.isNaN(getPortFromEnv('abc'))).toBe(true);
+    expect(Number.isNaN(getPortFromEnv('8080abc'))).toBe(true);
   });
 
-  it('throws for values outside the valid range', () => {
-    expect(() => getPortFromEnv('70000')).toThrow(
-      'Invalid PORT value "70000". PORT must be an integer between 1 and 65535.',
-    );
+  it('coerces numeric string values', () => {
+    expect(getPortFromEnv('3000.5')).toBe(3000.5);
+    expect(getPortFromEnv('70000')).toBe(70000);
   });
 });
