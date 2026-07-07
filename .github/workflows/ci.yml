@@ -3,7 +3,7 @@ name: Backend CI
 on:
   pull_request: # Trigger the workflow on pull request events for the main and master branches
   push:
-    branches: [main, master]
+    branches: [main]
 
 jobs:
   backend-ci:
