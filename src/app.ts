@@ -5,6 +5,7 @@ import { PrismaJobRoleDao } from './daos/prismaJobRoleDao';
 import { PrismaClient } from './generated/prisma/client';
 import { createJobRoleRouter } from './routes/jobRoleRouter';
 import { JobRoleService } from './services/jobRoleService';
+import jobRoleMapper from './mappers/jobRoleMapper';
 
 export const app = express();
 
@@ -17,7 +18,7 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 const jobRoleDao = new PrismaJobRoleDao(prisma);
-const jobRoleService = new JobRoleService(jobRoleDao);
+const jobRoleService = new JobRoleService(jobRoleDao, new jobRoleMapper());
 const jobRoleController = new JobRoleController(jobRoleService);
 
 app.use(express.json());

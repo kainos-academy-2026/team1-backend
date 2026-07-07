@@ -1,12 +1,15 @@
 import type { JobRoleDao } from '../daos/jobRoleDao';
-import type { JobRole } from '../models/jobRole';
-import {toJobRole} from '../mappers/jobRoleMapper';
+import { JobRoleResponse } from '../dtos/jobRoleResponse';
+import JobRoleMapper from '../mappers/jobRoleMapper';
 
 export class JobRoleService {
-	constructor(private readonly jobRoleDao: JobRoleDao) {}
+	constructor(
+		private readonly jobRoleDao: JobRoleDao,
+		private readonly jobRoleMapper: JobRoleMapper
+	) {}
 
-	async findAll(): Promise<JobRole[]> {
+	async findAll(): Promise<JobRoleResponse[]> {
 		const jobRoles = await this.jobRoleDao.findAll();
-		return jobRoles.map(toJobRole);
+		return jobRoles.map(this.jobRoleMapper.toJobRoleResponse);
 	}
 }

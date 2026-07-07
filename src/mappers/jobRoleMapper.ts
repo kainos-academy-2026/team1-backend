@@ -1,36 +1,16 @@
 import type { JobRoleResponse } from '../dtos/jobRoleResponse';
-import { JobRole, JobRoleStatus } from '../models/jobRole';
+import { JobRole } from '../generated/prisma/client';
 
-type JobRoleRow = {
-    jobRoleId: number;
-    roleName: string;
-    location: string;
-    capabilityId: number;
-    bandId: number;
-    closingDate: Date;
-    status: JobRoleStatus;
-};
-
-export function toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
-    return {
-        id: jobRole.jobRoleId,
-        roleName: jobRole.roleName,
-        location: jobRole.location,
-        capabilityId: jobRole.capabilityId,
-        bandId: jobRole.bandId,
-        closingDate: jobRole.closingDate,
-        status: jobRole.status,
+export default class JobRoleMapper {
+    toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
+        return {
+            id: jobRole.jobRoleId,
+            roleName: jobRole.roleName,
+            location: jobRole.location,
+            capabilityId: jobRole.capabilityId,
+            bandId: jobRole.bandId,
+            closingDate: jobRole.closingDate,
+            status: jobRole.status as JobRoleResponse['status'],
+        };
     };
-}
-
-export function toJobRole(row: JobRoleRow): JobRole {
-    return new JobRole(
-        row.jobRoleId,
-        row.roleName,
-        row.location,
-        row.capabilityId,
-        row.bandId,
-        row.closingDate,
-        row.status,
-    );
 }

@@ -19,10 +19,10 @@ model JobRole {
   capabilityId Int
   bandId       Int
   closingDate  DateTime
+  status       String
 
   capability Capability @relation(fields: [capabilityId], references: [capabilityId])
   band       Band       @relation(fields: [bandId], references: [bandId])
-  status     JobRoleStatus
 
   @@map("job_roles")
 }
@@ -43,9 +43,4 @@ model Band {
   jobRoles JobRole[]
 
   @@map("band")
-}
-
-enum JobRoleStatus {
-  OPEN
-  CLOSED
 }

@@ -11,7 +11,7 @@ export class JobRole {
 		public readonly capabilityId: number,
 		public readonly bandId: number,
 		public readonly closingDate: Date,
-		public readonly status: string,
+		public readonly status: JobRoleStatus,
 	) {
 		if (jobRoleId <= 0) {
 			throw new Error('ID must be greater than 0');
