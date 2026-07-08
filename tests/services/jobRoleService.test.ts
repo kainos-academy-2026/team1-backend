@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { JobRole } from '../../src/generated/prisma/client';
 import type { JobRoleResponse } from '../../src/dtos/jobRoleResponse';
+import type { JobRole } from '../../src/generated/prisma/client';
 import type JobRoleMapper from '../../src/mappers/jobRoleMapper';
 import { JobRoleService } from '../../src/services/jobRoleService';
 
