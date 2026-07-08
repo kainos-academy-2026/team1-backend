@@ -1,18 +1,16 @@
-import { z } from 'zod';
-
 export enum JobRoleStatus {
-    OPEN = 'open',
-    CLOSED = 'closed',
+	OPEN = 'open',
+	CLOSED = 'closed',
 }
 
-export const JobRoleSchema = z.object({
-    jobRoleId: z.number().int().positive(),
-    roleName: z.string().min(1, 'Role name is required'),
-    location: z.string().min(1, 'Location is required'),
-    capabilityId: z.number().int().positive(),
-    bandId: z.number().int().positive(),
-    closingDate: z.date(),
-    status: z.nativeEnum(JobRoleStatus),
-});
-
-export type JobRoleType = z.infer<typeof JobRoleSchema>;
+export class JobRole {
+	constructor(
+		public readonly jobRoleId: number,
+		public readonly roleName: string,
+		public readonly location: string,
+		public readonly capabilityId: number,
+		public readonly bandId: number,
+		public readonly closingDate: Date,
+		public readonly status: JobRoleStatus,
+	) {}
+}

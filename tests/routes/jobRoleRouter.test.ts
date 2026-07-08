@@ -12,7 +12,7 @@ describe('createJobRoleRouter', () => {
 		};
 
 		const app = express();
-		app.use('/job-roles', JobRoleRouter(controller as never));
+		app.use('/', JobRoleRouter(controller as never));
 
 		const response = await request(app).get('/job-roles');
 
