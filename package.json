@@ -26,7 +26,6 @@
 	"dependencies": {
 		"@prisma/adapter-pg": "^7.8.0",
 		"@prisma/client": "^7.8.0",
-		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
 		"pg": "^8.22.0",
 		"zod": "^4.4.3"
@@ -36,13 +35,14 @@
 		"@types/express": "^4.17.21",
 		"@types/node": "^20.11.5",
 		"@types/supertest": "^6.0.3",
-		"@vitest/coverage-v8": "^2.1.8",
-		"@vitest/ui": "^2.1.8",
+		"@vitest/coverage-v8": "^4.1.10",
+		"@vitest/ui": "^4.1.10",
+		"dotenv": "^17.4.2",
 		"prisma": "^7.8.0",
 		"supertest": "^7.0.0",
 		"ts-node-dev": "^2.0.0",
 		"tsx": "^4.23.0",
 		"typescript": "^5.3.3",
-		"vitest": "^2.1.8"
+		"vitest": "^4.1.10"
 	}
 }
