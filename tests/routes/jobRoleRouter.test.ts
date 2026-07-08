@@ -1,7 +1,7 @@
 import express from 'express';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import { createJobRoleRouter } from '../../src/routes/jobRoleRouter';
+import { JobRoleRouter } from '../../src/routes/jobRoleRouter';
 
 describe('createJobRoleRouter', () => {
 	it('wires GET /job-roles to controller.getAll', async () => {
@@ -12,7 +12,7 @@ describe('createJobRoleRouter', () => {
 		};
 
 		const app = express();
-		app.use('/job-roles', createJobRoleRouter(controller as never));
+		app.use('/job-roles', JobRoleRouter(controller as never));
 
 		const response = await request(app).get('/job-roles');
 

@@ -6,10 +6,11 @@ export class JobRoleService {
 	constructor(
 		private readonly jobRoleDao: JobRoleDao,
 		private readonly jobRoleMapper: JobRoleMapper,
-	) {}
+	) { }
 
 	async findAll(): Promise<JobRoleResponse[]> {
 		const jobRoles = await this.jobRoleDao.findAll();
-		return jobRoles.map(this.jobRoleMapper.toJobRoleResponse);
+		// map each job role to a JobRoleResponse using the mapper
+		return jobRoles.map((jobRole) => this.jobRoleMapper.toJobRoleResponse(jobRole));
 	}
 }

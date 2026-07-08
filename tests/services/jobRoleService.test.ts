@@ -12,7 +12,7 @@ describe('JobRoleService', () => {
 			location: 'Belfast',
 			capabilityId: 2,
 			bandId: 3,
-			closingDate: '2026-07-01T00:00:00.000Z',
+			closingDate: new Date('2026-07-01T00:00:00.000Z'),
 			status: 'open',
 		},
 	] as JobRole[];
@@ -42,11 +42,7 @@ describe('JobRoleService', () => {
 		const result = await service.findAll();
 
 		expect(jobRoleDao.findAll).toHaveBeenCalledOnce();
-		expect(jobRoleMapper.toJobRoleResponse).toHaveBeenCalledWith(
-			rows[0],
-			0,
-			rows,
-		);
+		expect(jobRoleMapper.toJobRoleResponse).toHaveBeenCalledWith(rows[0]);
 		expect(result).toEqual(responses);
 	});
 
