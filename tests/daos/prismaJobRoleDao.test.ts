@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 import { PrismaJobRoleDao } from '../../src/daos/prismaJobRoleDao';
-import { date } from 'zod/v4/mini';
 
 describe('PrismaJobRoleDao', () => {
 	it('requests all job roles ordered by id ascending', async () => {
