@@ -15,7 +15,7 @@ export function createApp(jobRoleController?: JobRoleController) {
 	});
 
 	if (jobRoleController) {
-		app.use('/job-roles', JobRoleRouter(jobRoleController));
+    	app.use(JobRoleRouter(jobRoleController));
 	}
 
 	return app;
