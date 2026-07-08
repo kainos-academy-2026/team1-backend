@@ -1,120 +1,112 @@
 import { describe, expect, it } from 'vitest';
-import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
+import { JobRoleSchema, JobRoleStatus } from '../../src/models/jobRole';
 
 describe('JobRole', () => {
-	const validArgs = [
-		1,
-		'Engineer',
-		'Belfast',
-		2,
-		3,
-		new Date('2026-07-01T00:00:00.000Z'),
-		JobRoleStatus.OPEN,
-	] as const;
+	const validInput = {
+		jobRoleId: 1,
+		roleName: 'Engineer',
+		location: 'Belfast',
+		capabilityId: 2,
+		bandId: 3,
+		closingDate: new Date('2026-07-01T00:00:00.000Z'),
+		status: JobRoleStatus.OPEN,
+	} as const;
 
-	it('creates a job role when all fields are valid', () => {
-		const jobRole = new JobRole(...validArgs);
+	it('parses a job role when all fields are valid', () => {
+		const result = JobRoleSchema.safeParse(validInput);
 
-		expect(jobRole.jobRoleId).toBe(1);
-		expect(jobRole.roleName).toBe('Engineer');
-		expect(jobRole.status).toBe(JobRoleStatus.OPEN);
+		expect(result.success).toBe(true);
+		if (!result.success) {
+			throw new Error('Expected schema parse to succeed');
+		}
+
+		expect(result.data.jobRoleId).toBe(1);
+		expect(result.data.roleName).toBe('Engineer');
+		expect(result.data.status).toBe(JobRoleStatus.OPEN);
 	});
 
-	it('throws when id is not greater than 0', () => {
-		expect(() =>
-			new JobRole(
-				0,
-				validArgs[1],
-				validArgs[2],
-				validArgs[3],
-				validArgs[4],
-				validArgs[5],
-				validArgs[6],
-			),
-		).toThrow('ID must be greater than 0');
+	it('fails when id is not greater than 0', () => {
+		const result = JobRoleSchema.safeParse({ ...validInput, jobRoleId: 0 });
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['jobRoleId']);
 	});
 
-	it('throws when role name is missing', () => {
-		expect(() =>
-			new JobRole(
-				validArgs[0],
-				'',
-				validArgs[2],
-				validArgs[3],
-				validArgs[4],
-				validArgs[5],
-				validArgs[6],
-			),
-		).toThrow('Role name is required');
+	it('fails when role name is missing', () => {
+		const result = JobRoleSchema.safeParse({ ...validInput, roleName: '' });
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['roleName']);
+		expect(result.error.issues[0]?.message).toBe('Role name is required');
 	});
 
-	it('throws when location is missing', () => {
-		expect(() =>
-			new JobRole(
-				validArgs[0],
-				validArgs[1],
-				'',
-				validArgs[3],
-				validArgs[4],
-				validArgs[5],
-				validArgs[6],
-			),
-		).toThrow('Location is required');
+	it('fails when location is missing', () => {
+		const result = JobRoleSchema.safeParse({ ...validInput, location: '' });
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['location']);
+		expect(result.error.issues[0]?.message).toBe('Location is required');
 	});
 
-	it('throws when capability id is missing', () => {
-		expect(() =>
-			new JobRole(
-				validArgs[0],
-				validArgs[1],
-				validArgs[2],
-				0,
-				validArgs[4],
-				validArgs[5],
-				validArgs[6],
-			),
-		).toThrow('Capability ID is required');
+	it('fails when capability id is missing', () => {
+		const result = JobRoleSchema.safeParse({ ...validInput, capabilityId: 0 });
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['capabilityId']);
 	});
 
-	it('throws when band id is missing', () => {
-		expect(() =>
-			new JobRole(
-				validArgs[0],
-				validArgs[1],
-				validArgs[2],
-				validArgs[3],
-				0,
-				validArgs[5],
-				validArgs[6],
-			),
-		).toThrow('Band ID is required');
+	it('fails when band id is missing', () => {
+		const result = JobRoleSchema.safeParse({ ...validInput, bandId: 0 });
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['bandId']);
 	});
 
-	it('throws when closing date is missing', () => {
-		expect(() =>
-			new JobRole(
-				validArgs[0],
-				validArgs[1],
-				validArgs[2],
-				validArgs[3],
-				validArgs[4],
-				null as never,
-				validArgs[6],
-			),
-		).toThrow('Closing date is required');
+	it('fails when closing date is missing', () => {
+		const result = JobRoleSchema.safeParse({
+			...validInput,
+			closingDate: null as never,
+		});
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['closingDate']);
 	});
 
-	it('throws when status is missing', () => {
-		expect(() =>
-			new JobRole(
-				validArgs[0],
-				validArgs[1],
-				validArgs[2],
-				validArgs[3],
-				validArgs[4],
-				validArgs[5],
-				undefined as never,
-			),
-		).toThrow('Status is required');
+	it('fails when status is missing', () => {
+		const result = JobRoleSchema.safeParse({
+			...validInput,
+			status: undefined as never,
+		});
+
+		expect(result.success).toBe(false);
+		if (result.success) {
+			throw new Error('Expected schema parse to fail');
+		}
+
+		expect(result.error.issues[0]?.path).toEqual(['status']);
 	});
 });
