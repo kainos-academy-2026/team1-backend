@@ -1,6 +1,6 @@
 import express, { type Request, type Response } from 'express';
 import type { JobRoleController } from './controllers/jobRoleController';
-import { createJobRoleRouter } from './routes/jobRoleRouter';
+import { JobRoleRouter } from './routes/jobRoleRouter';
 
 export function createApp(jobRoleController?: JobRoleController) {
 	const app = express();
@@ -15,7 +15,7 @@ export function createApp(jobRoleController?: JobRoleController) {
 	});
 
 	if (jobRoleController) {
-		app.use('/job-roles', createJobRoleRouter(jobRoleController));
+		app.use('/job-roles', JobRoleRouter(jobRoleController));
 	}
 
 	return app;
