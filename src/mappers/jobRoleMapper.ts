@@ -1,12 +1,11 @@
-import type { JobRoleResponse } from '../dtos/jobRoleResponse';
-import { JobRoleResponseSchema } from '../dtos/jobRoleResponse';
+import type JobRoleResponse from '../dtos/jobRoleResponse';
 import type { JobRole as PrismaJobRole } from '../generated/prisma/client';
 import type { JobRole } from '../models/jobRole';
 import { JobRoleStatus } from '../models/jobRole';
 
 export default class JobRoleMapper {
 	toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
-		return JobRoleResponseSchema.parse({
+		return {
 			id: jobRole.jobRoleId,
 			roleName: jobRole.roleName,
 			location: jobRole.location,
@@ -17,7 +16,7 @@ export default class JobRoleMapper {
 				.slice(0, 19)
 				.replace('T', ' '),
 			status: jobRole.status,
-		});
+		};
 	}
 
 	toDomain(jobRole: PrismaJobRole): JobRole {
