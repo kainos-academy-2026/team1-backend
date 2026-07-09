@@ -7,9 +7,11 @@
 		"node": ">=20"
 	},
 	"scripts": {
-		"build": "npm run prisma:generate &&tsc",
-		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     	"prisma:generate": "prisma generate",
+    	"prebuild": "npm run prisma:generate",
+    	"build": "tsc",
+    	"pretest": "npm run prisma:generate",  
+		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
 		"seed": "tsx prisma/seed.ts",
 		"start": "node dist/index.js",
 		"lint": "biome check .",
