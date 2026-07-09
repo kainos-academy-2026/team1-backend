@@ -1,3 +1,5 @@
+import type { JobRoleStatus } from '../generated/prisma/client';
+
 export default interface JobRoleResponse {
 	id: number;
 	roleName: string;
@@ -5,5 +7,5 @@ export default interface JobRoleResponse {
 	capabilityId: number;
 	bandId: number;
 	closingDate: Date;
-	status: string;
+	status: JobRoleStatus;
 }
