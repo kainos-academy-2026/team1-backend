@@ -12,6 +12,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum JobRoleStatus {
+  OPEN
+  CLOSED
+}
+
 model JobRole {
   jobRoleId    Int      @id @default(autoincrement())
   roleName     String

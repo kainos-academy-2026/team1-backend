@@ -61,11 +61,11 @@ describe('JobRoleMapper', () => {
 			bandId: 3,
 			bandName: 'Associate',
 			closingDate: new Date(closingDate),
-			status: 'open',
 			specification: 'https://example.com/specification.pdf',
 			description: 'Build and maintain backend services.',
 			responsibilities: 'Design, implement, test, and support APIs.',
 			numberOfOpenPositions: 2,
+			status: 'OPEN',
 		});
 	});
 });
