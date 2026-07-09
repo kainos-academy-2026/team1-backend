@@ -1,14 +1,17 @@
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
-
+import { describe, expect, it, vi } from 'vitest';
 import { app } from '../src/app';
+
+vi.hoisted(() => {
+	process.env.DATABASE_URL = 'postgresql://test:test@localhost/test';
+});
 
 describe('GET /health', () => {
 	it('returns service health details', async () => {
 		const response = await request(app).get('/health');
 
 		expect(response.status).toBe(200);
-		expect(response.body.status).toBe('UP');
+		expect(response.body.status).toBe('OK');
 		expect(typeof response.body.time).toBe('string');
 		expect(Number.isNaN(Date.parse(response.body.time))).toBe(false);
 	});
