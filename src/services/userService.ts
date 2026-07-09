@@ -9,12 +9,14 @@ export class UserService {
 		private readonly userMapper: UserMapper,
 	) {}
 
-	async createUser(data: { email: string; password: string }) {
+	async createUser(data: {
+		email: string;
+		password: string;
+	}): Promise<SignupResponse> {
 		const hashedPassword = await hash(data.password);
 		const user = await this.userDao.createUser({
 			email: data.email,
 			password: hashedPassword,
-			role: UserRole.USER,
 		});
 
 		return this.userMapper.toSignupResponse(user);
