@@ -1,10 +1,9 @@
-import type { JobRoleResponse } from '../dtos/jobRoleResponse';
-import { JobRoleResponseSchema } from '../dtos/jobRoleResponse';
+import type JobRoleResponse from '../dtos/jobRoleResponse';
 import type { JobRole } from '../generated/prisma/client';
 
 export default class JobRoleMapper {
 	toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
-		return JobRoleResponseSchema.parse({
+		return {
 			id: jobRole.jobRoleId,
 			roleName: jobRole.roleName,
 			location: jobRole.location,
@@ -12,6 +11,6 @@ export default class JobRoleMapper {
 			bandId: jobRole.bandId,
 			closingDate: new Date(jobRole.closingDate),
 			status: jobRole.status,
-		});
+		};
 	}
 }

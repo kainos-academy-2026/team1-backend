@@ -1,6 +1,7 @@
 import express from 'express';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
+import JobRoleRouter from '../../src/routes/jobRoleRouter';
 
 vi.hoisted(() => {
 	process.env.DATABASE_URL = 'postgresql://test:test@localhost/test';
@@ -17,8 +18,6 @@ vi.mock('../../src/generated/prisma/client', () => ({
 		};
 	},
 }));
-
-import JobRoleRouter from '../../src/routes/jobRoleRouter';
 
 describe('JobRoleRouter', () => {
 	it('wires GET /job-roles to controller.getAll', async () => {

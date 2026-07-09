@@ -1,5 +1,5 @@
 import type { JobRoleDao } from '../daos/jobRoleDao';
-import type { JobRoleResponse } from '../dtos/jobRoleResponse';
+import type JobRoleResponse from '../dtos/jobRoleResponse';
 import type JobRoleMapper from '../mappers/jobRoleMapper';
 
 export class JobRoleService {
