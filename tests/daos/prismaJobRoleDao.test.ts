@@ -11,7 +11,7 @@ describe('PrismaJobRoleDao', () => {
 				capabilityId: 2,
 				bandId: 3,
 				closingDate: new Date(),
-				status: 'open',
+				status: 'OPEN',
 			},
 		];
 

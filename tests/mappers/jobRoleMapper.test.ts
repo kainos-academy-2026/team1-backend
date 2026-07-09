@@ -13,7 +13,7 @@ describe('JobRoleMapper', () => {
 			capabilityId: 2,
 			bandId: 3,
 			closingDate,
-			status: 'open',
+			status: 'OPEN',
 		} as JobRole;
 
 		expect(mapper.toJobRoleResponse(jobRole)).toEqual({
@@ -23,7 +23,7 @@ describe('JobRoleMapper', () => {
 			capabilityId: 2,
 			bandId: 3,
 			closingDate: new Date(closingDate),
-			status: 'open',
+			status: 'OPEN',
 		});
 	});
 });
