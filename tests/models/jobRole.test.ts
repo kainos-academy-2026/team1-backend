@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
+import { type JobRole, JobRoleStatus } from '../../src/models/jobRole';
 
 describe('JobRole', () => {
 	const validArgs = [
@@ -27,5 +27,4 @@ describe('JobRole', () => {
 		expect(jobRole.roleName).toBe('Engineer');
 		expect(jobRole.status).toBe(JobRoleStatus.OPEN);
 	});
-
 });

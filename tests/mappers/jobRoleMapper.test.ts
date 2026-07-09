@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
 import JobRoleMapper from '../../src/mappers/jobRoleMapper';
+import { type JobRole, JobRoleStatus } from '../../src/models/jobRole';
 
 describe('JobRoleMapper', () => {
 	it('maps a prisma job role into a response DTO', () => {
@@ -22,7 +22,7 @@ describe('JobRoleMapper', () => {
 			location: 'Belfast',
 			capabilityId: 2,
 			bandId: 3,
-			closingDate: "2026-07-01 00:00:00",
+			closingDate: '2026-07-01 00:00:00',
 			status: 'open',
 		});
 	});

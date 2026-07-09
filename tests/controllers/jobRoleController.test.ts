@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
 import { JobRoleController } from '../../src/controllers/jobRoleController';
-import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
+import { type JobRole, JobRoleStatus } from '../../src/models/jobRole';
 
 describe('JobRoleController', () => {
 	it('returns 200 with job roles when the service succeeds', async () => {
@@ -30,15 +30,17 @@ describe('JobRoleController', () => {
 
 		expect(jobRoleService.findAll).toHaveBeenCalledOnce();
 		expect(res.status).toHaveBeenCalledWith(200);
-		expect(res.json).toHaveBeenCalledWith([{
-			id: 1,
-			roleName: 'Engineer',
-			location: 'Belfast',
-			capabilityId: 2,
-			bandId: 3,
-			closingDate: "2026-07-01 00:00:00",
-			status: JobRoleStatus.OPEN,
-		}]);
+		expect(res.json).toHaveBeenCalledWith([
+			{
+				id: 1,
+				roleName: 'Engineer',
+				location: 'Belfast',
+				capabilityId: 2,
+				bandId: 3,
+				closingDate: '2026-07-01 00:00:00',
+				status: JobRoleStatus.OPEN,
+			},
+		]);
 	});
 
 	it('returns 500 when the service throws', async () => {

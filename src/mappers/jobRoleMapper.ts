@@ -12,7 +12,10 @@ export default class JobRoleMapper {
 			location: jobRole.location,
 			capabilityId: jobRole.capabilityId,
 			bandId: jobRole.bandId,
-			closingDate: jobRole.closingDate.toISOString().slice(0, 19).replace('T', ' '),
+			closingDate: jobRole.closingDate
+				.toISOString()
+				.slice(0, 19)
+				.replace('T', ' '),
 			status: jobRole.status,
 		});
 	}
