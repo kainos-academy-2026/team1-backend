@@ -4,7 +4,7 @@ Kainos Job Roles API: a Node.js/Express backend using Prisma with PostgreSQL.
 
 ## Prerequisites
 
-- Node.js >= 20
+- Node.js >= 22
 - PostgreSQL database
 
 ## Setup
