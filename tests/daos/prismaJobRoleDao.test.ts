@@ -10,7 +10,7 @@ describe('PrismaJobRoleDao', () => {
 				location: 'Belfast',
 				capabilityId: 2,
 				bandId: 3,
-				closingDate: '2026-07-01T00:00:00.000Z',
+				closingDate: new Date('2026-07-01T00:00:00.000Z'),
 				status: 'open',
 			},
 		];

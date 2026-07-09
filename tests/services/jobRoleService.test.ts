@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { JobRole as PrismaJobRole } from '../../src/generated/prisma/client';
 import type JobRoleMapper from '../../src/mappers/jobRoleMapper';
-import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
+import { JobRoleStatus } from '../../src/models/jobRole';
 import { JobRoleService } from '../../src/services/jobRoleService';
 
 describe('JobRoleService', () => {

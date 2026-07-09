@@ -1,11 +1,8 @@
+import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
-import dotenv from 'dotenv';
 import { Router } from 'express';
 import { JobRoleController } from '../controllers/jobRoleController';
 import { JobRoleService } from '../services/jobRoleService';
-
-dotenv.config();
-
 import { PrismaJobRoleDao } from '../daos/prismaJobRoleDao';
 import { PrismaClient } from '../generated/prisma/client';
 import JobRoleMapper from '../mappers/jobRoleMapper';

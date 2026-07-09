@@ -18,7 +18,7 @@ vi.mock('../../src/generated/prisma/client', () => ({
 
 import JobRoleRouter from '../../src/routes/jobRoleRouter';
 
-describe('createJobRoleRouter', () => {
+describe('JobRoleRouter', () => {
 	it('wires GET /job-roles to controller.getAll', async () => {
 		const app = express();
 		app.use('/job-roles', JobRoleRouter);
