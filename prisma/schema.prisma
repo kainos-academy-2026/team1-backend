@@ -13,11 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum JobRoleStatus {
-  OPEN
-  CLOSED
-}
-
 model JobRole {
   jobRoleId    Int      @id @default(autoincrement())
   roleName     String
@@ -25,7 +20,7 @@ model JobRole {
   capabilityId Int
   bandId       Int
   closingDate  DateTime
-  status       JobRoleStatus @default(OPEN)
+  status       String   @default("OPEN")
 
   capability Capability @relation(fields: [capabilityId], references: [capabilityId])
   band       Band       @relation(fields: [bandId], references: [bandId])
@@ -33,16 +28,11 @@ model JobRole {
   @@map("job_roles")
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
 model User {
   userId       Int      @id @default(autoincrement())
   email        String
   password     String
-  role         UserRole @default(USER)
+  role         String   @default("USER")
 
   @@map("users")
 }

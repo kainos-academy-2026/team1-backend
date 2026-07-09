@@ -30,4 +30,16 @@ describe('PrismaJobRoleDao', () => {
 		});
 		expect(result).toBe(rows);
 	});
+
+	it('propagates errors thrown by prisma', async () => {
+		const prisma = {
+			jobRole: {
+				findMany: vi.fn().mockRejectedValue(new Error('database failed')),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+
+		await expect(dao.findAll()).rejects.toThrow('database failed');
+	});
 });
