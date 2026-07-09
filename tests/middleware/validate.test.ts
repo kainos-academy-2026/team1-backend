@@ -1,8 +1,8 @@
 import express from 'express';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import { validateBody } from '../../src/middleware/validate';
 import { z } from 'zod';
+import { validateBody } from '../../src/middleware/validate';
 
 describe('validateBody', () => {
 	const schema = z.object({ name: z.string() }).strict();
@@ -17,7 +17,9 @@ describe('validateBody', () => {
 	}
 
 	it('calls next and passes valid body through', async () => {
-		const response = await request(buildApp()).post('/test').send({ name: 'Alice' });
+		const response = await request(buildApp())
+			.post('/test')
+			.send({ name: 'Alice' });
 		expect(response.status).toBe(200);
 		expect(response.body).toEqual({ ok: true });
 	});
@@ -26,18 +28,20 @@ describe('validateBody', () => {
 		const response = await request(buildApp()).post('/test').send({});
 		expect(response.status).toBe(400);
 		expect(response.body.errors).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({ field: 'name' }),
-			]),
+			expect.arrayContaining([expect.objectContaining({ field: 'name' })]),
 		);
 	});
 
 	it('returns 400 with errors when an unrecognised field is present', async () => {
-		const response = await request(buildApp()).post('/test').send({ name: 'Alice', extra: 'bad' });
+		const response = await request(buildApp())
+			.post('/test')
+			.send({ name: 'Alice', extra: 'bad' });
 		expect(response.status).toBe(400);
 		expect(response.body.errors).toEqual(
 			expect.arrayContaining([
-				expect.objectContaining({ message: expect.stringContaining('Unrecognized key') }),
+				expect.objectContaining({
+					message: expect.stringContaining('Unrecognized key'),
+				}),
 			]),
 		);
 	});

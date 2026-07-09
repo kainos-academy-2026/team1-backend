@@ -20,9 +20,9 @@ const userService = new UserService(userDao, new UserMapper());
 const userController: UserController = new UserController(userService);
 
 router.post(
-    '/signup',
-    validateBody(SignupRequestSchema),
-    userController.createUser.bind(userController),
+	'/signup',
+	validateBody(SignupRequestSchema),
+	userController.createUser.bind(userController),
 );
 
 export default router;

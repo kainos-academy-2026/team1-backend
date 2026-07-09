@@ -101,9 +101,7 @@ describe('AuthRouter', () => {
 
 		expect(response.status).toBe(400);
 		expect(response.body.errors).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({ field: 'email' }),
-			]),
+			expect.arrayContaining([expect.objectContaining({ field: 'email' })]),
 		);
 		expect(createUserMock).not.toHaveBeenCalled();
 	});
@@ -120,9 +118,7 @@ describe('AuthRouter', () => {
 
 		expect(response.status).toBe(400);
 		expect(response.body.errors).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({ field: 'password' }),
-			]),
+			expect.arrayContaining([expect.objectContaining({ field: 'password' })]),
 		);
 		expect(createUserMock).not.toHaveBeenCalled();
 	});
