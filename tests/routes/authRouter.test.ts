@@ -88,4 +88,84 @@ describe('AuthRouter', () => {
 		);
 		expect(createUserMock).not.toHaveBeenCalled();
 	});
+
+	it('rejects an invalid email', async () => {
+		const app = express();
+		app.use(express.json());
+		app.use('/auth', AuthRouter);
+
+		const response = await request(app).post('/auth/signup').send({
+			email: 'not-an-email',
+			password: 'Password123!',
+		});
+
+		expect(response.status).toBe(400);
+		expect(response.body.errors).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ field: 'email' }),
+			]),
+		);
+		expect(createUserMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a password that is too short', async () => {
+		const app = express();
+		app.use(express.json());
+		app.use('/auth', AuthRouter);
+
+		const response = await request(app).post('/auth/signup').send({
+			email: 'test@example.com',
+			password: 'Ab1!',
+		});
+
+		expect(response.status).toBe(400);
+		expect(response.body.errors).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ field: 'password' }),
+			]),
+		);
+		expect(createUserMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a password missing an uppercase letter', async () => {
+		const app = express();
+		app.use(express.json());
+		app.use('/auth', AuthRouter);
+
+		const response = await request(app).post('/auth/signup').send({
+			email: 'test@example.com',
+			password: 'password123!',
+		});
+
+		expect(response.status).toBe(400);
+		expect(response.body.errors).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					message: expect.stringContaining('uppercase'),
+				}),
+			]),
+		);
+		expect(createUserMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a password missing a special character', async () => {
+		const app = express();
+		app.use(express.json());
+		app.use('/auth', AuthRouter);
+
+		const response = await request(app).post('/auth/signup').send({
+			email: 'test@example.com',
+			password: 'Password123',
+		});
+
+		expect(response.status).toBe(400);
+		expect(response.body.errors).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					message: expect.stringContaining('special character'),
+				}),
+			]),
+		);
+		expect(createUserMock).not.toHaveBeenCalled();
+	});
 });

@@ -50,4 +50,23 @@ describe('UserService', () => {
 		expect(userMapper.toSignupResponse).toHaveBeenCalledWith(createdUser);
 		expect(result).toEqual(response);
 	});
+
+	it('propagates errors thrown by the DAO', async () => {
+		vi.mocked(hash).mockResolvedValue('hashed-password');
+
+		const userDao = {
+			createUser: vi.fn().mockRejectedValue(new Error('database failed')),
+		};
+		const userMapper = {
+			toSignupResponse: vi.fn(),
+		} as unknown as UserMapper;
+
+		const service = new UserService(userDao, userMapper);
+
+		await expect(
+			service.createUser({ email: 'test@example.com', password: 'Password123!' }),
+		).rejects.toThrow('database failed');
+
+		expect(userMapper.toSignupResponse).not.toHaveBeenCalled();
+	});
 });
