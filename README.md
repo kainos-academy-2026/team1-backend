@@ -1,6 +1,6 @@
 # team1-backend
 
-Kainos Job Roles API — a Node.js/Express backend using Prisma with PostgreSQL.
+Kainos Job Roles API: a Node.js/Express backend using Prisma with PostgreSQL.
 
 ## Prerequisites
 
