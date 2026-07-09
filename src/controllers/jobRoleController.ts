@@ -9,7 +9,7 @@ export class JobRoleController {
 	async getAll(_req: Request, res: Response) {
 		try {
 			const jobRoles = await this.jobRoleService.findAll();
- 			const mapper = new JobRoleMapper();
+			const mapper = new JobRoleMapper();
 			const response: JobRoleResponse[] = jobRoles.map((jobRole) =>
 				mapper.toJobRoleResponse(jobRole),
 			);
