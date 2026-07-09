@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export enum JobRoleStatus {
-	OPEN = 'open',
-	CLOSED = 'closed',
+	OPEN = 'OPEN',
+	CLOSED = 'CLOSED',
 }
 
 export const JobRoleSchema = z.object({

@@ -1,7 +1,18 @@
 import type JobRoleResponse from '../dtos/jobRoleResponse';
 import type { JobRole } from '../generated/prisma/client';
+import { JobRoleStatus } from '../models/jobRole';
 
 export default class JobRoleMapper {
+	private toJobRoleStatus(status: string): JobRoleStatus {
+		switch (status) {
+			case JobRoleStatus.OPEN:
+			case JobRoleStatus.CLOSED:
+				return status;
+			default:
+				throw new Error(`Invalid job role status: ${status}`);
+		}
+	}
+
 	toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
 		return {
 			id: jobRole.jobRoleId,
@@ -10,7 +21,7 @@ export default class JobRoleMapper {
 			capabilityId: jobRole.capabilityId,
 			bandId: jobRole.bandId,
 			closingDate: new Date(jobRole.closingDate),
-			status: jobRole.status,
+			status: this.toJobRoleStatus(jobRole.status),
 		};
 	}
 }

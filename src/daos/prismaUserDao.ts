@@ -1,8 +1,5 @@
-import {
-	type PrismaClient,
-	type User,
-	UserRole,
-} from '../generated/prisma/client';
+import type { PrismaClient, User } from '../generated/prisma/client';
+import { UserRole } from '../models/user';
 import type { UserDao } from './userDao';
 
 export class PrismaUserDao implements UserDao {
