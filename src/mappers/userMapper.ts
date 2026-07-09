@@ -1,5 +1,6 @@
-import type { User } from '../generated/prisma/client.js';
-import { UserRole } from '../models/user.js';
+import type SignupResponse from '../dtos/signupResponse';
+import type { User } from '../generated/prisma/client';
+import { UserRole } from '../models/user';
 
 export default class UserMapper {
 	private toUserRole(role: string): UserRole {
