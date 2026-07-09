@@ -7,7 +7,7 @@ export const JobRoleResponseSchema = z.object({
 	location: z.string().min(1, 'Location is required'),
 	capabilityId: z.number().int().positive(),
 	bandId: z.number().int().positive(),
-	closingDate: z.date(),
+	closingDate: z.string(),
 	status: z.nativeEnum(JobRoleStatus),
 });
 
