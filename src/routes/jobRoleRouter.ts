@@ -7,6 +7,7 @@ import { PrismaClient } from '../generated/prisma/client';
 import JobRoleMapper from '../mappers/jobRoleMapper';
 import { JobRoleService } from '../services/jobRoleService';
 
+//Move to index.ts
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {

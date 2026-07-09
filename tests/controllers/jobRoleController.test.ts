@@ -1,23 +1,25 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
 import { JobRoleController } from '../../src/controllers/jobRoleController';
-import { type JobRole, JobRoleStatus } from '../../src/models/jobRole';
+import type { JobRoleResponse } from '../../src/dtos/jobRoleResponse';
+import { JobRoleStatus } from '../../src/models/jobRole';
 
 describe('JobRoleController', () => {
 	it('returns 200 with job roles when the service succeeds', async () => {
-		const jobRoles: JobRole[] = [
+		const responseRoles: JobRoleResponse[] = [
 			{
-				jobRoleId: 1,
+				id: 1,
 				roleName: 'Engineer',
 				location: 'Belfast',
 				capabilityId: 2,
 				bandId: 3,
-				closingDate: new Date('2026-07-01T00:00:00.000Z'),
+				closingDate: '2026-07-01 00:00:00',
 				status: JobRoleStatus.OPEN,
 			},
 		];
+
 		const jobRoleService = {
-			findAll: vi.fn().mockResolvedValue(jobRoles),
+			findAll: vi.fn().mockResolvedValue(responseRoles),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
 		const req = {} as Request;
@@ -30,17 +32,7 @@ describe('JobRoleController', () => {
 
 		expect(jobRoleService.findAll).toHaveBeenCalledOnce();
 		expect(res.status).toHaveBeenCalledWith(200);
-		expect(res.json).toHaveBeenCalledWith([
-			{
-				id: 1,
-				roleName: 'Engineer',
-				location: 'Belfast',
-				capabilityId: 2,
-				bandId: 3,
-				closingDate: '2026-07-01 00:00:00',
-				status: JobRoleStatus.OPEN,
-			},
-		]);
+		expect(res.json).toHaveBeenCalledWith(responseRoles);
 	});
 
 	it('returns 500 when the service throws', async () => {
