@@ -1,24 +1,18 @@
-import express, { type Request, type Response } from 'express';
-import type { JobRoleController } from './controllers/jobRoleController';
-import { JobRoleRouter } from './routes/jobRoleRouter';
+import express from 'express';
+import JobRoleRouter from './routes/jobRoleRouter';
 
-export function createApp(jobRoleController?: JobRoleController) {
-	const app = express();
+const app = express();
 
-	app.use(express.json());
+app.use(express.json());
 
-	app.get('/health', (_req: Request, res: Response) => {
-		res.json({
-			status: 'UP',
-			time: new Date().toISOString(),
-		});
-	});
+app.get('/', (_req, res) => {
+	res.json({ message: 'Welcome to your API!' });
+});
 
-	if (jobRoleController) {
-		app.use(JobRoleRouter(jobRoleController));
-	}
+app.get('/health', (_req, res) => {
+	res.json({ status: 'OK', time: new Date().toISOString() });
+});
 
-	return app;
-}
+app.use('/job-roles', JobRoleRouter);
 
-export const app = createApp();
+export { app };

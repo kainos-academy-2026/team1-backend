@@ -1,10 +1,21 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
 import { JobRoleController } from '../../src/controllers/jobRoleController';
+import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
 
 describe('JobRoleController', () => {
 	it('returns 200 with job roles when the service succeeds', async () => {
-		const jobRoles = [{ id: 1, roleName: 'Engineer' }];
+		const jobRoles: JobRole[] = [
+			{
+				jobRoleId: 1,
+				roleName: 'Engineer',
+				location: 'Belfast',
+				capabilityId: 2,
+				bandId: 3,
+				closingDate: new Date('2026-07-01T00:00:00.000Z'),
+				status: JobRoleStatus.OPEN,
+			},
+		];
 		const jobRoleService = {
 			findAll: vi.fn().mockResolvedValue(jobRoles),
 		};
@@ -19,7 +30,15 @@ describe('JobRoleController', () => {
 
 		expect(jobRoleService.findAll).toHaveBeenCalledOnce();
 		expect(res.status).toHaveBeenCalledWith(200);
-		expect(res.json).toHaveBeenCalledWith(jobRoles);
+		expect(res.json).toHaveBeenCalledWith([{
+			id: 1,
+			roleName: 'Engineer',
+			location: 'Belfast',
+			capabilityId: 2,
+			bandId: 3,
+			closingDate: new Date('2026-07-01T00:00:00.000Z'),
+			status: JobRoleStatus.OPEN,
+		}]);
 	});
 
 	it('returns 500 when the service throws', async () => {

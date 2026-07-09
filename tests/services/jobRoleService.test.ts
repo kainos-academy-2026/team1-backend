@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { JobRoleResponse } from '../../src/dtos/jobRoleResponse';
-import type { JobRole } from '../../src/generated/prisma/client';
+import type { JobRole as PrismaJobRole } from '../../src/generated/prisma/client';
 import type JobRoleMapper from '../../src/mappers/jobRoleMapper';
+import { JobRole, JobRoleStatus } from '../../src/models/jobRole';
 import { JobRoleService } from '../../src/services/jobRoleService';
 
 describe('JobRoleService', () => {
@@ -15,26 +15,26 @@ describe('JobRoleService', () => {
 			closingDate: new Date('2026-07-01T00:00:00.000Z'),
 			status: 'open',
 		},
-	] as JobRole[];
+	] as PrismaJobRole[];
 
 	it('returns mapped job roles from the DAO', async () => {
-		const responses = [
+		const domainRoles = [
 			{
-				id: 1,
+				jobRoleId: 1,
 				roleName: 'Engineer',
 				location: 'Belfast',
 				capabilityId: 2,
 				bandId: 3,
-				closingDate: new Date(rows[0].closingDate),
-				status: 'open',
+				closingDate: new Date('2026-07-01T00:00:00.000Z'),
+				status: JobRoleStatus.OPEN,
 			},
-		] as JobRoleResponse[];
+		];
 
 		const jobRoleDao = {
 			findAll: vi.fn().mockResolvedValue(rows),
 		};
 		const jobRoleMapper = {
-			toJobRoleResponse: vi.fn().mockReturnValue(responses[0]),
+			toDomain: vi.fn().mockReturnValue(domainRoles[0]),
 		} as unknown as JobRoleMapper;
 
 		const service = new JobRoleService(jobRoleDao, jobRoleMapper);
@@ -42,8 +42,8 @@ describe('JobRoleService', () => {
 		const result = await service.findAll();
 
 		expect(jobRoleDao.findAll).toHaveBeenCalledOnce();
-		expect(jobRoleMapper.toJobRoleResponse).toHaveBeenCalledWith(rows[0]);
-		expect(result).toEqual(responses);
+		expect(jobRoleMapper.toDomain).toHaveBeenCalledWith(rows[0]);
+		expect(result).toEqual(domainRoles);
 	});
 
 	it('returns an empty array when the DAO returns no rows', async () => {
@@ -51,13 +51,13 @@ describe('JobRoleService', () => {
 			findAll: vi.fn().mockResolvedValue([]),
 		};
 		const jobRoleMapper = {
-			toJobRoleResponse: vi.fn(),
+			toDomain: vi.fn(),
 		} as unknown as JobRoleMapper;
 
 		const service = new JobRoleService(jobRoleDao, jobRoleMapper);
 
 		await expect(service.findAll()).resolves.toEqual([]);
-		expect(jobRoleMapper.toJobRoleResponse).not.toHaveBeenCalled();
+		expect(jobRoleMapper.toDomain).not.toHaveBeenCalled();
 	});
 
 	it('propagates DAO errors', async () => {
@@ -66,7 +66,7 @@ describe('JobRoleService', () => {
 			findAll: vi.fn().mockRejectedValue(error),
 		};
 		const jobRoleMapper = {
-			toJobRoleResponse: vi.fn(),
+			toDomain: vi.fn(),
 		} as unknown as JobRoleMapper;
 
 		const service = new JobRoleService(jobRoleDao, jobRoleMapper);

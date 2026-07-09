@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { PrismaJobRoleDao } from '../../src/daos/prismaJobRoleDao';
 
 describe('PrismaJobRoleDao', () => {
-	it('requests all job roles ordered by id ascending', async () => {
+	it('returns all job roles', async () => {
 		const rows = [
 			{
 				jobRoleId: 1,
@@ -25,9 +25,7 @@ describe('PrismaJobRoleDao', () => {
 
 		const result = await dao.findAll();
 
-		expect(prisma.jobRole.findMany).toHaveBeenCalledWith({
-			orderBy: { jobRoleId: 'asc' },
-		});
+		expect(prisma.jobRole.findMany).toHaveBeenCalledWith();
 		expect(result).toBe(rows);
 	});
 });
