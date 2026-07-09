@@ -64,7 +64,10 @@ describe('UserService', () => {
 		const service = new UserService(userDao, userMapper);
 
 		await expect(
-			service.createUser({ email: 'test@example.com', password: 'Password123!' }),
+			service.createUser({
+				email: 'test@example.com',
+				password: 'Password123!',
+			}),
 		).rejects.toThrow('database failed');
 
 		expect(userMapper.toSignupResponse).not.toHaveBeenCalled();

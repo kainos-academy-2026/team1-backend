@@ -43,7 +43,10 @@ describe('PrismaUserDao', () => {
 		const dao = new PrismaUserDao(prisma as never);
 
 		await expect(
-			dao.createUser({ email: 'test@example.com', password: 'hashed-password' }),
+			dao.createUser({
+				email: 'test@example.com',
+				password: 'hashed-password',
+			}),
 		).rejects.toThrow('database failed');
 	});
 });
