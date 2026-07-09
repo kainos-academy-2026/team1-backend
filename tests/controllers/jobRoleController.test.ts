@@ -36,7 +36,7 @@ describe('JobRoleController', () => {
 			location: 'Belfast',
 			capabilityId: 2,
 			bandId: 3,
-			closingDate: new Date('2026-07-01T00:00:00.000Z'),
+			closingDate: "2026-07-01 00:00:00",
 			status: JobRoleStatus.OPEN,
 		}]);
 	});

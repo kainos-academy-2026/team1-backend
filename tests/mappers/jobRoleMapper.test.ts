@@ -22,7 +22,7 @@ describe('JobRoleMapper', () => {
 			location: 'Belfast',
 			capabilityId: 2,
 			bandId: 3,
-			closingDate: new Date(closingDate),
+			closingDate: "2026-07-01 00:00:00",
 			status: 'open',
 		});
 	});
