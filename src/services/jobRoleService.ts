@@ -1,6 +1,6 @@
-import type { JobRoleDao } from '../daos/jobRoleDao';
-import type JobRoleResponse from '../dtos/jobRoleResponse';
-import type JobRoleMapper from '../mappers/jobRoleMapper';
+import type { JobRoleDao } from '../daos/jobRoleDao.js';
+import type JobRoleResponse from '../dtos/jobRoleResponse.js';
+import type JobRoleMapper from '../mappers/jobRoleMapper.js';
 
 export class JobRoleService {
 	constructor(

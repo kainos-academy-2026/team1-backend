@@ -1,6 +1,6 @@
-import type JobRoleResponse from '../dtos/jobRoleResponse';
-import type { JobRole } from '../generated/prisma/client';
-import { JobRoleStatus } from '../models/jobRole';
+import type JobRoleResponse from '../dtos/jobRoleResponse.js';
+import type { JobRole } from '../generated/prisma/client.js';
+import { JobRoleStatus } from '../models/jobRole.js';
 
 export default class JobRoleMapper {
 	private toJobRoleStatus(status: string): JobRoleStatus {

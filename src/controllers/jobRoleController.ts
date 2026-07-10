@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { JobRoleService } from '../services/jobRoleService';
+import type { JobRoleService } from '../services/jobRoleService.js';
 
 export class JobRoleController {
 	constructor(private readonly jobRoleService: JobRoleService) {}

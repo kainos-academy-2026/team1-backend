@@ -1,13 +1,13 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Router } from 'express';
-import { UserController } from '../controllers/userController';
-import { PrismaUserDao } from '../daos/prismaUserDao';
-import SignupRequestSchema from '../dtos/signupRequest';
-import { PrismaClient } from '../generated/prisma/client';
-import UserMapper from '../mappers/userMapper';
-import { validateBody } from '../middleware/validate';
-import { UserService } from '../services/userService';
+import { UserController } from '../controllers/userController.js';
+import { PrismaUserDao } from '../daos/prismaUserDao.js';
+import SignupRequestSchema from '../dtos/signupRequest.js';
+import { PrismaClient } from '../generated/prisma/client.js';
+import UserMapper from '../mappers/userMapper.js';
+import { validateBody } from '../middleware/validate.js';
+import { UserService } from '../services/userService.js';
 
 const connectionString = process.env.DATABASE_URL as string;
 

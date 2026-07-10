@@ -1,5 +1,5 @@
-import type { JobRole, PrismaClient } from '../generated/prisma/client';
-import type { JobRoleDao } from './jobRoleDao';
+import type { JobRole, PrismaClient } from '../generated/prisma/client.js';
+import type { JobRoleDao } from './jobRoleDao.js';
 
 export class PrismaJobRoleDao implements JobRoleDao {
 	constructor(private readonly prisma: PrismaClient) {}

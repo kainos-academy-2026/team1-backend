@@ -6,7 +6,6 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
-  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -20,7 +19,7 @@ model JobRole {
   capabilityId Int
   bandId       Int
   closingDate  DateTime
-  status       String   @default("open")
+  status       String
 
   capability Capability @relation(fields: [capabilityId], references: [capabilityId])
   band       Band       @relation(fields: [bandId], references: [bandId])
@@ -30,9 +29,9 @@ model JobRole {
 
 model User {
   userId       Int      @id @default(autoincrement())
-  email        String
+  email        String   @unique
   password     String
-  role         String   @default("USER")
+  role         String
 
   @@map("users")
 }
