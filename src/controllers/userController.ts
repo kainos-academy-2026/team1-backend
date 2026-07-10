@@ -6,11 +6,11 @@ export class UserController {
 
 	async createUser(req: Request, res: Response) {
 		try {
-			this.userService.createUser({
+			const response = await this.userService.createUser({
 				email: req.body.email,
 				password: req.body.password,
 			});
-			res.status(201).json(users);
+			res.status(201).json(response);
 		} catch {
 			res.status(500).json({ error: 'Internal server error' });
 		}
