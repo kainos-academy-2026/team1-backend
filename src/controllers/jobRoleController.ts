@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { JobRoleService } from '../services/jobRoleService';
+import type { JobRoleService } from '../services/jobRoleService.js';
 
 export class JobRoleController {
 	constructor(private readonly jobRoleService: JobRoleService) {}
@@ -16,7 +16,7 @@ export class JobRoleController {
 	async getById(req: Request, res: Response) {
 		try {
 			const jobRoleId = parseInt(req.params.jobRoleId, 10);
-			if (isNaN(jobRoleId)) {
+			if (Number.isNaN(jobRoleId)) {
 				return res.status(400).json({ error: 'Invalid job role ID' });
 			}
 

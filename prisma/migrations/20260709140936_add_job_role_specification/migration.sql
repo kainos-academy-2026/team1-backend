@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "job_roles" ADD COLUMN     "specification" TEXT NOT NULL;
+ALTER TABLE "job_roles" ADD COLUMN     "specification" TEXT NOT NULL DEFAULT '';

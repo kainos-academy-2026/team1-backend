@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import type JobRoleDetailedResponse from '../../src/dtos/jobRoleDetailedResponse';
-import type JobRoleResponse from '../../src/dtos/jobRoleResponse';
-import type { JobRole } from '../../src/generated/prisma/client';
-import type JobRoleMapper from '../../src/mappers/jobRoleMapper';
-import { JobRoleService } from '../../src/services/jobRoleService';
+import type JobRoleDetailedResponse from '../../src/dtos/jobRoleDetailedResponse.js';
+import type JobRoleResponse from '../../src/dtos/jobRoleResponse.js';
+import type { JobRole } from '../../src/generated/prisma/client.js';
+import type JobRoleMapper from '../../src/mappers/jobRoleMapper.js';
+import { JobRoleService } from '../../src/services/jobRoleService.js';
 
 describe('JobRoleService', () => {
 	const rows = [

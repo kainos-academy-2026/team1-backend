@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Router } from 'express';
-import { JobRoleController } from '../controllers/jobRoleController';
-import { PrismaJobRoleDao } from '../daos/prismaJobRoleDao';
-import { PrismaClient } from '../generated/prisma/client';
-import JobRoleMapper from '../mappers/jobRoleMapper';
-import { JobRoleService } from '../services/jobRoleService';
+import { JobRoleController } from '../controllers/jobRoleController.js';
+import { PrismaJobRoleDao } from '../daos/prismaJobRoleDao.js';
+import { PrismaClient } from '../generated/prisma/client.js';
+import JobRoleMapper from '../mappers/jobRoleMapper.js';
+import { JobRoleService } from '../services/jobRoleService.js';
 
 //Move to index.ts
 const connectionString = process.env.DATABASE_URL;

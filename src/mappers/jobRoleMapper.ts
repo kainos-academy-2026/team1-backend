@@ -1,7 +1,7 @@
-import type { JobRoleWithDetails } from '../daos/prismaJobRoleDao';
-import type JobRoleDetailedResponse from '../dtos/jobRoleDetailedResponse';
-import type JobRoleResponse from '../dtos/jobRoleResponse';
-import type { JobRole } from '../generated/prisma/client';
+import type { JobRoleWithDetails } from '../daos/prismaJobRoleDao.js';
+import type JobRoleDetailedResponse from '../dtos/jobRoleDetailedResponse.js';
+import type JobRoleResponse from '../dtos/jobRoleResponse.js';
+import type { JobRole } from '../generated/prisma/client.js';
 
 export default class JobRoleMapper {
 	toJobRoleResponse(jobRole: JobRole): JobRoleResponse {

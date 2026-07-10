@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
-import { JobRoleController } from '../../src/controllers/jobRoleController';
+import { JobRoleController } from '../../src/controllers/jobRoleController.js';
 
 describe('JobRoleController', () => {
 	it('returns 200 with job roles when the service succeeds', async () => {

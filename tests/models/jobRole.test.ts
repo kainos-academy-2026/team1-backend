@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { JobRoleSchema, JobRoleStatus } from '../../src/models/jobRole';
+import { JobRoleSchema, JobRoleStatus } from '../../src/models/jobRole.js';
 
 describe('JobRole', () => {
 	const validInput = {

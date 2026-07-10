@@ -1,7 +1,7 @@
 import express from 'express';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import JobRoleRouter from '../../src/routes/jobRoleRouter';
+import JobRoleRouter from '../../src/routes/jobRoleRouter.js';
 
 vi.hoisted(() => {
 	process.env.DATABASE_URL = 'postgresql://test:test@localhost/test';
@@ -11,7 +11,7 @@ vi.mock('@prisma/adapter-pg', () => ({
 	PrismaPg: class PrismaPg {},
 }));
 
-vi.mock('../../src/generated/prisma/client', () => ({
+vi.mock('../../src/generated/prisma/client.js', () => ({
 	PrismaClient: class PrismaClient {
 		jobRole = {
 			findMany: vi.fn().mockResolvedValue([]),

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { JobRole } from '../../src/generated/prisma/client';
-import JobRoleMapper from '../../src/mappers/jobRoleMapper';
+import type { JobRole } from '../../src/generated/prisma/client.js';
+import JobRoleMapper from '../../src/mappers/jobRoleMapper.js';
 
 describe('JobRoleMapper', () => {
 	it('maps a prisma job role into a response DTO', () => {
