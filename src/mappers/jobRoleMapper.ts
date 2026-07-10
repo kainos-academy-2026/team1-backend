@@ -6,10 +6,10 @@ import { JobRoleStatus } from '../models/jobRole.js';
 
 export default class JobRoleMapper {
 	private toJobRoleStatus(status: string): JobRoleStatus {
-		switch (status) {
+		switch (status.toUpperCase()) {
 			case JobRoleStatus.OPEN:
 			case JobRoleStatus.CLOSED:
-				return status;
+				return status.toUpperCase() as JobRoleStatus;
 			default:
 				throw new Error(`Invalid job role status: ${status}`);
 		}
@@ -38,7 +38,7 @@ export default class JobRoleMapper {
 			capabilityName: jobRole.capability.capabilityName,
 			bandId: jobRole.band.bandId,
 			bandName: jobRole.band.bandName,
-			status: jobRole.status,
+			status: this.toJobRoleStatus(jobRole.status),
 			closingDate: new Date(jobRole.closingDate),
 			specification: jobRole.specification,
 			description: jobRole.description,

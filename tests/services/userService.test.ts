@@ -1,6 +1,5 @@
 import { hash } from 'argon2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type UserMapper from '../../src/mappers/userMapper';
 import { UserRole } from '../../src/models/user';
 import { UserService } from '../../src/services/userService';
 
@@ -13,7 +12,7 @@ describe('UserService', () => {
 		vi.mocked(hash).mockReset();
 	});
 
-	it('hashes the password before creating a user and returns mapped response', async () => {
+	it('hashes the password before creating a user', async () => {
 		vi.mocked(hash).mockResolvedValue('hashed-password');
 
 		const createdUser = {
@@ -22,22 +21,14 @@ describe('UserService', () => {
 			password: 'hashed-password',
 			role: UserRole.USER,
 		};
-		const response = {
-			id: 1,
-			email: 'test@example.com',
-			role: UserRole.USER,
-		};
 
 		const userDao = {
 			createUser: vi.fn().mockResolvedValue(createdUser),
 		};
-		const userMapper = {
-			toSignupResponse: vi.fn().mockReturnValue(response),
-		} as unknown as UserMapper;
 
-		const service = new UserService(userDao, userMapper);
+		const service = new UserService(userDao);
 
-		const result = await service.createUser({
+		await service.createUser({
 			email: 'test@example.com',
 			password: 'Password123!',
 		});
@@ -48,8 +39,6 @@ describe('UserService', () => {
 			password: 'hashed-password',
 			role: UserRole.USER,
 		});
-		expect(userMapper.toSignupResponse).toHaveBeenCalledWith(createdUser);
-		expect(result).toEqual(response);
 	});
 
 	it('propagates errors thrown by the DAO', async () => {
@@ -58,11 +47,8 @@ describe('UserService', () => {
 		const userDao = {
 			createUser: vi.fn().mockRejectedValue(new Error('database failed')),
 		};
-		const userMapper = {
-			toSignupResponse: vi.fn(),
-		} as unknown as UserMapper;
 
-		const service = new UserService(userDao, userMapper);
+		const service = new UserService(userDao);
 
 		await expect(
 			service.createUser({
@@ -70,7 +56,5 @@ describe('UserService', () => {
 				password: 'Password123!',
 			}),
 		).rejects.toThrow('database failed');
-
-		expect(userMapper.toSignupResponse).not.toHaveBeenCalled();
 	});
 });

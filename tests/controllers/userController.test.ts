@@ -3,14 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { UserController } from '../../src/controllers/userController';
 
 describe('UserController', () => {
-	it('returns 201 with signup response when the service succeeds', async () => {
-		const signupResponse = {
-			id: 1,
-			email: 'test@example.com',
-			role: 'USER',
-		};
+	it('returns 201 with no response body when the service succeeds', async () => {
 		const userService = {
-			createUser: vi.fn().mockResolvedValue(signupResponse),
+			createUser: vi.fn().mockResolvedValue(undefined),
 		};
 		const controller = new UserController(userService as never);
 		const req = {
@@ -18,6 +13,7 @@ describe('UserController', () => {
 		} as Request;
 		const res = {
 			status: vi.fn().mockReturnThis(),
+			end: vi.fn(),
 			json: vi.fn(),
 		} as unknown as Response;
 
@@ -28,7 +24,8 @@ describe('UserController', () => {
 			password: 'Password123!',
 		});
 		expect(res.status).toHaveBeenCalledWith(201);
-		expect(res.json).toHaveBeenCalledWith(signupResponse);
+		expect(res.end).toHaveBeenCalled();
+		expect(res.json).not.toHaveBeenCalled();
 	});
 
 	it('returns 500 when the service throws', async () => {

@@ -1,3 +1,5 @@
+import type { JobRoleStatus } from '../models/jobRole.js';
+
 export default interface JobRoleDetailedResponse {
 	id: number;
 	roleName: string;
@@ -7,7 +9,7 @@ export default interface JobRoleDetailedResponse {
 	bandId: number;
 	bandName: string;
 	closingDate: Date;
-	status: string;
+	status: JobRoleStatus;
 	specification: string;
 	description: string;
 	responsibilities: string;

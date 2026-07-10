@@ -53,11 +53,7 @@ describe('AuthRouter', () => {
 		});
 
 		expect(response.status).toBe(201);
-		expect(response.body).toEqual({
-			id: 1,
-			email: 'test@example.com',
-			role: 'USER',
-		});
+		expect(response.body).toEqual({});
 		expect(createUserMock).toHaveBeenCalledWith({
 			data: {
 				email: 'test@example.com',

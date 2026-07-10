@@ -5,7 +5,6 @@ import { UserController } from '../controllers/userController.js';
 import { PrismaUserDao } from '../daos/prismaUserDao.js';
 import SignupRequestSchema from '../dtos/signupRequest.js';
 import { PrismaClient } from '../generated/prisma/client.js';
-import UserMapper from '../mappers/userMapper.js';
 import { validateBody } from '../middleware/validate.js';
 import { UserService } from '../services/userService.js';
 
@@ -16,7 +15,7 @@ const prisma = new PrismaClient({ adapter });
 const userDao = new PrismaUserDao(prisma);
 
 const router = Router();
-const userService = new UserService(userDao, new UserMapper());
+const userService = new UserService(userDao);
 const userController: UserController = new UserController(userService);
 
 router.post(
