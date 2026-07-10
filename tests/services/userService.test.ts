@@ -1,6 +1,7 @@
 import { hash } from 'argon2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type UserMapper from '../../src/mappers/userMapper';
+import { UserRole } from '../../src/models/user';
 import { UserService } from '../../src/services/userService';
 
 vi.mock('argon2', () => ({
@@ -19,12 +20,12 @@ describe('UserService', () => {
 			userId: 1,
 			email: 'test@example.com',
 			password: 'hashed-password',
-			role: 'USER',
+			role: UserRole.USER,
 		};
 		const response = {
 			id: 1,
 			email: 'test@example.com',
-			role: 'USER',
+			role: UserRole.USER,
 		};
 
 		const userDao = {
@@ -45,6 +46,7 @@ describe('UserService', () => {
 		expect(userDao.createUser).toHaveBeenCalledWith({
 			email: 'test@example.com',
 			password: 'hashed-password',
+			role: UserRole.USER,
 		});
 		expect(userMapper.toSignupResponse).toHaveBeenCalledWith(createdUser);
 		expect(result).toEqual(response);
