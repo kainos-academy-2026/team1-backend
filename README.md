@@ -41,6 +41,29 @@ Kainos Job Roles API: a Node.js/Express backend using Prisma with PostgreSQL.
    npm run seed
    ```
 
+## Git Hook Setup
+
+This repository includes a pre-commit hook at `.githooks/pre-commit` that runs `npm run lint:fix` before each commit.
+
+Run these commands once after cloning:
+
+```bash
+chmod +x .githooks/pre-commit
+git config core.hooksPath .githooks
+```
+
+You can verify your Git hooks path with:
+
+```bash
+git config --get core.hooksPath
+```
+
+Expected output:
+
+```text
+.githooks
+```
+
 ## Scripts
 
 | Command                | Description                          |
