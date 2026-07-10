@@ -1,16 +1,16 @@
-import type { PrismaClient, User } from '../generated/prisma/client';
-import { UserRole } from '../models/user';
-import type { UserDao } from './userDao';
+import type { PrismaClient, User } from '../generated/prisma/client.js';
+import type { CreateUserData } from './userDao.js';
+import type { UserDao } from './userDao.js';
 
 export class PrismaUserDao implements UserDao {
 	constructor(private readonly prisma: PrismaClient) {}
 
-	async createUser(data: { email: string; password: string }): Promise<User> {
+	async createUser(data: CreateUserData): Promise<User> {
 		return this.prisma.user.create({
 			data: {
 				email: data.email,
 				password: data.password,
-				role: UserRole.USER,
+				role: data.role ?? 'USER',
 			},
 		});
 	}

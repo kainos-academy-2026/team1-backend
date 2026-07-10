@@ -1,4 +1,4 @@
-import type { JobRoleStatus } from '../models/jobRole';
+import type { JobRoleStatus } from '../models/jobRole.js';
 
 export default interface JobRoleResponse {
 	id: number;

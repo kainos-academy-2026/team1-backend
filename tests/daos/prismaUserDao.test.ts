@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { PrismaUserDao } from '../../src/daos/prismaUserDao';
+import { UserRole } from '../../src/models/user';
 
 describe('PrismaUserDao', () => {
 	it('creates a user with the USER role and returns the result', async () => {
@@ -48,5 +49,37 @@ describe('PrismaUserDao', () => {
 				password: 'hashed-password',
 			}),
 		).rejects.toThrow('database failed');
+	});
+
+	it('uses the provided role when one is supplied', async () => {
+		const created = {
+			userId: 2,
+			email: 'admin@example.com',
+			password: 'hashed-password',
+			role: 'ADMIN',
+		};
+
+		const prisma = {
+			user: {
+				create: vi.fn().mockResolvedValue(created),
+			},
+		};
+
+		const dao = new PrismaUserDao(prisma as never);
+
+		const result = await dao.createUser({
+			email: 'admin@example.com',
+			password: 'hashed-password',
+			role: UserRole.ADMIN,
+		});
+
+		expect(prisma.user.create).toHaveBeenCalledWith({
+			data: {
+				email: 'admin@example.com',
+				password: 'hashed-password',
+				role: 'ADMIN',
+			},
+		});
+		expect(result).toBe(created);
 	});
 });
