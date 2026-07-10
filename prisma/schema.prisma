@@ -30,6 +30,15 @@ model JobRole {
   @@map("job_roles")
 }
 
+model User {
+  userId       Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  role         String
+
+  @@map("users")
+}
+
 model Capability {
   capabilityId   Int    @id @default(autoincrement())
   capabilityName String

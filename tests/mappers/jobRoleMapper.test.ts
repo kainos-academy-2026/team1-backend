@@ -13,6 +13,30 @@ describe('JobRoleMapper', () => {
 			capabilityId: 2,
 			bandId: 3,
 			closingDate,
+			status: 'OPEN',
+		} as JobRole;
+
+		expect(mapper.toJobRoleResponse(jobRole)).toEqual({
+			id: 1,
+			roleName: 'Engineer',
+			location: 'Belfast',
+			capabilityId: 2,
+			bandId: 3,
+			closingDate: new Date(closingDate),
+			status: 'OPEN',
+		});
+	});
+
+	it('maps lowercase prisma status into uppercase response enum', () => {
+		const mapper = new JobRoleMapper();
+		const closingDate = new Date('2026-07-01T00:00:00.000Z');
+		const jobRole = {
+			jobRoleId: 1,
+			roleName: 'Engineer',
+			location: 'Belfast',
+			capabilityId: 2,
+			bandId: 3,
+			closingDate,
 			status: 'open',
 		} as JobRole;
 
@@ -23,7 +47,7 @@ describe('JobRoleMapper', () => {
 			capabilityId: 2,
 			bandId: 3,
 			closingDate: new Date(closingDate),
-			status: 'open',
+			status: 'OPEN',
 		});
 	});
 
@@ -61,11 +85,11 @@ describe('JobRoleMapper', () => {
 			bandId: 3,
 			bandName: 'Associate',
 			closingDate: new Date(closingDate),
-			status: 'open',
 			specification: 'https://example.com/specification.pdf',
 			description: 'Build and maintain backend services.',
 			responsibilities: 'Design, implement, test, and support APIs.',
 			numberOfOpenPositions: 2,
+			status: 'OPEN',
 		});
 	});
 });

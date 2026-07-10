@@ -14,7 +14,7 @@ describe('JobRoleService', () => {
 			capabilityId: 2,
 			bandId: 3,
 			closingDate: new Date('2026-07-01T00:00:00.000Z'),
-			status: 'open',
+			status: 'OPEN',
 		},
 	] as JobRole[];
 
@@ -27,7 +27,7 @@ describe('JobRoleService', () => {
 				capabilityId: 2,
 				bandId: 3,
 				closingDate: new Date(rows[0].closingDate),
-				status: 'open',
+				status: 'OPEN',
 			},
 		] as JobRoleResponse[];
 
@@ -131,7 +131,7 @@ describe('JobRoleService', () => {
 			bandId: 3,
 			bandName: 'Associate',
 			closingDate: new Date(row.closingDate),
-			status: 'open',
+			status: 'OPEN',
 			specification:
 				'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
 			description: 'Build and maintain backend services.',

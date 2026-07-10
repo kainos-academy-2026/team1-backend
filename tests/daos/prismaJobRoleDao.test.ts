@@ -11,7 +11,7 @@ describe('PrismaJobRoleDao', () => {
 				capabilityId: 2,
 				bandId: 3,
 				closingDate: new Date(),
-				status: 'open',
+				status: 'OPEN',
 			},
 		];
 
@@ -68,5 +68,29 @@ describe('PrismaJobRoleDao', () => {
 			},
 		});
 		expect(result).toBe(row);
+	});
+
+	it('propagates errors thrown by prisma', async () => {
+		const prisma = {
+			jobRole: {
+				findMany: vi.fn().mockRejectedValue(new Error('database failed')),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+
+		await expect(dao.findAll()).rejects.toThrow('database failed');
+	});
+
+	it('propagates errors thrown by prisma', async () => {
+		const prisma = {
+			jobRole: {
+				findMany: vi.fn().mockRejectedValue(new Error('database failed')),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+
+		await expect(dao.findAll()).rejects.toThrow('database failed');
 	});
 });
