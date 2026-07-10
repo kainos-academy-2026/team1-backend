@@ -1,4 +1,3 @@
-import type SignupResponse from '../dtos/signupResponse.js';
 import type { User } from '../generated/prisma/client.js';
 import { UserRole } from '../models/user.js';
 
