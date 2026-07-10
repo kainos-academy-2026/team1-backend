@@ -10,7 +10,7 @@ export class UserController {
 				email: req.body.email,
 				password: req.body.password,
 			});
-			res.status(201).end;
+			res.status(201).json(users);
 		} catch {
 			res.status(500).json({ error: 'Internal server error' });
 		}
