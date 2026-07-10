@@ -1,6 +1,7 @@
 import type { JobRoleDao } from '../daos/jobRoleDao';
 import type JobRoleResponse from '../dtos/jobRoleResponse';
 import type JobRoleMapper from '../mappers/jobRoleMapper';
+import type JobRoleDetailedResponse from '../dtos/jobRoleDetailedResponse';
 
 export class JobRoleService {
 	constructor(
@@ -14,4 +15,14 @@ export class JobRoleService {
 			this.jobRoleMapper.toJobRoleResponse(jobRole),
 		);
 	}
+
+	async findById(jobRoleId: number): Promise<JobRoleDetailedResponse | null> {
+        const jobRole = await this.jobRoleDao.findById(jobRoleId);
+        if (!jobRole) {
+            return null;
+        }
+        return this.jobRoleMapper.toDetailedJobRoleResponse(jobRole);
+    }
+
+	
 }

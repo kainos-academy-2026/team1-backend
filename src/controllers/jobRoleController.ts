@@ -12,4 +12,23 @@ export class JobRoleController {
 			res.status(500).json({ error: 'Internal server error' });
 		}
 	}
+
+	async getById(req: Request, res: Response) {
+		try {
+			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			if (isNaN(jobRoleId)) {
+				return res.status(400).json({ error: 'Invalid job role ID' });
+			}
+
+			const jobRole = await this.jobRoleService.findById(jobRoleId);
+
+			if (!jobRole) {
+				return res.status(404).json({ error: 'Job role not found' });
+			}
+
+			res.status(200).json(jobRole);
+		} catch {
+			res.status(500).json({ error: 'Internal server error' });
+		}
+	}
 }

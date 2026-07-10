@@ -40,4 +40,68 @@ describe('JobRoleController', () => {
 			error: 'Internal server error',
 		});
 	});
+
+	it('returns 400 when the job role ID is invalid', async () => {
+		const jobRoleService = {
+			findById: vi.fn(),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: 'invalid' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getById(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.json).toHaveBeenCalledWith({
+			error: 'Invalid job role ID',
+		});
+	});
+
+	it('returns 404 when the job role is not found', async () => {
+		const jobRoleService = {
+			findById: vi.fn().mockResolvedValue(null),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getById(req, res);
+
+		expect(jobRoleService.findById).toHaveBeenCalledWith(1);
+		expect(res.status).toHaveBeenCalledWith(404);
+		expect(res.json).toHaveBeenCalledWith({
+			error: 'Job role not found',
+		});
+	});
+
+	it('returns 200 with the job role when found', async () => {
+		const jobRole = { id: 1, roleName: 'Engineer' };
+		const jobRoleService = {
+			findById: vi.fn().mockResolvedValue(jobRole),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getById(req, res);
+
+		expect(jobRoleService.findById).toHaveBeenCalledWith(1);
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith(jobRole);
+	});
 });

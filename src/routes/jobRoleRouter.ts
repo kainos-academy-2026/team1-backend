@@ -26,4 +26,6 @@ const jobRoleController: JobRoleController = new JobRoleController(
 
 router.get('/', jobRoleController.getAll.bind(jobRoleController));
 
+router.get('/:jobRoleId', jobRoleController.getById.bind(jobRoleController));
+
 export default router;

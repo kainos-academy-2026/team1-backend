@@ -30,4 +30,43 @@ describe('PrismaJobRoleDao', () => {
 		});
 		expect(result).toBe(rows);
 	});
+
+	it('requests a job role by id', async () => {
+		const row = {
+			jobRoleId: 1,
+			roleName: 'Engineer',
+			location: 'Belfast',
+			capabilityId: 2,
+			bandId: 3,
+			closingDate: new Date(),
+			status: 'open',
+			capability: {
+				capabilityId: 2,
+				capabilityName: 'Engineering',
+			},
+			band: {
+				bandId: 3,
+				bandName: 'Associate',
+			},
+		};
+
+		const prisma = {
+			jobRole: {
+				findUnique: vi.fn().mockResolvedValue(row),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+
+		const result = await dao.findById(1);
+
+		expect(prisma.jobRole.findUnique).toHaveBeenCalledWith({
+			where: { jobRoleId: 1 },
+			include: {
+				capability: true,
+				band: true,
+			},
+		});
+		expect(result).toBe(row);
+	});
 });

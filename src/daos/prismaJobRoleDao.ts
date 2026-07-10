@@ -1,5 +1,12 @@
-import type { JobRole, PrismaClient } from '../generated/prisma/client';
+import type { JobRole, Prisma, PrismaClient } from '../generated/prisma/client';
 import type { JobRoleDao } from './jobRoleDao';
+
+export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
+  include: {
+    capability: true;
+    band: true;
+  };
+}>;
 
 export class PrismaJobRoleDao implements JobRoleDao {
 	constructor(private readonly prisma: PrismaClient) {}
@@ -10,5 +17,16 @@ export class PrismaJobRoleDao implements JobRoleDao {
 		});
 
 		return rows;
+	}
+
+	async findById(jobRoleId: number): Promise<JobRoleWithDetails | null> {
+		const row = await this.prisma.jobRole.findUnique({
+			where: { jobRoleId },
+			include: {
+				capability: true,
+				band: true,
+			}
+		});
+		return row;
 	}
 }
