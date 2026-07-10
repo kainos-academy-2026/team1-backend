@@ -2,7 +2,6 @@
 	"name": "team1-backend",
 	"version": "1.0.0",
 	"description": "Kainos Job Roles API",
-	"type": "module",
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "npm run prisma:generate && tsc",
