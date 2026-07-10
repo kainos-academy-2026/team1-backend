@@ -4,7 +4,6 @@
 	"description": "Kainos Job Roles API",
 	"type": "module",
 	"main": "dist/index.js",
-	"type": "module",
 	"scripts": {
 		"build": "npm run prisma:generate && tsc",
 		"dev": "tsx watch src/index.ts",
