@@ -22,13 +22,14 @@ describe('PrismaUserDao', () => {
 		const result = await dao.createUser({
 			email: 'test@example.com',
 			password: 'hashed-password',
+			role: UserRole.USER,
 		});
 
 		expect(prisma.user.create).toHaveBeenCalledWith({
 			data: {
 				email: 'test@example.com',
 				password: 'hashed-password',
-				role: 'USER',
+				role: UserRole.USER,
 			},
 		});
 		expect(result).toBe(created);
