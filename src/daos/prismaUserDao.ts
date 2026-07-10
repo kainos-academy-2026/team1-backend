@@ -9,7 +9,7 @@ export class PrismaUserDao implements UserDao {
 			data: {
 				email: data.email,
 				password: data.password,
-				role: data.role ?? 'USER',
+				role: data.role,
 			},
 		});
 	}
