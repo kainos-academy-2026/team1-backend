@@ -1,4 +1,8 @@
-import type { JobRole, Prisma, PrismaClient } from '../generated/prisma/client.js';
+import type {
+	JobRole,
+	Prisma,
+	PrismaClient,
+} from '../generated/prisma/client.js';
 import type { JobRoleDao } from './jobRoleDao.js';
 
 export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
