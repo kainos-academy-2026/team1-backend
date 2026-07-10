@@ -2,10 +2,10 @@ import type { JobRole, Prisma, PrismaClient } from '../generated/prisma/client';
 import type { JobRoleDao } from './jobRoleDao';
 
 export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
-  include: {
-    capability: true;
-    band: true;
-  };
+	include: {
+		capability: true;
+		band: true;
+	};
 }>;
 
 export class PrismaJobRoleDao implements JobRoleDao {
@@ -25,7 +25,7 @@ export class PrismaJobRoleDao implements JobRoleDao {
 			include: {
 				capability: true,
 				band: true,
-			}
+			},
 		});
 		return row;
 	}

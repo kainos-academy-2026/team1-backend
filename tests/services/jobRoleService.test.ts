@@ -104,7 +104,8 @@ describe('JobRoleService', () => {
 			bandId: 3,
 			closingDate: new Date('2026-07-01T00:00:00.000Z'),
 			status: 'open',
-			specification: 'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
+			specification:
+				'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
 			description: 'Build and maintain backend services.',
 			responsibilities: 'Design, implement, test, and support APIs.',
 			numberOfOpenPositions: 2,
@@ -131,7 +132,8 @@ describe('JobRoleService', () => {
 			bandName: 'Associate',
 			closingDate: new Date(row.closingDate),
 			status: 'open',
-			specification: 'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
+			specification:
+				'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
 			description: 'Build and maintain backend services.',
 			responsibilities: 'Design, implement, test, and support APIs.',
 			numberOfOpenPositions: 2,

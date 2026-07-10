@@ -1,5 +1,5 @@
-import { JobRoleWithDetails } from '../daos/prismaJobRoleDao';
-import JobRoleDetailedResponse from '../dtos/jobRoleDetailedResponse';
+import type { JobRoleWithDetails } from '../daos/prismaJobRoleDao';
+import type JobRoleDetailedResponse from '../dtos/jobRoleDetailedResponse';
 import type JobRoleResponse from '../dtos/jobRoleResponse';
 import type { JobRole } from '../generated/prisma/client';
 
@@ -16,7 +16,9 @@ export default class JobRoleMapper {
 		};
 	}
 
-	toDetailedJobRoleResponse(jobRole: JobRoleWithDetails): JobRoleDetailedResponse {
+	toDetailedJobRoleResponse(
+		jobRole: JobRoleWithDetails,
+	): JobRoleDetailedResponse {
 		return {
 			id: jobRole.jobRoleId,
 			roleName: jobRole.roleName,
@@ -33,4 +35,4 @@ export default class JobRoleMapper {
 			closingDate: new Date(jobRole.closingDate),
 		};
 	}
-};
+}

@@ -1,5 +1,5 @@
 import type { JobRole } from '../generated/prisma/client';
-import { JobRoleWithDetails } from './prismaJobRoleDao';
+import type { JobRoleWithDetails } from './prismaJobRoleDao';
 
 export interface JobRoleDao {
 	findAll(): Promise<JobRole[]>;
