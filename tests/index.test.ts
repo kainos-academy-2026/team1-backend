@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
-import { app } from '../src/app';
+import { app } from '../src/app.js';
 
 vi.hoisted(() => {
 	process.env.DATABASE_URL = 'postgresql://test:test@localhost/test';

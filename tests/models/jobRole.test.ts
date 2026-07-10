@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { JobRoleSchema, JobRoleStatus } from '../../src/models/jobRole';
+import { JobRoleSchema, JobRoleStatus } from '../../src/models/jobRole.js';
 
 describe('JobRole', () => {
 	const validInput = {
@@ -10,6 +10,11 @@ describe('JobRole', () => {
 		bandId: 3,
 		closingDate: new Date('2026-07-01T00:00:00.000Z'),
 		status: JobRoleStatus.OPEN,
+		specification:
+			'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
+		description: 'Build and maintain backend services.',
+		responsibilities: 'Design, implement, test, and support APIs.',
+		numberOfOpenPositions: 2,
 	} as const;
 
 	it('parses a job role when all fields are valid', () => {

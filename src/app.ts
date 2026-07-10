@@ -1,5 +1,5 @@
 import express from 'express';
-import JobRoleRouter from './routes/jobRoleRouter';
+import JobRoleRouter from './routes/jobRoleRouter.js';
 
 const app = express();
 
