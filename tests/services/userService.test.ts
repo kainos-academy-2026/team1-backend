@@ -1,6 +1,5 @@
 import { hash } from 'argon2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type SignupResponse from '../../src/dtos/signupResponse';
 import type UserMapper from '../../src/mappers/userMapper';
 import { UserService } from '../../src/services/userService';
 
@@ -26,7 +25,7 @@ describe('UserService', () => {
 			id: 1,
 			email: 'test@example.com',
 			role: 'USER',
-		} as SignupResponse;
+		};
 
 		const userDao = {
 			createUser: vi.fn().mockResolvedValue(createdUser),

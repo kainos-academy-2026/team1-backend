@@ -4,7 +4,7 @@ import type { UserRole } from '../models/user.js';
 export interface CreateUserData {
 	email: string;
 	password: string;
-	role?: UserRole;
+	role: UserRole;
 }
 
 export interface UserDao {
