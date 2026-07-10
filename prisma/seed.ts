@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma/client';
+import { PrismaClient } from '../src/generated/prisma/client.js';
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -40,6 +40,11 @@ async function main(): Promise<void> {
 				bandId: 2,
 				closingDate: new Date('2024-12-31'),
 				status: 'open',
+				specification:
+					'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
+				description: 'Build and maintain backend services.',
+				responsibilities: 'Design, implement, test, and support APIs.',
+				numberOfOpenPositions: 2,
 			},
 			{
 				jobRoleId: 2,
@@ -49,6 +54,13 @@ async function main(): Promise<void> {
 				bandId: 3,
 				closingDate: new Date('2024-11-30'),
 				status: 'open',
+				specification:
+					'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Data%20and%20Artificial%20Intelligence/Job%20Profile%20-%20Senior%20Data%20Scientist%20(Senior%20Associate).pdf',
+				description:
+					'Analyze and interpret complex data to drive business decisions.',
+				responsibilities:
+					'Collect, process, and analyze data to provide insights.',
+				numberOfOpenPositions: 1,
 			},
 			{
 				jobRoleId: 3,
@@ -58,6 +70,11 @@ async function main(): Promise<void> {
 				bandId: 3,
 				closingDate: new Date('2024-10-31'),
 				status: 'closed',
+				specification:
+					'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Product/Job%20Profile%20-%20Product%20Consultant%20(Manager).pdf',
+				description: 'Lead product development and strategy.',
+				responsibilities: 'Define product vision, strategy, and roadmap.',
+				numberOfOpenPositions: 1,
 			},
 		],
 		skipDuplicates: true,

@@ -3,9 +3,7 @@
 	"version": "1.0.0",
 	"description": "Kainos Job Roles API",
 	"main": "dist/index.js",
-	"engines": {
-		"node": ">=20"
-	},
+	"type": "module",
 	"scripts": {
 		"build": "npm run prisma:generate && tsc",
 		"dev": "tsx watch src/index.ts",
