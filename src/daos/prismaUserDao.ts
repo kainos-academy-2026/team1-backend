@@ -1,6 +1,5 @@
 import type { PrismaClient, User } from '../generated/prisma/client.js';
-import type { CreateUserData } from './userDao.js';
-import type { UserDao } from './userDao.js';
+import type { CreateUserData, UserDao } from './userDao.js';
 
 export class PrismaUserDao implements UserDao {
 	constructor(private readonly prisma: PrismaClient) {}
