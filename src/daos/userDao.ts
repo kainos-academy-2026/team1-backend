@@ -9,4 +9,5 @@ export interface CreateUserData {
 
 export interface UserDao {
 	createUser(data: CreateUserData): Promise<User>;
+	findUserByEmail(email: string): Promise<User | null>;
 }

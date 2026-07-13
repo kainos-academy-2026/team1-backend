@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
+import argon2 from 'argon2';
 import { PrismaClient } from '../src/generated/prisma/client.js';
 
 const connectionString = process.env.DATABASE_URL;
@@ -26,6 +27,22 @@ async function main(): Promise<void> {
 			{ bandId: 1, bandName: 'Junior' },
 			{ bandId: 2, bandName: 'Mid' },
 			{ bandId: 3, bandName: 'Senior' },
+		],
+		skipDuplicates: true,
+	});
+
+	await prisma.user.createMany({
+		data: [
+			{
+				email: 'test@example.com',
+				password: await argon2.hash('Password123!'),
+				role: 'USER',
+			},
+			{
+				email: 'admin@example.com',
+				password: await argon2.hash('AdminPassword123!'),
+				role: 'ADMIN',
+			},
 		],
 		skipDuplicates: true,
 	});

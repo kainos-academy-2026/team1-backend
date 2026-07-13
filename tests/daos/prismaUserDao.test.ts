@@ -83,4 +83,28 @@ describe('PrismaUserDao', () => {
 		});
 		expect(result).toBe(created);
 	});
+
+	it('finds a user by email', async () => {
+		const foundUser = {
+			userId: 1,
+			email: 'test@example.com',
+			password: 'hashed-password',
+			role: 'USER',
+		};
+
+		const prisma = {
+			user: {
+				create: vi.fn(),
+				findUnique: vi.fn().mockResolvedValue(foundUser),
+			},
+		};
+
+		const dao = new PrismaUserDao(prisma as never);
+		const result = await dao.findUserByEmail('test@example.com');
+
+		expect(prisma.user.findUnique).toHaveBeenCalledWith({
+			where: { email: 'test@example.com' },
+		});
+		expect(result).toBe(foundUser);
+	});
 });
