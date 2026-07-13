@@ -1,6 +1,6 @@
 import express from 'express';
-import AuthRouter from './routes/authRouter.js';
 import JobRoleRouter from './routes/jobRoleRouter.js';
+import AuthRouter from './routes/loginRouter.js';
 
 const app = express();
 
