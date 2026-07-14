@@ -2,6 +2,7 @@ import type { RequestHandler } from 'express';
 import {
 	InsufficientRoleError,
 	InvalidTokenError,
+	JWTKeyNotSetError,
 	MissingTokenError,
 } from '../errors/authErrors.js';
 import type { UserRole } from '../models/user.js';
@@ -15,13 +16,22 @@ export function authenticate(): RequestHandler {
 			return;
 		}
 
-		const token = authHeader.split(' ')[1];
-		const tokenService = new JoseTokenService();
+		const token = authHeader.slice('Bearer '.length).trim();
+		if (!token) {
+			sendAuthError(res, new MissingTokenError());
+			return;
+		}
+
 		try {
+			const tokenService = new JoseTokenService();
 			const payload = await tokenService.verify(token);
 			req.user = payload;
 			next();
-		} catch {
+		} catch (err) {
+			if (err instanceof Error && err.name === 'JWTExpired') {
+				sendAuthError(res, new JWTKeyNotSetError());
+				return;
+			}
 			sendAuthError(res, new InvalidTokenError());
 		}
 	};
@@ -45,7 +55,11 @@ export const authorise = authorize;
 
 function sendAuthError(
 	res: Parameters<RequestHandler>[1],
-	error: MissingTokenError | InvalidTokenError | InsufficientRoleError,
+	error:
+		| MissingTokenError
+		| InvalidTokenError
+		| InsufficientRoleError
+		| JWTKeyNotSetError,
 ): void {
 	if (error instanceof InsufficientRoleError) {
 		res.status(403).json({ message: error.message });

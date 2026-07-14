@@ -18,3 +18,10 @@ export class InsufficientRoleError extends Error {
 		this.name = 'InsufficientRoleError';
 	}
 }
+
+export class JWTKeyNotSetError extends Error {
+	constructor() {
+		super('JWT secret key is not set');
+		this.name = 'JWTKeyNotSetError';
+	}
+}
