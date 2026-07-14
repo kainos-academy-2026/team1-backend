@@ -72,4 +72,19 @@ describe('JoseTokenService', () => {
 
 		await expect(service.verify(expiredToken)).rejects.toThrow();
 	});
+
+	it('rejects a token with invalid payload claims', async () => {
+		const service = new JoseTokenService();
+		const invalidPayloadToken = await new jose.SignJWT({
+			sub: '1',
+			email: 'test@example.com',
+			role: 'SUPERUSER',
+		})
+			.setProtectedHeader({ alg: 'HS256' })
+			.setIssuedAt()
+			.setExpirationTime('2h')
+			.sign(new TextEncoder().encode(SECRET));
+
+		await expect(service.verify(invalidPayloadToken)).rejects.toThrow();
+	});
 });

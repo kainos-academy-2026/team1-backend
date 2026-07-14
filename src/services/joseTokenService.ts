@@ -1,6 +1,9 @@
 import * as jose from 'jose';
 import type { User } from '../generated/prisma/client.js';
-import type { TokenPayload } from '../models/tokenPayload.js';
+import {
+	TokenPayloadSchema,
+	type TokenPayload,
+} from '../models/tokenPayload.js';
 import type { UserRole } from '../models/user.js';
 
 export class JoseTokenService {
@@ -32,10 +35,6 @@ export class JoseTokenService {
 	async verify(token: string): Promise<TokenPayload> {
 		const { payload } = await jose.jwtVerify(token, this.secretKey);
 
-		return {
-			sub: payload.sub as string,
-			email: payload.email as string,
-			role: payload.role as UserRole,
-		};
+		return TokenPayloadSchema.parse(payload);
 	}
 }

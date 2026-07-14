@@ -10,13 +10,13 @@ import { JoseTokenService } from '../services/joseTokenService.js';
 export function authenticate(): RequestHandler {
 	return async (req, res, next) => {
 		const authHeader = req.headers.authorization;
-		const tokenService = new JoseTokenService();
 		if (!authHeader || !authHeader.startsWith('Bearer ')) {
 			sendAuthError(res, new MissingTokenError());
 			return;
 		}
 
 		const token = authHeader.split(' ')[1];
+        const tokenService = new JoseTokenService();
 		try {
 			const payload = await tokenService.verify(token);
 			req.user = payload;
