@@ -23,13 +23,13 @@ const tokenService = new JoseTokenService();
 
 router.get(
 	'/',
-	authorize(tokenService, UserRole.ADMIN, UserRole.USER),
+	authorize(tokenService, [UserRole.ADMIN, UserRole.USER]),
 	jobRoleController.getAll.bind(jobRoleController),
 );
 
 router.get(
 	'/:jobRoleId',
-	authorize(tokenService, UserRole.ADMIN, UserRole.USER),
+	authorize(tokenService, [UserRole.ADMIN, UserRole.USER]),
 	jobRoleController.getById.bind(jobRoleController),
 );
 

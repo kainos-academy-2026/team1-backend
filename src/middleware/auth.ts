@@ -4,7 +4,7 @@ import type { JoseTokenService } from '../services/joseTokenService.js';
 
 export function authorize(
 	tokenService: JoseTokenService,
-	...allowedRoles: UserRole[]
+	allowedRoles: UserRole[],
 ): RequestHandler {
 	return async (req, res, next) => {
 		const authHeader = req.headers.authorization;
@@ -18,8 +18,9 @@ export function authorize(
 			res.status(401).json({ message: 'Missing authentication token' });
 			return;
 		}
-
-		const payload = await tokenService.verify(token).catch(() => null);
+		console.log('HEllo');
+		const payload = await tokenService.verify(token);
+		console.log(payload);
 		if (!payload) {
 			res.status(401).json({ message: 'Invalid authentication token' });
 			return;
