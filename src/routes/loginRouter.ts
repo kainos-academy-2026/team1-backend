@@ -21,7 +21,8 @@ const userDao = new PrismaUserDao(prisma);
 const router = Router();
 const userService = new UserService(userDao);
 const userController = new UserController(userService);
-const loginService = new LoginService(userDao, new JoseTokenService());
+const tokenService = new JoseTokenService();
+const loginService = new LoginService(userDao, tokenService);
 const loginController = new LoginController(loginService);
 
 router.post(
@@ -35,7 +36,5 @@ router.post(
 	validateBody(LoginRequestSchema),
 	loginController.login.bind(loginController),
 );
-
-router.post('/logout', loginController.logout.bind(loginController));
 
 export default router;

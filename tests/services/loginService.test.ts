@@ -1,9 +1,7 @@
 import { verify } from 'argon2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-	InvalidCredentialsError,
-	UserNotFoundError,
-} from '../../src/errors/userErrors';
+import { InvalidCredentialsError } from '../../src/errors/invalidCredentialsError';
+import { UserNotFoundError } from '../../src/errors/userNotFoundError';
 import { LoginService } from '../../src/services/loginService';
 
 vi.mock('argon2', () => ({

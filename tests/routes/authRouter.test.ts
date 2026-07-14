@@ -218,14 +218,4 @@ describe('AuthRouter', () => {
 
 		expect(response.status).toBe(400);
 	});
-
-	it('returns 204 on POST /auth/logout', async () => {
-		const app = express();
-		app.use(express.json());
-		app.use('/auth', AuthRouter);
-
-		const response = await request(app).post('/auth/logout').send({});
-
-		expect(response.status).toBe(204);
-	});
 });
