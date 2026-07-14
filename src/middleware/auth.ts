@@ -16,7 +16,7 @@ export function authenticate(): RequestHandler {
 		}
 
 		const token = authHeader.split(' ')[1];
-        const tokenService = new JoseTokenService();
+		const tokenService = new JoseTokenService();
 		try {
 			const payload = await tokenService.verify(token);
 			req.user = payload;

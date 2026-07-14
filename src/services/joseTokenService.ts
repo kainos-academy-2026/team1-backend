@@ -1,8 +1,8 @@
 import * as jose from 'jose';
 import type { User } from '../generated/prisma/client.js';
 import {
-	TokenPayloadSchema,
 	type TokenPayload,
+	TokenPayloadSchema,
 } from '../models/tokenPayload.js';
 import type { UserRole } from '../models/user.js';
 
