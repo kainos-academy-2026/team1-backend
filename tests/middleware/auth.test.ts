@@ -54,9 +54,14 @@ describe('auth middleware', () => {
 		const app = express();
 		const userToken = await createToken(UserRole.USER);
 
-		app.get('/admin', authenticate(), authorize([UserRole.ADMIN]), (_req, res) => {
-			res.sendStatus(204);
-		});
+		app.get(
+			'/admin',
+			authenticate(),
+			authorize([UserRole.ADMIN]),
+			(_req, res) => {
+				res.sendStatus(204);
+			},
+		);
 
 		const response = await request(app)
 			.get('/admin')
@@ -70,9 +75,14 @@ describe('auth middleware', () => {
 		const app = express();
 		const adminToken = await createToken(UserRole.ADMIN);
 
-		app.get('/admin', authenticate(), authorize([UserRole.ADMIN]), (_req, res) => {
-			res.sendStatus(204);
-		});
+		app.get(
+			'/admin',
+			authenticate(),
+			authorize([UserRole.ADMIN]),
+			(_req, res) => {
+				res.sendStatus(204);
+			},
+		);
 
 		const response = await request(app)
 			.get('/admin')
