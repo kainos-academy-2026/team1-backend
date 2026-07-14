@@ -1,7 +1,22 @@
 import express from 'express';
+import * as jose from 'jose';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AuthRouter from '../../src/routes/loginRouter';
+
+const SECRET = 'test-secret-key';
+
+function createToken(role: 'ADMIN' | 'USER' = 'USER'): Promise<string> {
+	return new jose.SignJWT({
+		sub: '1',
+		email: 'test@example.com',
+		role,
+	})
+		.setProtectedHeader({ alg: 'HS256' })
+		.setIssuedAt()
+		.setExpirationTime('2h')
+		.sign(new TextEncoder().encode(SECRET));
+}
 
 const { createUserMock, findUniqueMock } = vi.hoisted(() => ({
 	createUserMock: vi.fn(),
@@ -219,12 +234,26 @@ describe('AuthRouter', () => {
 		expect(response.status).toBe(400);
 	});
 
-	it('returns 204 on POST /auth/logout', async () => {
+	it('returns 401 on POST /auth/logout without a token', async () => {
 		const app = express();
 		app.use(express.json());
 		app.use('/auth', AuthRouter);
 
 		const response = await request(app).post('/auth/logout').send({});
+
+		expect(response.status).toBe(401);
+	});
+
+	it('returns 204 on POST /auth/logout with a valid token', async () => {
+		const app = express();
+		app.use(express.json());
+		app.use('/auth', AuthRouter);
+		const token = await createToken();
+
+		const response = await request(app)
+			.post('/auth/logout')
+			.set('Authorization', `Bearer ${token}`)
+			.send({});
 
 		expect(response.status).toBe(204);
 	});

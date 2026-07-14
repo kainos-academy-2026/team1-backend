@@ -1,10 +1,26 @@
 import express from 'express';
+import * as jose from 'jose';
 import request from 'supertest';
 import { describe, expect, it, vi } from 'vitest';
 import JobRoleRouter from '../../src/routes/jobRoleRouter.js';
 
+const SECRET = 'test-secret-key';
+
+function createToken(role: 'ADMIN' | 'USER' = 'USER'): Promise<string> {
+	return new jose.SignJWT({
+		sub: '1',
+		email: 'test@example.com',
+		role,
+	})
+		.setProtectedHeader({ alg: 'HS256' })
+		.setIssuedAt()
+		.setExpirationTime('2h')
+		.sign(new TextEncoder().encode(SECRET));
+}
+
 vi.hoisted(() => {
 	process.env.DATABASE_URL = 'postgresql://test:test@localhost/test';
+	process.env.JWT_SECRET_KEY = 'test-secret-key';
 });
 
 vi.mock('@prisma/adapter-pg', () => ({
@@ -42,21 +58,36 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 }));
 
 describe('JobRoleRouter', () => {
-	it('wires GET /job-roles to controller.getAll', async () => {
+	it('returns 401 for unauthenticated GET /job-roles', async () => {
 		const app = express();
 		app.use('/job-roles', JobRoleRouter);
 
 		const response = await request(app).get('/job-roles');
 
+		expect(response.status).toBe(401);
+	});
+
+	it('wires authenticated GET /job-roles to controller.getAll', async () => {
+		const app = express();
+		app.use('/job-roles', JobRoleRouter);
+		const token = await createToken();
+
+		const response = await request(app)
+			.get('/job-roles')
+			.set('Authorization', `Bearer ${token}`);
+
 		expect(response.status).toBe(200);
 		expect(response.body).toEqual([]);
 	});
 
-	it('wires GET /job-roles/:id to controller.getById', async () => {
+	it('wires authenticated GET /job-roles/:id to controller.getById', async () => {
 		const app = express();
 		app.use('/job-roles', JobRoleRouter);
+		const token = await createToken();
 
-		const response = await request(app).get('/job-roles/1');
+		const response = await request(app)
+			.get('/job-roles/1')
+			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.status).toBe(200);
 		expect(response.body.id).toBe(1);

@@ -7,6 +7,7 @@ import { PrismaUserDao } from '../daos/prismaUserDao.js';
 import LoginRequestSchema from '../dtos/loginRequest.js';
 import SignupRequestSchema from '../dtos/signupRequest.js';
 import { PrismaClient } from '../generated/prisma/client.js';
+import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { JoseTokenService } from '../services/joseTokenService.js';
 import { LoginService } from '../services/loginService.js';
@@ -36,6 +37,10 @@ router.post(
 	loginController.login.bind(loginController),
 );
 
-router.post('/logout', loginController.logout.bind(loginController));
+router.post(
+	'/logout',
+	authenticate(),
+	loginController.logout.bind(loginController),
+);
 
 export default router;
