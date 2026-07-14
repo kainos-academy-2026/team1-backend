@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 import type { UserRole } from '../models/user.js';
-import { JoseTokenService } from '../services/joseTokenService.js';
+import type { JoseTokenService } from '../services/joseTokenService.js';
 
 export function authorize(
 	tokenService: JoseTokenService,
