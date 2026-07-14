@@ -4,7 +4,6 @@ import {
 	type TokenPayload,
 	TokenPayloadSchema,
 } from '../models/tokenPayload.js';
-import type { UserRole } from '../models/user.js';
 
 export class JoseTokenService {
 	private readonly secretKey: Uint8Array;
@@ -19,11 +18,11 @@ export class JoseTokenService {
 	}
 
 	async create(user: User): Promise<string> {
-		const payload: TokenPayload = {
+		const payload: TokenPayload = TokenPayloadSchema.parse({
 			sub: user.userId.toString(),
 			email: user.email,
-			role: user.role as UserRole,
-		};
+			role: user.role,
+		});
 
 		return new jose.SignJWT({ ...payload })
 			.setProtectedHeader({ alg: 'HS256' })
