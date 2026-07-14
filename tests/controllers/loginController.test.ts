@@ -1,16 +1,13 @@
 import type { Request, Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginController } from '../../src/controllers/loginController';
-import {
-	InvalidCredentialsError,
-	UserNotFoundError,
-} from '../../src/errors/userErrors';
+import { InvalidCredentialsError } from '../../src/errors/invalidCredentialsError';
+import { UserNotFoundError } from '../../src/errors/userNotFoundError';
 
 describe('LoginController', () => {
 	const loginMock = vi.fn();
 	const statusMock = vi.fn();
 	const jsonMock = vi.fn();
-	const endMock = vi.fn();
 
 	beforeEach(() => {
 		vi.resetAllMocks();
@@ -87,19 +84,5 @@ describe('LoginController', () => {
 
 		expect(statusMock).toHaveBeenCalledWith(500);
 		expect(jsonMock).toHaveBeenCalledWith({ error: 'Internal server error' });
-	});
-
-	it('returns 204 on logout', () => {
-		const controller = new LoginController({ login: loginMock } as never);
-		const req = {} as Request;
-		const res = {
-			status: statusMock,
-			end: endMock,
-		} as unknown as Response;
-
-		controller.logout(req, res);
-
-		expect(statusMock).toHaveBeenCalledWith(204);
-		expect(endMock).toHaveBeenCalled();
 	});
 });

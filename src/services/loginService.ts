@@ -1,10 +1,8 @@
 import { verify } from 'argon2';
 import type { UserDao } from '../daos/userDao.js';
 import type { LoginRequest } from '../dtos/loginRequest.js';
-import {
-	InvalidCredentialsError,
-	UserNotFoundError,
-} from '../errors/userErrors.js';
+import { InvalidCredentialsError } from '../errors/invalidCredentialsError.js';
+import { UserNotFoundError } from '../errors/userNotFoundError.js';
 import type { JoseTokenService } from './joseTokenService.js';
 
 export class LoginService {

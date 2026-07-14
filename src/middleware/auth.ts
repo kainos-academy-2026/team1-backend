@@ -1,70 +1,38 @@
 import type { RequestHandler } from 'express';
-import {
-	InsufficientRoleError,
-	InvalidTokenError,
-	JWTKeyNotSetError,
-	MissingTokenError,
-} from '../errors/authErrors.js';
 import type { UserRole } from '../models/user.js';
 import { JoseTokenService } from '../services/joseTokenService.js';
 
-export function authenticate(): RequestHandler {
+export function authorize(
+	tokenService: JoseTokenService,
+	...allowedRoles: UserRole[]
+): RequestHandler {
 	return async (req, res, next) => {
 		const authHeader = req.headers.authorization;
 		if (!authHeader || !authHeader.startsWith('Bearer ')) {
-			sendAuthError(res, new MissingTokenError());
+			res.status(401).json({ message: 'Missing authentication token' });
 			return;
 		}
 
 		const token = authHeader.slice('Bearer '.length).trim();
 		if (!token) {
-			sendAuthError(res, new MissingTokenError());
+			res.status(401).json({ message: 'Missing authentication token' });
 			return;
 		}
 
-		try {
-			const tokenService = new JoseTokenService();
-			const payload = await tokenService.verify(token);
-			req.user = payload;
-			next();
-		} catch (err) {
-			if (err instanceof Error && err.name === 'JWTExpired') {
-				sendAuthError(res, new JWTKeyNotSetError());
-				return;
-			}
-			sendAuthError(res, new InvalidTokenError());
+		const payload = await tokenService.verify(token).catch(() => null);
+		if (!payload) {
+			res.status(401).json({ message: 'Invalid authentication token' });
+			return;
 		}
-	};
-}
 
-export function authorize(allowedRoles: UserRole[]): RequestHandler {
-	return (req, res, next) => {
-		if (!req.user) {
-			sendAuthError(res, new MissingTokenError());
+		if (!allowedRoles.includes(payload.role)) {
+			res.status(403).json({ message: 'Insufficient role' });
 			return;
 		}
-		if (!allowedRoles.includes(req.user.role)) {
-			sendAuthError(res, new InsufficientRoleError());
-			return;
-		}
+
+		req.user = payload;
 		next();
 	};
 }
 
 export const authorise = authorize;
-
-function sendAuthError(
-	res: Parameters<RequestHandler>[1],
-	error:
-		| MissingTokenError
-		| InvalidTokenError
-		| InsufficientRoleError
-		| JWTKeyNotSetError,
-): void {
-	if (error instanceof InsufficientRoleError) {
-		res.status(403).json({ message: error.message });
-		return;
-	}
-
-	res.status(401).json({ message: error.message });
-}

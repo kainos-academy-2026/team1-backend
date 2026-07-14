@@ -2,8 +2,9 @@ import express from 'express';
 import * as jose from 'jose';
 import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { authenticate, authorize } from '../../src/middleware/auth.js';
+import { authorize } from '../../src/middleware/auth.js';
 import { UserRole } from '../../src/models/user.js';
+import { JoseTokenService } from '../../src/services/joseTokenService.js';
 
 const SECRET = 'test-secret-key';
 
@@ -26,9 +27,13 @@ describe('auth middleware', () => {
 
 	it('returns 401 when the token is missing', async () => {
 		const app = express();
-		app.get('/protected', authenticate(), (_req, res) => {
-			res.sendStatus(204);
-		});
+		app.get(
+			'/protected',
+			authorize(new JoseTokenService(), UserRole.USER),
+			(_req, res) => {
+				res.sendStatus(204);
+			},
+		);
 
 		const response = await request(app).get('/protected');
 
@@ -38,9 +43,13 @@ describe('auth middleware', () => {
 
 	it('returns 401 when the token is invalid', async () => {
 		const app = express();
-		app.get('/protected', authenticate(), (_req, res) => {
-			res.sendStatus(204);
-		});
+		app.get(
+			'/protected',
+			authorize(new JoseTokenService(), UserRole.USER),
+			(_req, res) => {
+				res.sendStatus(204);
+			},
+		);
 
 		const response = await request(app)
 			.get('/protected')
@@ -56,8 +65,7 @@ describe('auth middleware', () => {
 
 		app.get(
 			'/admin',
-			authenticate(),
-			authorize([UserRole.ADMIN]),
+			authorize(new JoseTokenService(), UserRole.ADMIN),
 			(_req, res) => {
 				res.sendStatus(204);
 			},
@@ -77,8 +85,7 @@ describe('auth middleware', () => {
 
 		app.get(
 			'/admin',
-			authenticate(),
-			authorize([UserRole.ADMIN]),
+			authorize(new JoseTokenService(), UserRole.ADMIN),
 			(_req, res) => {
 				res.sendStatus(204);
 			},

@@ -1,8 +1,6 @@
 import type { Request, Response } from 'express';
-import {
-	InvalidCredentialsError,
-	UserNotFoundError,
-} from '../errors/userErrors.js';
+import { InvalidCredentialsError } from '../errors/invalidCredentialsError.js';
+import { UserNotFoundError } from '../errors/userNotFoundError.js';
 import type { LoginService } from '../services/loginService.js';
 
 export class LoginController {
@@ -23,9 +21,5 @@ export class LoginController {
 
 			res.status(500).json({ error: 'Internal server error' });
 		}
-	}
-
-	logout(_req: Request, res: Response) {
-		res.status(204).end();
 	}
 }
