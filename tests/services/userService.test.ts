@@ -24,6 +24,7 @@ describe('UserService', () => {
 
 		const userDao = {
 			createUser: vi.fn().mockResolvedValue(createdUser),
+			findUserByEmail: vi.fn().mockResolvedValue(null),
 		};
 
 		const service = new UserService(userDao);
@@ -46,6 +47,7 @@ describe('UserService', () => {
 
 		const userDao = {
 			createUser: vi.fn().mockRejectedValue(new Error('database failed')),
+			findUserByEmail: vi.fn().mockResolvedValue(null),
 		};
 
 		const service = new UserService(userDao);

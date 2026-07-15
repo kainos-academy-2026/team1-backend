@@ -54,6 +54,7 @@ describe('AuthRouter', () => {
 	});
 
 	it('creates a user on POST /auth/signup', async () => {
+		findUniqueMock.mockResolvedValue(null);
 		const app = express();
 		app.use(express.json());
 		app.use('/auth', AuthRouter);
