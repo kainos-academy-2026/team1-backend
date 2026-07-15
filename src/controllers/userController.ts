@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { DuplicateEmailError } from '../errors/userErrors.js';
 import type { UserService } from '../services/userService.js';
 
 export class UserController {
@@ -11,8 +12,12 @@ export class UserController {
 				password: req.body.password,
 			});
 			res.status(201).end();
-		} catch {
-			res.status(500).json({ error: 'Internal server error' });
+		} catch (err) {
+			if (err instanceof DuplicateEmailError) {
+				res.status(409).json({ error: err.message });
+			} else {
+				res.status(500).json({ error: 'Internal server error' });
+			}
 		}
 	}
 }
