@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
 import { JobRoleController } from '../../src/controllers/jobRoleController.js';
+import { JobRoleNotOpenError } from '../../src/errors/jobRoleNotOpenError.js';
+import { UserRole } from '../../src/models/user.js';
 
 describe('JobRoleController', () => {
 	it('returns 200 with job roles when the service succeeds', async () => {
@@ -103,5 +105,112 @@ describe('JobRoleController', () => {
 		expect(jobRoleService.findById).toHaveBeenCalledWith(1);
 		expect(res.status).toHaveBeenCalledWith(200);
 		expect(res.json).toHaveBeenCalledWith(jobRole);
+	});
+
+	it('returns 400 when applying with an invalid job role ID', async () => {
+		const jobRoleService = {
+			applyForJobRole: vi.fn(),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: 'invalid' },
+			body: { fileName: 'cv.pdf', contentType: 'application/pdf' },
+			user: { sub: '1', email: 'test@example.com', role: UserRole.USER },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.applyForJobRole(req, res);
+
+		expect(jobRoleService.applyForJobRole).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.json).toHaveBeenCalledWith({
+			error: 'Invalid job role ID',
+		});
+	});
+
+	it('returns 404 when applying to a missing job role', async () => {
+		const jobRoleService = {
+			applyForJobRole: vi.fn().mockResolvedValue(null),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1' },
+			body: { fileName: 'cv.pdf', contentType: 'application/pdf' },
+			user: { sub: '1', email: 'test@example.com', role: UserRole.USER },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.applyForJobRole(req, res);
+
+		expect(jobRoleService.applyForJobRole).toHaveBeenCalledWith(
+			1,
+			1,
+			'cv.pdf',
+			'application/pdf',
+		);
+		expect(res.status).toHaveBeenCalledWith(404);
+		expect(res.json).toHaveBeenCalledWith({
+			error: 'Job role not found',
+		});
+	});
+
+	it('returns 409 when the job role is not open for applications', async () => {
+		const jobRoleService = {
+			applyForJobRole: vi.fn().mockRejectedValue(new JobRoleNotOpenError()),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1' },
+			body: { fileName: 'cv.pdf', contentType: 'application/pdf' },
+			user: { sub: '1', email: 'test@example.com', role: UserRole.USER },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.applyForJobRole(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(409);
+		expect(res.json).toHaveBeenCalledWith({
+			error: 'Job role is not open for applications',
+		});
+	});
+
+	it('returns 200 with presigned upload data when applying succeeds', async () => {
+		const presignedUpload = {
+			uploadUrl: 'https://s3.example.com/upload',
+			key: 'job-applications/1/1/123-cv.pdf',
+		};
+		const jobRoleService = {
+			applyForJobRole: vi.fn().mockResolvedValue(presignedUpload),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1' },
+			body: { fileName: 'cv.pdf', contentType: 'application/pdf' },
+			user: { sub: '1', email: 'test@example.com', role: UserRole.USER },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.applyForJobRole(req, res);
+
+		expect(jobRoleService.applyForJobRole).toHaveBeenCalledWith(
+			1,
+			1,
+			'cv.pdf',
+			'application/pdf',
+		);
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith(presignedUpload);
 	});
 });

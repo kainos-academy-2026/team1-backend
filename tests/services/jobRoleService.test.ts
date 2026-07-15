@@ -1,9 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import type JobRoleDetailedResponse from '../../src/dtos/jobRoleDetailedResponse.js';
 import type JobRoleResponse from '../../src/dtos/jobRoleResponse.js';
+import { JobRoleNotOpenError } from '../../src/errors/jobRoleNotOpenError.js';
 import type { JobRole } from '../../src/generated/prisma/client.js';
 import type JobRoleMapper from '../../src/mappers/jobRoleMapper.js';
 import { JobRoleService } from '../../src/services/jobRoleService.js';
+import type { S3Service } from '../../src/services/s3Service.js';
+
+function createS3ServiceMock(): S3Service {
+	return {
+		getPresignedUploadUrl: vi.fn(),
+	} as unknown as S3Service;
+}
 
 describe('JobRoleService', () => {
 	const rows = [
@@ -39,7 +47,11 @@ describe('JobRoleService', () => {
 			toJobRoleResponse: vi.fn().mockReturnValue(responses[0]),
 		} as unknown as JobRoleMapper;
 
-		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			createS3ServiceMock(),
+		);
 
 		const result = await service.findAll();
 
@@ -57,7 +69,11 @@ describe('JobRoleService', () => {
 			toJobRoleResponse: vi.fn(),
 		} as unknown as JobRoleMapper;
 
-		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			createS3ServiceMock(),
+		);
 
 		await expect(service.findAll()).resolves.toEqual([]);
 		expect(jobRoleMapper.toJobRoleResponse).not.toHaveBeenCalled();
@@ -73,7 +89,11 @@ describe('JobRoleService', () => {
 			toJobRoleResponse: vi.fn(),
 		} as unknown as JobRoleMapper;
 
-		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			createS3ServiceMock(),
+		);
 
 		await expect(service.findAll()).rejects.toThrow('database failed');
 	});
@@ -88,7 +108,11 @@ describe('JobRoleService', () => {
 			toDetailedJobRoleResponse: vi.fn(),
 		} as unknown as JobRoleMapper;
 
-		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			createS3ServiceMock(),
+		);
 
 		await expect(service.findById(1)).resolves.toBeNull();
 		expect(jobRoleMapper.toJobRoleResponse).not.toHaveBeenCalled();
@@ -148,7 +172,11 @@ describe('JobRoleService', () => {
 			toDetailedJobRoleResponse: vi.fn().mockReturnValue(response),
 		} as unknown as JobRoleMapper;
 
-		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			createS3ServiceMock(),
+		);
 
 		const result = await service.findById(1);
 
@@ -168,9 +196,134 @@ describe('JobRoleService', () => {
 			toDetailedJobRoleResponse: vi.fn(),
 		} as unknown as JobRoleMapper;
 
-		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			createS3ServiceMock(),
+		);
 
 		await expect(service.findById(1)).rejects.toThrow('database failed');
 		expect(jobRoleMapper.toDetailedJobRoleResponse).not.toHaveBeenCalled();
+	});
+
+	it('returns presigned upload data and creates an application when the role is open', async () => {
+		const openJobRole = {
+			jobRoleId: 2,
+			status: 'open',
+			numberOfOpenPositions: 3,
+		};
+		const jobRoleDao = {
+			findById: vi.fn().mockResolvedValue(openJobRole),
+			createApplication: vi.fn().mockResolvedValue(undefined),
+		};
+		const jobRoleMapper = {} as unknown as JobRoleMapper;
+		const s3Service = createS3ServiceMock();
+		vi.mocked(s3Service.getPresignedUploadUrl).mockResolvedValue({
+			uploadUrl: 'https://s3.example.com/upload',
+			key: 'job-applications/2/7/123-cv.pdf',
+		});
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			s3Service,
+		);
+
+		const result = await service.applyForJobRole(
+			7,
+			2,
+			'cv.pdf',
+			'application/pdf',
+		);
+
+		expect(jobRoleDao.findById).toHaveBeenCalledWith(2);
+		expect(s3Service.getPresignedUploadUrl).toHaveBeenCalledWith(
+			7,
+			2,
+			'cv.pdf',
+			'application/pdf',
+		);
+		expect(jobRoleDao.createApplication).toHaveBeenCalledWith({
+			userId: 7,
+			jobRoleId: 2,
+			cvURL: 'job-applications/2/7/123-cv.pdf',
+		});
+		expect(result).toEqual({
+			uploadUrl: 'https://s3.example.com/upload',
+			key: 'job-applications/2/7/123-cv.pdf',
+		});
+	});
+
+	it('returns null when applying to a missing job role', async () => {
+		const jobRoleDao = {
+			findById: vi.fn().mockResolvedValue(null),
+			createApplication: vi.fn(),
+		};
+		const jobRoleMapper = {} as unknown as JobRoleMapper;
+		const s3Service = createS3ServiceMock();
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			s3Service,
+		);
+
+		await expect(
+			service.applyForJobRole(7, 2, 'cv.pdf', 'application/pdf'),
+		).resolves.toBeNull();
+		expect(s3Service.getPresignedUploadUrl).not.toHaveBeenCalled();
+		expect(jobRoleDao.createApplication).not.toHaveBeenCalled();
+	});
+
+	it('throws when the job role is not open', async () => {
+		const closedJobRole = {
+			jobRoleId: 2,
+			status: 'closed',
+			numberOfOpenPositions: 3,
+		};
+		const jobRoleDao = {
+			findById: vi.fn().mockResolvedValue(closedJobRole),
+			createApplication: vi.fn(),
+		};
+		const jobRoleMapper = {} as unknown as JobRoleMapper;
+		const s3Service = createS3ServiceMock();
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			s3Service,
+		);
+
+		await expect(
+			service.applyForJobRole(7, 2, 'cv.pdf', 'application/pdf'),
+		).rejects.toThrow(JobRoleNotOpenError);
+		expect(s3Service.getPresignedUploadUrl).not.toHaveBeenCalled();
+		expect(jobRoleDao.createApplication).not.toHaveBeenCalled();
+	});
+
+	it('throws when the job role has no open positions', async () => {
+		const noPositionsJobRole = {
+			jobRoleId: 2,
+			status: 'open',
+			numberOfOpenPositions: 0,
+		};
+		const jobRoleDao = {
+			findById: vi.fn().mockResolvedValue(noPositionsJobRole),
+			createApplication: vi.fn(),
+		};
+		const jobRoleMapper = {} as unknown as JobRoleMapper;
+		const s3Service = createS3ServiceMock();
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			jobRoleMapper,
+			s3Service,
+		);
+
+		await expect(
+			service.applyForJobRole(7, 2, 'cv.pdf', 'application/pdf'),
+		).rejects.toThrow(JobRoleNotOpenError);
+		expect(s3Service.getPresignedUploadUrl).not.toHaveBeenCalled();
+		expect(jobRoleDao.createApplication).not.toHaveBeenCalled();
 	});
 });

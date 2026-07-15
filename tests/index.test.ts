@@ -5,6 +5,8 @@ import { app } from '../src/app.js';
 vi.hoisted(() => {
 	process.env.DATABASE_URL = 'postgresql://test:test@localhost/test';
 	process.env.JWT_SECRET_KEY = 'test-secret-key';
+	process.env.AWS_REGION = 'us-east-1';
+	process.env.S3_BUCKET_NAME = 'test-bucket';
 });
 
 describe('GET /health', () => {

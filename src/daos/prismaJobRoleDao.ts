@@ -1,9 +1,11 @@
 import type {
+	Application,
 	JobRole,
 	Prisma,
 	PrismaClient,
 } from '../generated/prisma/client.js';
-import type { JobRoleDao } from './jobRoleDao.js';
+import { Status } from '../generated/prisma/enums.js';
+import type { CreateApplicationData, JobRoleDao } from './jobRoleDao.js';
 
 export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
 	include: {
@@ -32,5 +34,16 @@ export class PrismaJobRoleDao implements JobRoleDao {
 			},
 		});
 		return row;
+	}
+
+	async createApplication(data: CreateApplicationData): Promise<Application> {
+		return this.prisma.application.create({
+			data: {
+				userId: data.userId,
+				jobRoleId: data.jobRoleId,
+				cvURL: data.cvURL,
+				status: Status.IN_PROGRESS,
+			},
+		});
 	}
 }

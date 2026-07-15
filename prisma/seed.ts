@@ -96,6 +96,28 @@ async function main(): Promise<void> {
 		],
 		skipDuplicates: true,
 	});
+
+	const applicant = await prisma.user.findUnique({
+		where: { email: 'test@example.com' },
+	});
+	if (!applicant) {
+		throw new Error('Seed user test@example.com not found');
+	}
+
+	const existingApplication = await prisma.application.findFirst({
+		where: { userId: applicant.userId, jobRoleId: 1 },
+	});
+	if (!existingApplication) {
+		await prisma.application.create({
+			data: {
+				userId: applicant.userId,
+				jobRoleId: 1,
+				cvURL:
+					'https://kainossoftwareltd.sharepoint.com/sites/Career/CVs/test-user-cv.pdf',
+				status: 'IN_PROGRESS',
+			},
+		});
+	}
 }
 
 main()
