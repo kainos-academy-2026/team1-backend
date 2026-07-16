@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { DuplicateEmailError } from '../errors/userErrors.js';
+import { DuplicateEmailError } from '../errors/duplicateEmailError.js';
 import type { UserService } from '../services/userService.js';
 
 export class UserController {

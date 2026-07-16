@@ -1,5 +1,6 @@
 import { hash } from 'argon2';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DuplicateEmailError } from '../../src/errors/duplicateEmailError';
 import { UserRole } from '../../src/models/user';
 import { UserService } from '../../src/services/userService';
 
@@ -58,5 +59,31 @@ describe('UserService', () => {
 				password: 'Password123!',
 			}),
 		).rejects.toThrow('database failed');
+	});
+
+	it('throws DuplicateEmailError when email already exists', async () => {
+		const existingUser = {
+			userId: 99,
+			email: 'test@example.com',
+			password: 'existing-hash',
+			role: UserRole.USER,
+		};
+
+		const userDao = {
+			createUser: vi.fn(),
+			findUserByEmail: vi.fn().mockResolvedValue(existingUser),
+		};
+
+		const service = new UserService(userDao);
+
+		await expect(
+			service.createUser({
+				email: 'test@example.com',
+				password: 'Password123!',
+			}),
+		).rejects.toBeInstanceOf(DuplicateEmailError);
+
+		expect(hash).not.toHaveBeenCalled();
+		expect(userDao.createUser).not.toHaveBeenCalled();
 	});
 });
