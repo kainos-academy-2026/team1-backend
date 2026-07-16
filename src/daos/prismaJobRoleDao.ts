@@ -17,12 +17,18 @@ export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
 export class PrismaJobRoleDao implements JobRoleDao {
 	constructor(private readonly prisma: PrismaClient) {}
 
-	async findAll(): Promise<JobRole[]> {
+	async findAll(limit: number, offset: number): Promise<JobRole[]> {
 		const rows = await this.prisma.jobRole.findMany({
 			orderBy: { jobRoleId: 'asc' },
+			take: limit,
+			skip: offset,
 		});
 
 		return rows;
+	}
+
+	async count(): Promise<number> {
+		return this.prisma.jobRole.count();
 	}
 
 	async findById(jobRoleId: number): Promise<JobRoleWithDetails | null> {

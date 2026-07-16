@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
 import { UserController } from '../../src/controllers/userController';
+import { DuplicateEmailError } from '../../src/errors/duplicateEmailError';
 
 describe('UserController', () => {
 	it('returns 201 with no response body when the service succeeds', async () => {
@@ -47,5 +48,24 @@ describe('UserController', () => {
 		expect(res.json).toHaveBeenCalledWith({
 			error: 'Internal server error',
 		});
+	});
+
+	it('returns 409 when the service throws DuplicateEmailError', async () => {
+		const userService = {
+			createUser: vi.fn().mockRejectedValue(new DuplicateEmailError()),
+		};
+		const controller = new UserController(userService as never);
+		const req = {
+			body: { email: 'test@example.com', password: 'Password123!' },
+		} as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.createUser(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(409);
+		expect(res.json).toHaveBeenCalledWith({ error: 'Email already in use' });
 	});
 });

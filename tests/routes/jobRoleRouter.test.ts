@@ -51,7 +51,18 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 			}),
 		};
 		jobRole = {
-			findMany: vi.fn().mockResolvedValue([]),
+			findMany: vi.fn().mockResolvedValue([
+				{
+					jobRoleId: 1,
+					roleName: 'Engineer',
+					location: 'Belfast',
+					capabilityId: 2,
+					bandId: 3,
+					closingDate: new Date('2026-07-01T00:00:00.000Z'),
+					status: 'open',
+				},
+			]),
+			count: vi.fn().mockResolvedValue(1),
 			findUnique: vi.fn().mockResolvedValue({
 				jobRoleId: 1,
 				roleName: 'Engineer',
@@ -98,7 +109,8 @@ describe('JobRoleRouter', () => {
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.status).toBe(200);
-		expect(response.body).toEqual([]);
+		expect(response.headers['x-total-count']).toBe('1');
+		expect(response.body).toHaveLength(1);
 	});
 
 	it('wires authenticated GET /job-roles/:id to controller.getById', async () => {

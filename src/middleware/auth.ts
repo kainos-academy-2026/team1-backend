@@ -8,7 +8,7 @@ export function authorize(
 ): RequestHandler {
 	return async (req, res, next) => {
 		const authHeader = req.headers.authorization;
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		if (!authHeader?.startsWith('Bearer ')) {
 			res.status(401).json({ message: 'Missing authentication token' });
 			return;
 		}
