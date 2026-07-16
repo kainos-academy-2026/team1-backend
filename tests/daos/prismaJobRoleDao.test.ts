@@ -18,17 +18,37 @@ describe('PrismaJobRoleDao', () => {
 		const prisma = {
 			jobRole: {
 				findMany: vi.fn().mockResolvedValue(rows),
+				count: vi.fn(),
 			},
 		};
 
 		const dao = new PrismaJobRoleDao(prisma as never);
 
-		const result = await dao.findAll();
+		const result = await dao.findAll(10, 20);
 
 		expect(prisma.jobRole.findMany).toHaveBeenCalledWith({
 			orderBy: { jobRoleId: 'asc' },
+			take: 10,
+			skip: 20,
 		});
 		expect(result).toBe(rows);
+	});
+
+	it('requests total job role count', async () => {
+		const prisma = {
+			jobRole: {
+				findMany: vi.fn(),
+				count: vi.fn().mockResolvedValue(42),
+				findUnique: vi.fn(),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+
+		const result = await dao.count();
+
+		expect(prisma.jobRole.count).toHaveBeenCalledOnce();
+		expect(result).toBe(42);
 	});
 
 	it('requests a job role by id', async () => {
@@ -53,6 +73,8 @@ describe('PrismaJobRoleDao', () => {
 		const prisma = {
 			jobRole: {
 				findUnique: vi.fn().mockResolvedValue(row),
+				findMany: vi.fn(),
+				count: vi.fn(),
 			},
 		};
 
@@ -74,23 +96,24 @@ describe('PrismaJobRoleDao', () => {
 		const prisma = {
 			jobRole: {
 				findMany: vi.fn().mockRejectedValue(new Error('database failed')),
+				count: vi.fn(),
 			},
 		};
 
 		const dao = new PrismaJobRoleDao(prisma as never);
 
-		await expect(dao.findAll()).rejects.toThrow('database failed');
+		await expect(dao.findAll(10, 0)).rejects.toThrow('database failed');
 	});
 
 	it('propagates errors thrown by prisma', async () => {
 		const prisma = {
 			jobRole: {
-				findMany: vi.fn().mockRejectedValue(new Error('database failed')),
+				count: vi.fn().mockRejectedValue(new Error('database failed')),
 			},
 		};
 
 		const dao = new PrismaJobRoleDao(prisma as never);
 
-		await expect(dao.findAll()).rejects.toThrow('database failed');
+		await expect(dao.count()).rejects.toThrow('database failed');
 	});
 });

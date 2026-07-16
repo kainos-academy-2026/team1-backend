@@ -4,22 +4,95 @@ import { JobRoleController } from '../../src/controllers/jobRoleController.js';
 
 describe('JobRoleController', () => {
 	it('returns 200 with job roles when the service succeeds', async () => {
-		const jobRoles = [{ id: 1, roleName: 'Engineer' }];
+		const jobRoles = {
+			data: [{ id: 1, roleName: 'Engineer' }],
+			total: 1,
+		};
 		const jobRoleService = {
 			findAll: vi.fn().mockResolvedValue(jobRoles),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
-		const req = {} as Request;
+		const req = { query: {} } as unknown as Request;
 		const res = {
+			set: vi.fn().mockReturnThis(),
 			status: vi.fn().mockReturnThis(),
 			json: vi.fn(),
 		} as unknown as Response;
 
 		await controller.getAll(req, res);
 
-		expect(jobRoleService.findAll).toHaveBeenCalledOnce();
+		expect(jobRoleService.findAll).toHaveBeenCalledWith(10, 0);
+		expect(res.set).toHaveBeenCalledWith('X-Total-Count', '1');
 		expect(res.status).toHaveBeenCalledWith(200);
-		expect(res.json).toHaveBeenCalledWith(jobRoles);
+		expect(res.json).toHaveBeenCalledWith(jobRoles.data);
+	});
+
+	it('returns 200 and forwards parsed pagination params', async () => {
+		const jobRoleService = {
+			findAll: vi.fn().mockResolvedValue({ data: [], total: 12 }),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			query: { limit: '20', offset: '40' },
+		} as unknown as Request;
+		const res = {
+			set: vi.fn().mockReturnThis(),
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getAll(req, res);
+
+		expect(jobRoleService.findAll).toHaveBeenCalledWith(20, 40);
+		expect(res.set).toHaveBeenCalledWith('X-Total-Count', '12');
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith([]);
+	});
+
+	it('returns 400 when pagination params are invalid', async () => {
+		const jobRoleService = {
+			findAll: vi.fn(),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			query: { limit: 'abc', offset: '0' },
+		} as unknown as Request;
+		const res = {
+			set: vi.fn().mockReturnThis(),
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getAll(req, res);
+
+		expect(jobRoleService.findAll).not.toHaveBeenCalled();
+		expect(res.set).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.json).toHaveBeenCalledWith({
+			error:
+				'Invalid pagination parameters. limit must be >= 1 and offset must be >= 0',
+		});
+	});
+
+	it('returns 400 when pagination params are out of range', async () => {
+		const jobRoleService = {
+			findAll: vi.fn(),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			query: { limit: '0', offset: '-1' },
+		} as unknown as Request;
+		const res = {
+			set: vi.fn().mockReturnThis(),
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getAll(req, res);
+
+		expect(jobRoleService.findAll).not.toHaveBeenCalled();
+		expect(res.set).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(400);
 	});
 
 	it('returns 500 when the service throws', async () => {
@@ -27,14 +100,16 @@ describe('JobRoleController', () => {
 			findAll: vi.fn().mockRejectedValue(new Error('database failed')),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
-		const req = {} as Request;
+		const req = { query: {} } as unknown as Request;
 		const res = {
+			set: vi.fn().mockReturnThis(),
 			status: vi.fn().mockReturnThis(),
 			json: vi.fn(),
 		} as unknown as Response;
 
 		await controller.getAll(req, res);
 
+		expect(res.set).not.toHaveBeenCalled();
 		expect(res.status).toHaveBeenCalledWith(500);
 		expect(res.json).toHaveBeenCalledWith({
 			error: 'Internal server error',
