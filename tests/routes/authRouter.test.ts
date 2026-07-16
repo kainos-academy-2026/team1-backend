@@ -1,6 +1,7 @@
 import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DuplicateEmailError } from '../../src/errors/duplicateEmailError';
 import AuthRouter from '../../src/routes/loginRouter';
 
 const { createUserMock, findUniqueMock } = vi.hoisted(() => ({
@@ -54,6 +55,7 @@ describe('AuthRouter', () => {
 	});
 
 	it('creates a user on POST /auth/signup', async () => {
+		findUniqueMock.mockResolvedValue(null);
 		const app = express();
 		app.use(express.json());
 		app.use('/auth', AuthRouter);
@@ -72,6 +74,27 @@ describe('AuthRouter', () => {
 				role: 'USER',
 			},
 		});
+	});
+
+	it('returns 409 on POST /auth/signup when email already exists', async () => {
+		findUniqueMock.mockResolvedValue({
+			userId: 1,
+			email: 'test@example.com',
+			password: 'hashed-password',
+			role: 'USER',
+		});
+		const app = express();
+		app.use(express.json());
+		app.use('/auth', AuthRouter);
+
+		const response = await request(app).post('/auth/signup').send({
+			email: 'test@example.com',
+			password: 'Password123!',
+		});
+
+		expect(response.status).toBe(409);
+		expect(response.body).toEqual({ error: new DuplicateEmailError().message });
+		expect(createUserMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects unexpected fields in signup body', async () => {
