@@ -12,24 +12,43 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function main(): Promise<void> {
-	const result = await prisma.capability.createMany({
-		data: [
-			{ capabilityId: 1, capabilityName: 'Software Development' },
-			{ capabilityId: 2, capabilityName: 'Data Science' },
-			{ capabilityId: 3, capabilityName: 'Product Management' },
-		],
-		skipDuplicates: true,
-	});
-	console.log('createMany count:', result.count);
+	const capabilitySeed = [
+		{ capabilityId: 1, capabilityName: 'Engineering' },
+		{ capabilityId: 2, capabilityName: 'Data and AI' },
+		{ capabilityId: 3, capabilityName: 'Product and Delivery' },
+		{ capabilityId: 4, capabilityName: 'Workday Services' },
+		{ capabilityId: 5, capabilityName: 'Architecture and Platforms' },
+	];
 
-	await prisma.band.createMany({
-		data: [
-			{ bandId: 1, bandName: 'Junior' },
-			{ bandId: 2, bandName: 'Mid' },
-			{ bandId: 3, bandName: 'Senior' },
-		],
-		skipDuplicates: true,
-	});
+	await Promise.all(
+		capabilitySeed.map((capability) =>
+			prisma.capability.upsert({
+				where: { capabilityId: capability.capabilityId },
+				update: { capabilityName: capability.capabilityName },
+				create: capability,
+			}),
+		),
+	);
+	console.log('capabilities seeded:', capabilitySeed.length);
+
+	const bandSeed = [
+		{ bandId: 1, bandName: 'Associate' },
+		{ bandId: 2, bandName: 'Senior Associate' },
+		{ bandId: 3, bandName: 'Consultant' },
+		{ bandId: 4, bandName: 'Manager' },
+		{ bandId: 5, bandName: 'Principal' },
+	];
+
+	await Promise.all(
+		bandSeed.map((band) =>
+			prisma.band.upsert({
+				where: { bandId: band.bandId },
+				update: { bandName: band.bandName },
+				create: band,
+			}),
+		),
+	);
+	console.log('bands seeded:', bandSeed.length);
 
 	await prisma.user.createMany({
 		data: [
@@ -47,77 +66,293 @@ async function main(): Promise<void> {
 		skipDuplicates: true,
 	});
 
-	await prisma.jobRole.createMany({
-		data: [
-			{
-				jobRoleId: 1,
-				roleName: 'Software Engineer',
-				location: 'New York',
-				capabilityId: 1,
-				bandId: 2,
-				closingDate: new Date('2024-12-31'),
-				status: 'open',
-				specification:
-					'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Engineering/Job%20profile%20-%20Software%20Engineer%20(Associate).pdf',
-				description: 'Build and maintain backend services.',
-				responsibilities: 'Design, implement, test, and support APIs.',
-				numberOfOpenPositions: 2,
+	const seedJobs = [
+		{
+			roleName: 'Workday Adaptive Planning Practice Lead, EMEA',
+			location: 'Multiple locations',
+			capabilityId: 4,
+			bandId: 5,
+		},
+		{
+			roleName: 'Workday HCM Consultant (SA)',
+			location: 'Multiple locations',
+			capabilityId: 4,
+			bandId: 2,
+		},
+		{
+			roleName: 'Senior Technical Business Analyst',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 3,
+			bandId: 3,
+		},
+		{
+			roleName: 'Lead Extend Developer',
+			location: 'Buenos Aires, Argentina',
+			capabilityId: 4,
+			bandId: 4,
+		},
+		{
+			roleName: 'Lead Software Engineer',
+			location: 'Buenos Aires, Argentina',
+			capabilityId: 1,
+			bandId: 4,
+		},
+		{
+			roleName: 'Workday AMS Service Manager',
+			location: 'Multiple locations',
+			capabilityId: 4,
+			bandId: 4,
+		},
+		{
+			roleName: 'Product Lead (Defence)',
+			location: 'London, United Kingdom',
+			capabilityId: 3,
+			bandId: 4,
+		},
+		{
+			roleName: 'Technical Architect',
+			location: 'London, United Kingdom',
+			capabilityId: 5,
+			bandId: 4,
+		},
+		{
+			roleName: 'Senior Dynamics 365 Engineer',
+			location: 'Gdansk, Poland',
+			capabilityId: 5,
+			bandId: 3,
+		},
+		{
+			roleName: 'Senior Workday Integrations Consultant',
+			location: 'Gdansk, Poland',
+			capabilityId: 4,
+			bandId: 3,
+		},
+		{
+			roleName: 'Workday Financials Consultant',
+			location: 'Dublin, Ireland',
+			capabilityId: 4,
+			bandId: 3,
+		},
+		{
+			roleName: 'Data Engineer',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 2,
+			bandId: 2,
+		},
+		{
+			roleName: 'Senior Data Engineer',
+			location: 'London, United Kingdom',
+			capabilityId: 2,
+			bandId: 3,
+		},
+		{
+			roleName: 'Cloud Platform Engineer',
+			location: 'Toronto, Canada',
+			capabilityId: 5,
+			bandId: 2,
+		},
+		{
+			roleName: 'Senior Cloud Platform Engineer',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 5,
+			bandId: 3,
+		},
+		{
+			roleName: 'QA Automation Engineer',
+			location: 'Gdansk, Poland',
+			capabilityId: 1,
+			bandId: 2,
+		},
+		{
+			roleName: 'Senior QA Automation Engineer',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 1,
+			bandId: 3,
+		},
+		{
+			roleName: 'DevOps Engineer',
+			location: 'Warsaw, Poland',
+			capabilityId: 5,
+			bandId: 2,
+		},
+		{
+			roleName: 'Site Reliability Engineer',
+			location: 'London, United Kingdom',
+			capabilityId: 5,
+			bandId: 3,
+		},
+		{
+			roleName: 'Delivery Manager',
+			location: 'Derry, United Kingdom',
+			capabilityId: 3,
+			bandId: 4,
+		},
+		{
+			roleName: 'Product Manager',
+			location: 'Birmingham, United Kingdom',
+			capabilityId: 3,
+			bandId: 3,
+		},
+		{
+			roleName: 'Senior Product Manager',
+			location: 'London, United Kingdom',
+			capabilityId: 3,
+			bandId: 4,
+		},
+		{
+			roleName: 'Business Analyst',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 3,
+			bandId: 2,
+		},
+		{
+			roleName: 'Security Engineer',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 5,
+			bandId: 2,
+		},
+		{
+			roleName: 'Lead Security Engineer',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 5,
+			bandId: 4,
+		},
+		{
+			roleName: 'AI Engineer',
+			location: 'London, United Kingdom',
+			capabilityId: 2,
+			bandId: 3,
+		},
+		{
+			roleName: 'Machine Learning Engineer',
+			location: 'Toronto, Canada',
+			capabilityId: 2,
+			bandId: 3,
+		},
+		{
+			roleName: 'Software Engineer',
+			location: 'Belfast, United Kingdom',
+			capabilityId: 1,
+			bandId: 1,
+		},
+		{
+			roleName: 'Senior Software Engineer',
+			location: 'Gdansk, Poland',
+			capabilityId: 1,
+			bandId: 2,
+		},
+		{
+			roleName: 'Principal Software Engineer',
+			location: 'London, United Kingdom',
+			capabilityId: 1,
+			bandId: 5,
+		},
+		{
+			roleName: 'Solutions Architect',
+			location: 'Indianapolis, United States Of America',
+			capabilityId: 5,
+			bandId: 5,
+		},
+	];
+
+	const capabilityThemes: Record<number, { domain: string; outcomes: string }> =
+		{
+			1: {
+				domain: 'digital product engineering',
+				outcomes: 'secure, maintainable platforms for high-volume services',
 			},
-			{
-				jobRoleId: 2,
-				roleName: 'Data Scientist',
-				location: 'San Francisco',
-				capabilityId: 2,
-				bandId: 3,
-				closingDate: new Date('2024-11-30'),
-				status: 'open',
-				specification:
-					'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Data%20and%20Artificial%20Intelligence/Job%20Profile%20-%20Senior%20Data%20Scientist%20(Senior%20Associate).pdf',
+			2: {
+				domain: 'data and AI delivery',
+				outcomes: 'decision-ready insight and production-grade ML capabilities',
+			},
+			3: {
+				domain: 'product and delivery leadership',
+				outcomes: 'measurable customer value and reliable programme execution',
+			},
+			4: {
+				domain: 'Workday transformation services',
+				outcomes: 'scalable HR and finance operations for enterprise clients',
+			},
+			5: {
+				domain: 'architecture and cloud platforms',
+				outcomes: 'resilient cloud estates and modern integration patterns',
+			},
+		};
+
+	const initiatives = [
+		'public sector digital services',
+		'global HR modernization programmes',
+		'regulated cloud migration portfolios',
+		'AI-enabled operations transformation',
+		'customer experience acceleration initiatives',
+		'enterprise platform reliability programmes',
+	];
+
+	const deliveryContexts = [
+		'multi-disciplinary delivery squads',
+		'cross-region client teams',
+		'product-led engineering groups',
+		'architecture governance forums',
+		'managed service delivery pods',
+		'rapid discovery and delivery teams',
+	];
+
+	const responsibilityFocus = [
+		'owning delivery milestones and technical quality',
+		'shaping scope with stakeholders and prioritizing outcomes',
+		'mentoring team members and improving engineering standards',
+		'reducing risk through proactive planning and early validation',
+		'strengthening collaboration across engineering, product, and client teams',
+		'driving continuous improvement through measurable delivery metrics',
+	];
+
+	await Promise.all(
+		seedJobs.map((job, index) => {
+			const jobRoleId = index + 1;
+			const capabilityTheme = capabilityThemes[job.capabilityId];
+			const initiative = initiatives[index % initiatives.length];
+			const deliveryContext = deliveryContexts[index % deliveryContexts.length];
+			const focus = responsibilityFocus[index % responsibilityFocus.length];
+			const closingDate = new Date(
+				2026,
+				7 + (index % 5),
+				5 + ((index * 3) % 22),
+			);
+			const status = index % 9 === 0 ? 'closed' : 'open';
+			const numberOfOpenPositions = status === 'closed' ? 0 : (index % 5) + 1;
+			const payload = {
+				roleName: job.roleName,
+				location: job.location,
+				capabilityId: job.capabilityId,
+				bandId: job.bandId,
+				closingDate,
+				status,
+				specification: `https://careers.kainos.com/gb/en/job/SEED_${String(
+					jobRoleId,
+				).padStart(4, '0')}/${job.roleName
+					.toLowerCase()
+					.replace(/[^a-z0-9]+/g, '-')
+					.replace(/(^-|-$)/g, '')}`,
 				description:
-					'Analyze and interpret complex data to drive business decisions.',
+					`${job.roleName} role in ${job.location} focused on ${capabilityTheme.domain}. ` +
+					`The position supports ${initiative} and delivers ${capabilityTheme.outcomes}.`,
 				responsibilities:
-					'Collect, process, and analyze data to provide insights.',
-				numberOfOpenPositions: 1,
-			},
-			{
-				jobRoleId: 3,
-				roleName: 'Product Manager',
-				location: 'Chicago',
-				capabilityId: 3,
-				bandId: 3,
-				closingDate: new Date('2024-10-31'),
-				status: 'closed',
-				specification:
-					'https://kainossoftwareltd.sharepoint.com/sites/Career/JobProfiles/Product/Job%20Profile%20-%20Product%20Consultant%20(Manager).pdf',
-				description: 'Lead product development and strategy.',
-				responsibilities: 'Define product vision, strategy, and roadmap.',
-				numberOfOpenPositions: 1,
-			},
-		],
-		skipDuplicates: true,
-	});
+					`Working within ${deliveryContext}, this role is accountable for ${focus}, ` +
+					'communicating progress clearly, and ensuring delivery commitments are met.',
+				numberOfOpenPositions,
+			};
 
-	const applicant = await prisma.user.findUnique({
-		where: { email: 'test@example.com' },
-	});
-	if (!applicant) {
-		throw new Error('Seed user test@example.com not found');
-	}
-
-	const existingApplication = await prisma.application.findFirst({
-		where: { userId: applicant.userId, jobRoleId: 1 },
-	});
-	if (!existingApplication) {
-		await prisma.application.create({
-			data: {
-				userId: applicant.userId,
-				jobRoleId: 1,
-				cvURL:
-					'https://kainossoftwareltd.sharepoint.com/sites/Career/CVs/test-user-cv.pdf',
-				status: 'IN_PROGRESS',
-			},
-		});
-	}
+			return prisma.jobRole.upsert({
+				where: { jobRoleId },
+				update: payload,
+				create: {
+					jobRoleId,
+					...payload,
+				},
+			});
+		}),
+	);
+	console.log('job roles seeded:', seedJobs.length);
 }
 
 main()
@@ -128,3 +363,4 @@ main()
 	.finally(async () => {
 		await prisma.$disconnect();
 	});
+	

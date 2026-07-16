@@ -49,6 +49,28 @@ describe('auth middleware', () => {
 		expect(response.body).toEqual({ message: 'Invalid authentication token' });
 	});
 
+	it('returns 401 when verifying the token throws (expired/invalid signature)', async () => {
+		const app = express();
+		const tokenService = {
+			verify: vi.fn().mockRejectedValue(new Error('token expired')),
+		} as unknown as JoseTokenService;
+
+		app.get(
+			'/protected',
+			authorize(tokenService, [UserRole.USER]),
+			(_req, res) => {
+				res.sendStatus(204);
+			},
+		);
+
+		const response = await request(app)
+			.get('/protected')
+			.set('Authorization', 'Bearer expired-token');
+
+		expect(response.status).toBe(401);
+		expect(response.body).toEqual({ message: 'Invalid authentication token' });
+	});
+
 	it('returns 403 when the authenticated role is not allowed', async () => {
 		const app = express();
 		const tokenService = createTokenServiceMock({
