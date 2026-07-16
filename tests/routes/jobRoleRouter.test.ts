@@ -14,7 +14,18 @@ vi.mock('@prisma/adapter-pg', () => ({
 vi.mock('../../src/generated/prisma/client.js', () => ({
 	PrismaClient: class PrismaClient {
 		jobRole = {
-			findMany: vi.fn().mockResolvedValue([]),
+			findMany: vi.fn().mockResolvedValue([
+				{
+					jobRoleId: 1,
+					roleName: 'Engineer',
+					location: 'Belfast',
+					capabilityId: 2,
+					bandId: 3,
+					closingDate: new Date('2026-07-01T00:00:00.000Z'),
+					status: 'open',
+				},
+			]),
+			count: vi.fn().mockResolvedValue(1),
 			findUnique: vi.fn().mockResolvedValue({
 				jobRoleId: 1,
 				roleName: 'Engineer',
@@ -49,7 +60,8 @@ describe('JobRoleRouter', () => {
 		const response = await request(app).get('/job-roles');
 
 		expect(response.status).toBe(200);
-		expect(response.body).toEqual([]);
+		expect(response.headers['x-total-count']).toBe('1');
+		expect(response.body).toHaveLength(1);
 	});
 
 	it('wires GET /job-roles/:id to controller.getById', async () => {

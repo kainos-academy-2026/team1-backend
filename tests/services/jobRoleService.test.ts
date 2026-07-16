@@ -33,6 +33,7 @@ describe('JobRoleService', () => {
 
 		const jobRoleDao = {
 			findAll: vi.fn().mockResolvedValue(rows),
+			count: vi.fn().mockResolvedValue(1),
 			findById: vi.fn(),
 		};
 		const jobRoleMapper = {
@@ -41,16 +42,18 @@ describe('JobRoleService', () => {
 
 		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
 
-		const result = await service.findAll();
+		const result = await service.findAll(10, 0);
 
-		expect(jobRoleDao.findAll).toHaveBeenCalledOnce();
+		expect(jobRoleDao.findAll).toHaveBeenCalledWith(10, 0);
+		expect(jobRoleDao.count).toHaveBeenCalledOnce();
 		expect(jobRoleMapper.toJobRoleResponse).toHaveBeenCalledWith(rows[0]);
-		expect(result).toEqual(responses);
+		expect(result).toEqual({ data: responses, total: 1 });
 	});
 
 	it('returns an empty array when the DAO returns no rows', async () => {
 		const jobRoleDao = {
 			findAll: vi.fn().mockResolvedValue([]),
+			count: vi.fn().mockResolvedValue(0),
 			findById: vi.fn(),
 		};
 		const jobRoleMapper = {
@@ -59,7 +62,10 @@ describe('JobRoleService', () => {
 
 		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
 
-		await expect(service.findAll()).resolves.toEqual([]);
+		await expect(service.findAll(10, 0)).resolves.toEqual({
+			data: [],
+			total: 0,
+		});
 		expect(jobRoleMapper.toJobRoleResponse).not.toHaveBeenCalled();
 	});
 
@@ -67,6 +73,7 @@ describe('JobRoleService', () => {
 		const error = new Error('database failed');
 		const jobRoleDao = {
 			findAll: vi.fn().mockRejectedValue(error),
+			count: vi.fn().mockResolvedValue(1),
 			findById: vi.fn(),
 		};
 		const jobRoleMapper = {
@@ -75,11 +82,13 @@ describe('JobRoleService', () => {
 
 		const service = new JobRoleService(jobRoleDao as never, jobRoleMapper);
 
-		await expect(service.findAll()).rejects.toThrow('database failed');
+		await expect(service.findAll(10, 0)).rejects.toThrow('database failed');
 	});
 
 	it('returns null when the DAO returns no row', async () => {
 		const jobRoleDao = {
+			findAll: vi.fn(),
+			count: vi.fn(),
 			findById: vi.fn().mockResolvedValue(null),
 		};
 
@@ -140,6 +149,8 @@ describe('JobRoleService', () => {
 		} as JobRoleDetailedResponse;
 
 		const jobRoleDao = {
+			findAll: vi.fn(),
+			count: vi.fn(),
 			findById: vi.fn().mockResolvedValue(row),
 		};
 
@@ -161,6 +172,8 @@ describe('JobRoleService', () => {
 	it('propagates DAO errors for findById', async () => {
 		const error = new Error('database failed');
 		const jobRoleDao = {
+			findAll: vi.fn(),
+			count: vi.fn(),
 			findById: vi.fn().mockRejectedValue(error),
 		};
 		const jobRoleMapper = {
