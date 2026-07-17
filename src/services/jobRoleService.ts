@@ -90,10 +90,7 @@ export class JobRoleService {
 		);
 	}
 
-	async hireApplicant(
-		applicationId: number,
-		jobRoleId: number,
-	): Promise<void> {
+	async hireApplicant(applicationId: number, jobRoleId: number): Promise<void> {
 		const application =
 			await this.jobRoleDao.findApplicationById(applicationId);
 		if (!application) {
@@ -117,6 +114,9 @@ export class JobRoleService {
 		if (application.status !== Status.IN_PROGRESS) {
 			throw new ApplicationNotInProgressError();
 		}
-		await this.jobRoleDao.updateApplicationStatus(applicationId, Status.REJECTED);
+		await this.jobRoleDao.updateApplicationStatus(
+			applicationId,
+			Status.REJECTED,
+		);
 	}
 }
