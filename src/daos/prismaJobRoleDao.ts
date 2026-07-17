@@ -1,6 +1,5 @@
 import type {
 	Application,
-	JobRole,
 	Prisma,
 	PrismaClient,
 } from '../generated/prisma/client.js';

@@ -1,7 +1,6 @@
 /*
   Warnings:
 
-  - The `role` column on the `users` table would be dropped and recreated. This will lead to data loss if there is data in the column.
   - A unique constraint covering the columns `[email]` on the table `users` will be added. If there are existing duplicate values, this will fail.
 
 */
@@ -18,8 +17,15 @@ ALTER COLUMN "responsibilities" DROP DEFAULT,
 ALTER COLUMN "numberOfOpenPositions" DROP DEFAULT;
 
 -- AlterTable
-ALTER TABLE "users" DROP COLUMN "role",
-ADD COLUMN     "role" "UserRole" NOT NULL DEFAULT 'USER';
+ALTER TABLE "users" ALTER COLUMN "role" DROP DEFAULT,
+ALTER COLUMN "role" TYPE "UserRole"
+USING (
+  CASE
+    WHEN UPPER("role"::TEXT) = 'ADMIN' THEN 'ADMIN'::"UserRole"
+    ELSE 'USER'::"UserRole"
+  END
+),
+ALTER COLUMN "role" SET DEFAULT 'USER';
 
 -- CreateTable
 CREATE TABLE "Application" (

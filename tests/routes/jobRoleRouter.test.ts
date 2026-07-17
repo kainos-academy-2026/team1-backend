@@ -149,8 +149,6 @@ describe('JobRoleRouter', () => {
 	it('returns 400 when the apply body is invalid', async () => {
 		const app = express();
 		app.use(express.json());
-	it('returns capabilityName and bandName in GET /job-roles list response', async () => {
-		const app = express();
 		app.use('/job-roles', JobRoleRouter);
 		const token = await createToken();
 
@@ -160,6 +158,20 @@ describe('JobRoleRouter', () => {
 			.send({ fileName: 'cv.pdf', contentType: 'image/png' });
 
 		expect(response.status).toBe(400);
+	});
+
+	it('returns capabilityName and bandName in GET /job-roles list response', async () => {
+		const app = express();
+		app.use('/job-roles', JobRoleRouter);
+		const token = await createToken();
+
+		const response = await request(app)
+			.get('/job-roles')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.status).toBe(200);
+		expect(response.body[0]).toHaveProperty('capabilityName', 'Data and AI');
+		expect(response.body[0]).toHaveProperty('bandName', 'Consultant');
 	});
 
 	it('wires authenticated POST /job-roles/:id/apply to controller.applyForJobRole', async () => {

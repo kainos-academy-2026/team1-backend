@@ -9,12 +9,14 @@ const corsOrigins = process.env.CORS_ORIGIN?.split(',')
 	.map((origin) => origin.trim())
 	.filter((origin) => origin.length > 0);
 
-app.use(
-	cors({
-		origin: corsOrigins && corsOrigins.length > 0 ? corsOrigins : true,
-		credentials: true,
-	}),
-);
+if (corsOrigins && corsOrigins.length > 0) {
+	app.use(
+		cors({
+			origin: corsOrigins,
+			credentials: true,
+		}),
+	);
+}
 
 app.use(express.json());
 

@@ -1,4 +1,4 @@
-import type { Application, JobRole } from '../generated/prisma/client.js';
+import type { Application } from '../generated/prisma/client.js';
 import type { JobRoleWithDetails } from './prismaJobRoleDao.js';
 
 export interface CreateApplicationData {
