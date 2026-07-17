@@ -20,6 +20,9 @@ export interface JobRoleDao {
 		jobRoleId: number,
 	): Promise<ApplicationWithUser[]>;
 	findApplicationById(applicationId: number): Promise<Application | null>;
-	updateApplicationStatus(applicationId: number, status: Status): Promise<Application>;
+	updateApplicationStatus(
+		applicationId: number,
+		status: Status,
+	): Promise<Application>;
 	decrementOpenPositions(jobRoleId: number): Promise<JobRole>;
 }
