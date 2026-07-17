@@ -5,10 +5,10 @@ import { JobRoleStatus } from '../models/jobRole.js';
 
 export default class JobRoleMapper {
 	private toJobRoleStatus(status: string): JobRoleStatus {
-		switch (status.toUpperCase()) {
+		switch (status.toLowerCase()) {
 			case JobRoleStatus.OPEN:
 			case JobRoleStatus.CLOSED:
-				return status.toUpperCase() as JobRoleStatus;
+				return status.toLowerCase() as JobRoleStatus;
 			default:
 				throw new Error(`Invalid job role status: ${status}`);
 		}
