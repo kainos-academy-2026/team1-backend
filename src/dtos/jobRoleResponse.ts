@@ -5,7 +5,9 @@ export default interface JobRoleResponse {
 	roleName: string;
 	location: string;
 	capabilityId: number;
+	capabilityName: string;
 	bandId: number;
+	bandName: string;
 	closingDate: Date;
 	status: JobRoleStatus;
 }

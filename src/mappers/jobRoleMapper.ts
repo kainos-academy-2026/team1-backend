@@ -1,7 +1,6 @@
 import type { JobRoleWithDetails } from '../daos/prismaJobRoleDao.js';
 import type JobRoleDetailedResponse from '../dtos/jobRoleDetailedResponse.js';
 import type JobRoleResponse from '../dtos/jobRoleResponse.js';
-import type { JobRole } from '../generated/prisma/client.js';
 import { JobRoleStatus } from '../models/jobRole.js';
 
 export default class JobRoleMapper {
@@ -15,13 +14,15 @@ export default class JobRoleMapper {
 		}
 	}
 
-	toJobRoleResponse(jobRole: JobRole): JobRoleResponse {
+	toJobRoleResponse(jobRole: JobRoleWithDetails): JobRoleResponse {
 		return {
 			id: jobRole.jobRoleId,
 			roleName: jobRole.roleName,
 			location: jobRole.location,
-			capabilityId: jobRole.capabilityId,
-			bandId: jobRole.bandId,
+			capabilityId: jobRole.capability.capabilityId,
+			capabilityName: jobRole.capability.capabilityName,
+			bandId: jobRole.band.bandId,
+			bandName: jobRole.band.bandName,
 			closingDate: new Date(jobRole.closingDate),
 			status: this.toJobRoleStatus(jobRole.status),
 		};

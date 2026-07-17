@@ -8,7 +8,7 @@ export interface CreateApplicationData {
 }
 
 export interface JobRoleDao {
-	findAll(limit: number, offset: number): Promise<JobRole[]>;
+	findAll(limit: number, offset: number): Promise<JobRoleWithDetails[]>;
 	count(): Promise<number>;
 	findById(jobRoleId: number): Promise<JobRoleWithDetails | null>;
 	createApplication(data: CreateApplicationData): Promise<Application>;

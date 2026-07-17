@@ -12,6 +12,14 @@ describe('PrismaJobRoleDao', () => {
 				bandId: 3,
 				closingDate: new Date(),
 				status: 'OPEN',
+				capability: {
+					capabilityId: 2,
+					capabilityName: 'Data and AI',
+				},
+				band: {
+					bandId: 3,
+					bandName: 'Consultant',
+				},
 			},
 		];
 
@@ -27,6 +35,10 @@ describe('PrismaJobRoleDao', () => {
 		const result = await dao.findAll(10, 20);
 
 		expect(prisma.jobRole.findMany).toHaveBeenCalledWith({
+			include: {
+				capability: true,
+				band: true,
+			},
 			orderBy: { jobRoleId: 'asc' },
 			take: 10,
 			skip: 20,

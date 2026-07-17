@@ -60,6 +60,14 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 					bandId: 3,
 					closingDate: new Date('2026-07-01T00:00:00.000Z'),
 					status: 'open',
+					capability: {
+						capabilityId: 2,
+						capabilityName: 'Data and AI',
+					},
+					band: {
+						bandId: 3,
+						bandName: 'Consultant',
+					},
 				},
 			]),
 			count: vi.fn().mockResolvedValue(1),
@@ -78,11 +86,11 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 				numberOfOpenPositions: 2,
 				capability: {
 					capabilityId: 2,
-					capabilityName: 'Engineering',
+					capabilityName: 'Data and AI',
 				},
 				band: {
 					bandId: 3,
-					bandName: 'Associate',
+					bandName: 'Consultant',
 				},
 			}),
 		};
@@ -141,6 +149,8 @@ describe('JobRoleRouter', () => {
 	it('returns 400 when the apply body is invalid', async () => {
 		const app = express();
 		app.use(express.json());
+	it('returns capabilityName and bandName in GET /job-roles list response', async () => {
+		const app = express();
 		app.use('/job-roles', JobRoleRouter);
 		const token = await createToken();
 
