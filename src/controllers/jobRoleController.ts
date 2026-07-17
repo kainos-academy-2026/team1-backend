@@ -13,10 +13,8 @@ export class JobRoleController {
 			const limitRaw = req.query.limit;
 			const offsetRaw = req.query.offset;
 
-			const limit =
-				typeof limitRaw === 'string' ? Number.parseInt(limitRaw, 10) : 10;
-			const offset =
-				typeof offsetRaw === 'string' ? Number.parseInt(offsetRaw, 10) : 0;
+			const limit = parseInt(limitRaw as string);
+			const offset = parseInt(offsetRaw as string);
 
 			if (
 				!Number.isInteger(limit) ||
@@ -40,7 +38,7 @@ export class JobRoleController {
 
 	async getById(req: Request, res: Response) {
 		try {
-			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			const jobRoleId = parseInt(req.params.jobRoleId);
 			if (Number.isNaN(jobRoleId)) {
 				return res.status(400).json({ error: 'Invalid job role ID' });
 			}
@@ -59,12 +57,12 @@ export class JobRoleController {
 
 	async applyForJobRole(req: Request, res: Response) {
 		try {
-			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			const jobRoleId = parseInt(req.params.jobRoleId);
 			if (Number.isNaN(jobRoleId)) {
 				return res.status(400).json({ error: 'Invalid job role ID' });
 			}
 
-			const userId = Number.parseInt(req.user?.sub ?? '', 10);
+			const userId = parseInt(req.user?.sub ?? '');
 			if (Number.isNaN(userId)) {
 				return res.status(401).json({ error: 'Invalid authentication token' });
 			}
@@ -92,7 +90,7 @@ export class JobRoleController {
 
 	async getApplicationsForJobRole(req: Request, res: Response) {
 		try {
-			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			const jobRoleId = parseInt(req.params.jobRoleId);
 			if (Number.isNaN(jobRoleId)) {
 				return res.status(400).json({ error: 'Invalid job role ID' });
 			}
@@ -107,8 +105,8 @@ export class JobRoleController {
 
 	async hireApplicant(req: Request, res: Response) {
 		try {
-			const jobRoleId = parseInt(req.params.jobRoleId, 10);
-			const applicationId = parseInt(req.params.applicationId, 10);
+			const jobRoleId = parseInt(req.params.jobRoleId);
+			const applicationId = parseInt(req.params.applicationId);
 			if (Number.isNaN(jobRoleId) || Number.isNaN(applicationId)) {
 				return res.status(400).json({ error: 'Invalid ID' });
 			}
@@ -128,7 +126,7 @@ export class JobRoleController {
 
 	async rejectApplicant(req: Request, res: Response) {
 		try {
-			const applicationId = parseInt(req.params.applicationId, 10);
+			const applicationId = parseInt(req.params.applicationId);
 			if (Number.isNaN(applicationId)) {
 				return res.status(400).json({ error: 'Invalid application ID' });
 			}

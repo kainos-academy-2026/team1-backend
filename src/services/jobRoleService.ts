@@ -90,7 +90,7 @@ export class JobRoleService {
 		);
 	}
 
-	async hireApplicant(applicationId: number, jobRoleId: number): Promise<void> {
+	private async findValidatedApplication(applicationId: number) {
 		const application =
 			await this.jobRoleDao.findApplicationById(applicationId);
 		if (!application) {
@@ -99,21 +99,17 @@ export class JobRoleService {
 		if (application.status !== Status.IN_PROGRESS) {
 			throw new ApplicationNotInProgressError();
 		}
-		await Promise.all([
-			this.jobRoleDao.updateApplicationStatus(applicationId, Status.HIRED),
-			this.jobRoleDao.decrementOpenPositions(jobRoleId),
-		]);
+		return application;
+	}
+
+	async hireApplicant(applicationId: number, jobRoleId: number): Promise<void> {
+		await this.findValidatedApplication(applicationId);
+		await this.jobRoleDao.updateApplicationStatus(applicationId, Status.HIRED);
+		await this.jobRoleDao.decrementOpenPositions(jobRoleId);
 	}
 
 	async rejectApplicant(applicationId: number): Promise<void> {
-		const application =
-			await this.jobRoleDao.findApplicationById(applicationId);
-		if (!application) {
-			throw new ApplicationNotFoundError();
-		}
-		if (application.status !== Status.IN_PROGRESS) {
-			throw new ApplicationNotInProgressError();
-		}
+		await this.findValidatedApplication(applicationId);
 		await this.jobRoleDao.updateApplicationStatus(
 			applicationId,
 			Status.REJECTED,

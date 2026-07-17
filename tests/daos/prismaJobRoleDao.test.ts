@@ -199,34 +199,45 @@ describe('PrismaJobRoleDao', () => {
 	});
 
 	it('updates the application status', async () => {
+		const updated = {
+			applicationId: 1,
+			status: 'HIRED',
+			userId: 7,
+			jobRoleId: 2,
+			cvURL: 'job-applications/2/7/cv.pdf',
+			dateApplied: new Date(),
+		};
 		const prisma = {
 			application: {
-				update: vi.fn().mockResolvedValue({}),
+				update: vi.fn().mockResolvedValue(updated),
 			},
 		};
 
 		const dao = new PrismaJobRoleDao(prisma as never);
-		await dao.updateApplicationStatus(1, 'HIRED' as never);
+		const result = await dao.updateApplicationStatus(1, 'HIRED' as never);
 
 		expect(prisma.application.update).toHaveBeenCalledWith({
 			where: { applicationId: 1 },
 			data: { status: 'HIRED' },
 		});
+		expect(result).toBe(updated);
 	});
 
 	it('decrements open positions for a job role', async () => {
+		const updated = { jobRoleId: 2, numberOfOpenPositions: 2 };
 		const prisma = {
 			jobRole: {
-				update: vi.fn().mockResolvedValue({}),
+				update: vi.fn().mockResolvedValue(updated),
 			},
 		};
 
 		const dao = new PrismaJobRoleDao(prisma as never);
-		await dao.decrementOpenPositions(2);
+		const result = await dao.decrementOpenPositions(2);
 
 		expect(prisma.jobRole.update).toHaveBeenCalledWith({
 			where: { jobRoleId: 2 },
 			data: { numberOfOpenPositions: { decrement: 1 } },
 		});
+		expect(result).toBe(updated);
 	});
 });

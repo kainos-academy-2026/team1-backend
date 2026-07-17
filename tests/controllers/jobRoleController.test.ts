@@ -14,7 +14,7 @@ describe('JobRoleController', () => {
 			findAll: vi.fn().mockResolvedValue(jobRoles),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
-		const req = { query: {} } as unknown as Request;
+		const req = { query: { limit: '10', offset: '0' } } as unknown as Request;
 		const res = {
 			set: vi.fn().mockReturnThis(),
 			status: vi.fn().mockReturnThis(),
@@ -102,7 +102,7 @@ describe('JobRoleController', () => {
 			findAll: vi.fn().mockRejectedValue(new Error('database failed')),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
-		const req = { query: {} } as unknown as Request;
+		const req = { query: { limit: '10', offset: '0' } } as unknown as Request;
 		const res = {
 			set: vi.fn().mockReturnThis(),
 			status: vi.fn().mockReturnThis(),

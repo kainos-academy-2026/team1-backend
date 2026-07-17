@@ -1,4 +1,4 @@
-import type { Application } from '../generated/prisma/client.js';
+import type { Application, JobRole } from '../generated/prisma/client.js';
 import type { Status } from '../generated/prisma/enums.js';
 import type {
 	ApplicationWithUser,
@@ -20,6 +20,6 @@ export interface JobRoleDao {
 		jobRoleId: number,
 	): Promise<ApplicationWithUser[]>;
 	findApplicationById(applicationId: number): Promise<Application | null>;
-	updateApplicationStatus(applicationId: number, status: Status): Promise<void>;
-	decrementOpenPositions(jobRoleId: number): Promise<void>;
+	updateApplicationStatus(applicationId: number, status: Status): Promise<Application>;
+	decrementOpenPositions(jobRoleId: number): Promise<JobRole>;
 }

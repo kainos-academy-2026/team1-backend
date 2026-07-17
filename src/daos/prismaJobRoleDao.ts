@@ -1,20 +1,21 @@
 import type {
 	Application,
+	JobRole,
 	Prisma,
 	PrismaClient,
 } from '../generated/prisma/client.js';
 import { Status } from '../generated/prisma/enums.js';
 import type { CreateApplicationData, JobRoleDao } from './jobRoleDao.js';
 
+const JOB_ROLE_INCLUDE = { capability: true, band: true } as const;
+const APPLICATION_WITH_USER_INCLUDE = { user: true } as const;
+
 export type ApplicationWithUser = Prisma.ApplicationGetPayload<{
-	include: { user: true };
+	include: typeof APPLICATION_WITH_USER_INCLUDE;
 }>;
 
 export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
-	include: {
-		capability: true;
-		band: true;
-	};
+	include: typeof JOB_ROLE_INCLUDE;
 }>;
 
 export class PrismaJobRoleDao implements JobRoleDao {
@@ -22,10 +23,7 @@ export class PrismaJobRoleDao implements JobRoleDao {
 
 	async findAll(limit: number, offset: number): Promise<JobRoleWithDetails[]> {
 		const rows = await this.prisma.jobRole.findMany({
-			include: {
-				capability: true,
-				band: true,
-			},
+			include: JOB_ROLE_INCLUDE,
 			orderBy: { jobRoleId: 'asc' },
 			take: limit,
 			skip: offset,
@@ -41,10 +39,7 @@ export class PrismaJobRoleDao implements JobRoleDao {
 	async findById(jobRoleId: number): Promise<JobRoleWithDetails | null> {
 		const row = await this.prisma.jobRole.findUnique({
 			where: { jobRoleId },
-			include: {
-				capability: true,
-				band: true,
-			},
+			include: JOB_ROLE_INCLUDE,
 		});
 		return row;
 	}
@@ -65,7 +60,7 @@ export class PrismaJobRoleDao implements JobRoleDao {
 	): Promise<ApplicationWithUser[]> {
 		return this.prisma.application.findMany({
 			where: { jobRoleId },
-			include: { user: true },
+			include: APPLICATION_WITH_USER_INCLUDE,
 			orderBy: { dateApplied: 'asc' },
 		});
 	}
@@ -81,15 +76,15 @@ export class PrismaJobRoleDao implements JobRoleDao {
 	async updateApplicationStatus(
 		applicationId: number,
 		status: Status,
-	): Promise<void> {
-		await this.prisma.application.update({
+	): Promise<Application> {
+		return this.prisma.application.update({
 			where: { applicationId },
 			data: { status },
 		});
 	}
 
-	async decrementOpenPositions(jobRoleId: number): Promise<void> {
-		await this.prisma.jobRole.update({
+	async decrementOpenPositions(jobRoleId: number): Promise<JobRole> {
+		return this.prisma.jobRole.update({
 			where: { jobRoleId },
 			data: { numberOfOpenPositions: { decrement: 1 } },
 		});
