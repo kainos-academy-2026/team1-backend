@@ -339,4 +339,174 @@ describe('JobRoleService', () => {
 		expect(s3Service.getPresignedUploadUrl).not.toHaveBeenCalled();
 		expect(jobRoleDao.createApplication).not.toHaveBeenCalled();
 	});
+
+	it('returns application responses with presigned download URLs', async () => {
+		const applications = [
+			{
+				applicationId: 1,
+				userId: 7,
+				jobRoleId: 2,
+				cvURL: 'job-applications/2/7/cv.pdf',
+				status: 'IN_PROGRESS',
+				dateApplied: new Date('2026-07-15T00:00:00.000Z'),
+				user: { userId: 7, email: 'alice@example.com' },
+			},
+		];
+
+		const jobRoleDao = {
+			findApplicationsByJobRoleId: vi.fn().mockResolvedValue(applications),
+		};
+		const s3Service = {
+			...createS3ServiceMock(),
+			getPresignedDownloadUrl: vi
+				.fn()
+				.mockResolvedValue('https://s3.example.com/download'),
+		} as unknown as S3Service;
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			s3Service,
+		);
+
+		const result = await service.getApplicationsForJobRole(2);
+
+		expect(jobRoleDao.findApplicationsByJobRoleId).toHaveBeenCalledWith(2);
+		expect(s3Service.getPresignedDownloadUrl).toHaveBeenCalledWith(
+			'job-applications/2/7/cv.pdf',
+		);
+		expect(result).toEqual([
+			{
+				applicationId: 1,
+				userId: 7,
+				userEmail: 'alice@example.com',
+				status: 'IN_PROGRESS',
+				dateApplied: new Date('2026-07-15T00:00:00.000Z'),
+				cvPresignedUrl: 'https://s3.example.com/download',
+			},
+		]);
+	});
+
+	it('throws ApplicationNotFoundError when hiring a missing application', async () => {
+		const { ApplicationNotFoundError } = await import(
+			'../../src/errors/applicationNotFoundError.js'
+		);
+		const jobRoleDao = {
+			findApplicationById: vi.fn().mockResolvedValue(null),
+		};
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			createS3ServiceMock(),
+		);
+
+		await expect(service.hireApplicant(99, 1)).rejects.toThrow(
+			ApplicationNotFoundError,
+		);
+	});
+
+	it('throws ApplicationNotInProgressError when hiring a non-in-progress application', async () => {
+		const { ApplicationNotInProgressError } = await import(
+			'../../src/errors/applicationNotInProgressError.js'
+		);
+		const jobRoleDao = {
+			findApplicationById: vi
+				.fn()
+				.mockResolvedValue({ applicationId: 1, status: 'HIRED' }),
+		};
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			createS3ServiceMock(),
+		);
+
+		await expect(service.hireApplicant(1, 2)).rejects.toThrow(
+			ApplicationNotInProgressError,
+		);
+	});
+
+	it('updates status to HIRED and decrements open positions', async () => {
+		const jobRoleDao = {
+			findApplicationById: vi
+				.fn()
+				.mockResolvedValue({ applicationId: 1, status: 'IN_PROGRESS' }),
+			updateApplicationStatus: vi.fn().mockResolvedValue(undefined),
+			decrementOpenPositions: vi.fn().mockResolvedValue(undefined),
+		};
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			createS3ServiceMock(),
+		);
+
+		await service.hireApplicant(1, 2);
+
+		expect(jobRoleDao.updateApplicationStatus).toHaveBeenCalledWith(1, 'HIRED');
+		expect(jobRoleDao.decrementOpenPositions).toHaveBeenCalledWith(2);
+	});
+
+	it('throws ApplicationNotFoundError when rejecting a missing application', async () => {
+		const { ApplicationNotFoundError } = await import(
+			'../../src/errors/applicationNotFoundError.js'
+		);
+		const jobRoleDao = {
+			findApplicationById: vi.fn().mockResolvedValue(null),
+		};
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			createS3ServiceMock(),
+		);
+
+		await expect(service.rejectApplicant(99)).rejects.toThrow(
+			ApplicationNotFoundError,
+		);
+	});
+
+	it('throws ApplicationNotInProgressError when rejecting a non-in-progress application', async () => {
+		const { ApplicationNotInProgressError } = await import(
+			'../../src/errors/applicationNotInProgressError.js'
+		);
+		const jobRoleDao = {
+			findApplicationById: vi
+				.fn()
+				.mockResolvedValue({ applicationId: 1, status: 'REJECTED' }),
+		};
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			createS3ServiceMock(),
+		);
+
+		await expect(service.rejectApplicant(1)).rejects.toThrow(
+			ApplicationNotInProgressError,
+		);
+	});
+
+	it('updates status to REJECTED', async () => {
+		const jobRoleDao = {
+			findApplicationById: vi
+				.fn()
+				.mockResolvedValue({ applicationId: 1, status: 'IN_PROGRESS' }),
+			updateApplicationStatus: vi.fn().mockResolvedValue(undefined),
+		};
+
+		const service = new JobRoleService(
+			jobRoleDao as never,
+			{} as never,
+			createS3ServiceMock(),
+		);
+
+		await service.rejectApplicant(1);
+
+		expect(jobRoleDao.updateApplicationStatus).toHaveBeenCalledWith(
+			1,
+			'REJECTED',
+		);
+	});
 });

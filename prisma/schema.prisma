@@ -56,6 +56,8 @@ enum Status {
   OPEN
   CLOSED
   IN_PROGRESS
+  HIRED
+  REJECTED
 }
 
 enum UserRole {

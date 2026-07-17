@@ -6,6 +6,10 @@ import type {
 import { Status } from '../generated/prisma/enums.js';
 import type { CreateApplicationData, JobRoleDao } from './jobRoleDao.js';
 
+export type ApplicationWithUser = Prisma.ApplicationGetPayload<{
+	include: { user: true };
+}>;
+
 export type JobRoleWithDetails = Prisma.JobRoleGetPayload<{
 	include: {
 		capability: true;
@@ -53,6 +57,41 @@ export class PrismaJobRoleDao implements JobRoleDao {
 				cvURL: data.cvURL,
 				status: Status.IN_PROGRESS,
 			},
+		});
+	}
+
+	async findApplicationsByJobRoleId(
+		jobRoleId: number,
+	): Promise<ApplicationWithUser[]> {
+		return this.prisma.application.findMany({
+			where: { jobRoleId },
+			include: { user: true },
+			orderBy: { dateApplied: 'asc' },
+		});
+	}
+
+	async findApplicationById(
+		applicationId: number,
+	): Promise<Application | null> {
+		return this.prisma.application.findUnique({
+			where: { applicationId },
+		});
+	}
+
+	async updateApplicationStatus(
+		applicationId: number,
+		status: Status,
+	): Promise<void> {
+		await this.prisma.application.update({
+			where: { applicationId },
+			data: { status },
+		});
+	}
+
+	async decrementOpenPositions(jobRoleId: number): Promise<void> {
+		await this.prisma.jobRole.update({
+			where: { jobRoleId },
+			data: { numberOfOpenPositions: { decrement: 1 } },
 		});
 	}
 }

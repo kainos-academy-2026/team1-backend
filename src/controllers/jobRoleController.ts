@@ -1,5 +1,7 @@
 import type { Request, Response } from 'express';
 import type { ApplyJobRoleRequest } from '../dtos/ApplyJobRoleRequest.js';
+import { ApplicationNotFoundError } from '../errors/applicationNotFoundError.js';
+import { ApplicationNotInProgressError } from '../errors/applicationNotInProgressError.js';
 import { JobRoleNotOpenError } from '../errors/jobRoleNotOpenError.js';
 import type { JobRoleService } from '../services/jobRoleService.js';
 
@@ -82,6 +84,62 @@ export class JobRoleController {
 			return res.status(200).json(application);
 		} catch (error) {
 			if (error instanceof JobRoleNotOpenError) {
+				return res.status(409).json({ error: error.message });
+			}
+			return res.status(500).json({ error: 'Internal server error' });
+		}
+	}
+
+	async getApplicationsForJobRole(req: Request, res: Response) {
+		try {
+			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			if (Number.isNaN(jobRoleId)) {
+				return res.status(400).json({ error: 'Invalid job role ID' });
+			}
+
+			const applications =
+				await this.jobRoleService.getApplicationsForJobRole(jobRoleId);
+			return res.status(200).json(applications);
+		} catch {
+			return res.status(500).json({ error: 'Internal server error' });
+		}
+	}
+
+	async hireApplicant(req: Request, res: Response) {
+		try {
+			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			const applicationId = parseInt(req.params.applicationId, 10);
+			if (Number.isNaN(jobRoleId) || Number.isNaN(applicationId)) {
+				return res.status(400).json({ error: 'Invalid ID' });
+			}
+
+			await this.jobRoleService.hireApplicant(applicationId, jobRoleId);
+			return res.status(200).json({ message: 'Applicant hired' });
+		} catch (error) {
+			if (error instanceof ApplicationNotFoundError) {
+				return res.status(404).json({ error: error.message });
+			}
+			if (error instanceof ApplicationNotInProgressError) {
+				return res.status(409).json({ error: error.message });
+			}
+			return res.status(500).json({ error: 'Internal server error' });
+		}
+	}
+
+	async rejectApplicant(req: Request, res: Response) {
+		try {
+			const applicationId = parseInt(req.params.applicationId, 10);
+			if (Number.isNaN(applicationId)) {
+				return res.status(400).json({ error: 'Invalid application ID' });
+			}
+
+			await this.jobRoleService.rejectApplicant(applicationId);
+			return res.status(200).json({ message: 'Applicant rejected' });
+		} catch (error) {
+			if (error instanceof ApplicationNotFoundError) {
+				return res.status(404).json({ error: error.message });
+			}
+			if (error instanceof ApplicationNotInProgressError) {
 				return res.status(409).json({ error: error.message });
 			}
 			return res.status(500).json({ error: 'Internal server error' });

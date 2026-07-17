@@ -151,4 +151,82 @@ describe('PrismaJobRoleDao', () => {
 		});
 		expect(result).toBe(created);
 	});
+
+	it('returns applications with user for a job role', async () => {
+		const applications = [
+			{
+				applicationId: 1,
+				userId: 7,
+				jobRoleId: 2,
+				cvURL: 'job-applications/2/7/cv.pdf',
+				status: 'IN_PROGRESS',
+				dateApplied: new Date(),
+				user: { userId: 7, email: 'alice@example.com' },
+			},
+		];
+
+		const prisma = {
+			application: {
+				findMany: vi.fn().mockResolvedValue(applications),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+		const result = await dao.findApplicationsByJobRoleId(2);
+
+		expect(prisma.application.findMany).toHaveBeenCalledWith({
+			where: { jobRoleId: 2 },
+			include: { user: true },
+			orderBy: { dateApplied: 'asc' },
+		});
+		expect(result).toBe(applications);
+	});
+
+	it('returns null when application not found by id', async () => {
+		const prisma = {
+			application: {
+				findUnique: vi.fn().mockResolvedValue(null),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+		const result = await dao.findApplicationById(99);
+
+		expect(prisma.application.findUnique).toHaveBeenCalledWith({
+			where: { applicationId: 99 },
+		});
+		expect(result).toBeNull();
+	});
+
+	it('updates the application status', async () => {
+		const prisma = {
+			application: {
+				update: vi.fn().mockResolvedValue({}),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+		await dao.updateApplicationStatus(1, 'HIRED' as never);
+
+		expect(prisma.application.update).toHaveBeenCalledWith({
+			where: { applicationId: 1 },
+			data: { status: 'HIRED' },
+		});
+	});
+
+	it('decrements open positions for a job role', async () => {
+		const prisma = {
+			jobRole: {
+				update: vi.fn().mockResolvedValue({}),
+			},
+		};
+
+		const dao = new PrismaJobRoleDao(prisma as never);
+		await dao.decrementOpenPositions(2);
+
+		expect(prisma.jobRole.update).toHaveBeenCalledWith({
+			where: { jobRoleId: 2 },
+			data: { numberOfOpenPositions: { decrement: 1 } },
+		});
+	});
 });
