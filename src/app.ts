@@ -1,8 +1,22 @@
+import cors from 'cors';
 import express from 'express';
 import JobRoleRouter from './routes/jobRoleRouter.js';
 import AuthRouter from './routes/loginRouter.js';
 
 const app = express();
+
+const corsOrigins = process.env.CORS_ORIGIN?.split(',')
+	.map((origin) => origin.trim())
+	.filter((origin) => origin.length > 0);
+
+if (corsOrigins && corsOrigins.length > 0) {
+	app.use(
+		cors({
+			origin: corsOrigins,
+			credentials: true,
+		}),
+	);
+}
 
 app.use(express.json());
 

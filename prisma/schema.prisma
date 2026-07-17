@@ -26,6 +26,7 @@ model JobRole {
   numberOfOpenPositions Int
   capability Capability @relation(fields: [capabilityId], references: [capabilityId])
   band       Band       @relation(fields: [bandId], references: [bandId])
+  applications Application[]
 
   @@map("job_roles")
 }
@@ -34,9 +35,32 @@ model User {
   userId       Int      @id @default(autoincrement())
   email        String   @unique
   password     String
-  role         String
+  role         UserRole @default(USER)
+  applications Application[]
 
   @@map("users")
+}
+
+model Application {
+  applicationId Int @id @default(autoincrement())
+  userId        Int
+  jobRoleId     Int
+  user          User @relation(fields: [userId], references: [userId])
+  jobRole       JobRole @relation(fields: [jobRoleId], references: [jobRoleId])
+  cvURL         String
+  status        Status @default(IN_PROGRESS)
+  dateApplied   DateTime @default(now())
+}
+
+enum Status {
+  OPEN
+  CLOSED
+  IN_PROGRESS
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model Capability {

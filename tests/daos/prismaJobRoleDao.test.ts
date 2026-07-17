@@ -117,15 +117,38 @@ describe('PrismaJobRoleDao', () => {
 		await expect(dao.findAll(10, 0)).rejects.toThrow('database failed');
 	});
 
-	it('propagates errors thrown by prisma', async () => {
+	it('creates an application with in progress status', async () => {
+		const created = {
+			applicationId: 1,
+			userId: 7,
+			jobRoleId: 2,
+			cvURL: 'job-applications/2/7/123-cv.pdf',
+			status: 'IN_PROGRESS',
+			dateApplied: new Date('2026-07-15T00:00:00.000Z'),
+		};
+
 		const prisma = {
-			jobRole: {
-				count: vi.fn().mockRejectedValue(new Error('database failed')),
+			application: {
+				create: vi.fn().mockResolvedValue(created),
 			},
 		};
 
 		const dao = new PrismaJobRoleDao(prisma as never);
 
-		await expect(dao.count()).rejects.toThrow('database failed');
+		const result = await dao.createApplication({
+			userId: 7,
+			jobRoleId: 2,
+			cvURL: 'job-applications/2/7/123-cv.pdf',
+		});
+
+		expect(prisma.application.create).toHaveBeenCalledWith({
+			data: {
+				userId: 7,
+				jobRoleId: 2,
+				cvURL: 'job-applications/2/7/123-cv.pdf',
+				status: 'IN_PROGRESS',
+			},
+		});
+		expect(result).toBe(created);
 	});
 });

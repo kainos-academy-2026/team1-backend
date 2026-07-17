@@ -18,9 +18,14 @@ export function authorize(
 			res.status(401).json({ message: 'Missing authentication token' });
 			return;
 		}
-		console.log('HEllo');
-		const payload = await tokenService.verify(token);
-		console.log(payload);
+
+		let payload: Awaited<ReturnType<JoseTokenService['verify']>> | null = null;
+		try {
+			payload = await tokenService.verify(token);
+		} catch {
+			payload = null;
+		}
+
 		if (!payload) {
 			res.status(401).json({ message: 'Invalid authentication token' });
 			return;
