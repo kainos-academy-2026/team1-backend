@@ -39,6 +39,14 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 					bandId: 3,
 					closingDate: new Date('2026-07-01T00:00:00.000Z'),
 					status: 'open',
+					capability: {
+						capabilityId: 2,
+						capabilityName: 'Data and AI',
+					},
+					band: {
+						bandId: 3,
+						bandName: 'Consultant',
+					},
 				},
 			]),
 			count: vi.fn().mockResolvedValue(1),
@@ -57,11 +65,11 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 				numberOfOpenPositions: 2,
 				capability: {
 					capabilityId: 2,
-					capabilityName: 'Engineering',
+					capabilityName: 'Data and AI',
 				},
 				band: {
 					bandId: 3,
-					bandName: 'Associate',
+					bandName: 'Consultant',
 				},
 			}),
 		};
@@ -103,5 +111,42 @@ describe('JobRoleRouter', () => {
 
 		expect(response.status).toBe(200);
 		expect(response.body.id).toBe(1);
+	});
+
+	it('returns capabilityName and bandName in GET /job-roles list response', async () => {
+		const app = express();
+		app.use('/job-roles', JobRoleRouter);
+		const token = await createToken();
+
+		const response = await request(app)
+			.get('/job-roles')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.status).toBe(200);
+		expect(response.body).toHaveLength(1);
+		const jobRole = response.body[0];
+		expect(jobRole.capabilityName).toBe('Data and AI');
+		expect(jobRole.bandName).toBe('Consultant');
+		expect(jobRole.capabilityId).toBe(2);
+		expect(jobRole.bandId).toBe(3);
+	});
+
+	it('regression: fails if capability or band joins are removed from list query', async () => {
+		const app = express();
+		app.use('/job-roles', JobRoleRouter);
+		const token = await createToken();
+
+		const response = await request(app)
+			.get('/job-roles')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.status).toBe(200);
+		const jobRole = response.body[0];
+
+		// These fields must be present and non-empty strings
+		expect(typeof jobRole.capabilityName).toBe('string');
+		expect(jobRole.capabilityName.length).toBeGreaterThan(0);
+		expect(typeof jobRole.bandName).toBe('string');
+		expect(jobRole.bandName.length).toBeGreaterThan(0);
 	});
 });
