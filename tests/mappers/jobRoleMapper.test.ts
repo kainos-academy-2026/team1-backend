@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { JobRole } from '../../src/generated/prisma/client.js';
+import type { JobRoleWithDetails } from '../../src/daos/prismaJobRoleDao.js';
 import JobRoleMapper from '../../src/mappers/jobRoleMapper.js';
 
 describe('JobRoleMapper', () => {
@@ -14,14 +14,24 @@ describe('JobRoleMapper', () => {
 			bandId: 3,
 			closingDate,
 			status: 'OPEN',
-		} as JobRole;
+			capability: {
+				capabilityId: 2,
+				capabilityName: 'Data and AI',
+			},
+			band: {
+				bandId: 3,
+				bandName: 'Consultant',
+			},
+		} as JobRoleWithDetails;
 
 		expect(mapper.toJobRoleResponse(jobRole)).toEqual({
 			id: 1,
 			roleName: 'Engineer',
 			location: 'Belfast',
 			capabilityId: 2,
+			capabilityName: 'Data and AI',
 			bandId: 3,
+			bandName: 'Consultant',
 			closingDate: new Date(closingDate),
 			status: 'OPEN',
 		});
@@ -38,14 +48,24 @@ describe('JobRoleMapper', () => {
 			bandId: 3,
 			closingDate,
 			status: 'open',
-		} as JobRole;
+			capability: {
+				capabilityId: 2,
+				capabilityName: 'Data and AI',
+			},
+			band: {
+				bandId: 3,
+				bandName: 'Consultant',
+			},
+		} as JobRoleWithDetails;
 
 		expect(mapper.toJobRoleResponse(jobRole)).toEqual({
 			id: 1,
 			roleName: 'Engineer',
 			location: 'Belfast',
 			capabilityId: 2,
+			capabilityName: 'Data and AI',
 			bandId: 3,
+			bandName: 'Consultant',
 			closingDate: new Date(closingDate),
 			status: 'OPEN',
 		});
