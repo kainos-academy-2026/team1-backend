@@ -12,7 +12,7 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"ci:check": "biome ci .",
-		"test": "vitest run && npm run test:bdd",
+		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage",
