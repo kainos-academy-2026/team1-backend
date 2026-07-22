@@ -27,14 +27,21 @@ Given('I am authenticated as a user', async function (this: CustomWorld) {
 	this.authToken = body.token;
 });
 
-Given('I clear my authentication token', function (this: CustomWorld) {
-	this.authToken = null;
-});
-
 When(
 	'I send a GET request to {string}',
 	async function (this: CustomWorld, path: string) {
 		await this.makeRequest('GET', path);
+	},
+);
+
+Then(
+	'the response status should be {int}',
+	function (this: CustomWorld, expected: number) {
+		assert.equal(
+			this.response.status,
+			expected,
+			`Expected status ${expected}, got ${this.response.status}. Body: ${JSON.stringify(this.response.body)}`,
+		);
 	},
 );
 
@@ -48,3 +55,4 @@ Then(
 		);
 	},
 );
+
