@@ -1,5 +1,5 @@
-import { Given, Then, When } from '@cucumber/cucumber';
 import assert from 'node:assert/strict';
+import { Given, Then, When } from '@cucumber/cucumber';
 import type { CustomWorld } from '../support/world.js';
 
 // Generates a unique email per scenario run to avoid duplicate conflicts

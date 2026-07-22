@@ -1,7 +1,7 @@
 import {
 	type IWorldOptions,
-	World,
 	setWorldConstructor,
+	World,
 } from '@cucumber/cucumber';
 import { resolveApiBaseUrl } from '../../config/environment.js';
 
