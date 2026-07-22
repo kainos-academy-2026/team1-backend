@@ -1,8 +1,4 @@
-import {
-	type IWorldOptions,
-	setWorldConstructor,
-	World,
-} from '@cucumber/cucumber';
+import { setWorldConstructor, World } from '@cucumber/cucumber';
 import { resolveApiBaseUrl } from '../../config/environment.js';
 
 const BASE_URL = process.env.API_BASE_URL ?? resolveApiBaseUrl();
@@ -21,10 +17,6 @@ export class CustomWorld extends World {
 	response: ApiResponse = { status: 0, body: null };
 	authToken: string | null = null;
 
-	constructor(options: IWorldOptions) {
-		super(options);
-	}
-
 	async makeRequest(
 		method: string,
 		path: string,
@@ -34,7 +26,7 @@ export class CustomWorld extends World {
 			'Content-Type': 'application/json',
 		};
 		if (this.authToken) {
-			headers['Authorization'] = `Bearer ${this.authToken}`;
+			headers.Authorization = `Bearer ${this.authToken}`;
 		}
 
 		const res = await fetch(`${this.baseUrl}${path}`, {
