@@ -98,7 +98,6 @@ vi.mock('../../src/generated/prisma/client.js', () => ({
 }));
 
 describe('JobRoleRouter', () => {
-
 	it('wires authenticated GET /job-roles to controller.getAll', async () => {
 		const app = express();
 		app.use('/job-roles', JobRoleRouter);

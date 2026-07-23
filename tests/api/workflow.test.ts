@@ -1,5 +1,5 @@
-import request from 'supertest';
 import * as jose from 'jose';
+import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { app } from '../../src/app.js';
 
@@ -17,7 +17,14 @@ function createToken(role: 'ADMIN' | 'USER' = 'USER'): Promise<string> {
 		.sign(new TextEncoder().encode(SECRET));
 }
 
-const { createUserMock, findUniqueMock, findManyMock, countMock, findByIdMock, createApplicationMock } = vi.hoisted(() => ({
+const {
+	createUserMock,
+	findUniqueMock,
+	findManyMock,
+	countMock,
+	findByIdMock,
+	createApplicationMock,
+} = vi.hoisted(() => ({
 	createUserMock: vi.fn(),
 	findUniqueMock: vi.fn(),
 	findManyMock: vi.fn(),
@@ -184,7 +191,10 @@ describe('API Workflow Tests', () => {
 			expect(rolesRes.status).toBe(200);
 			expect(Array.isArray(rolesRes.body)).toBe(true);
 			expect(rolesRes.body).toHaveLength(1);
-			expect(rolesRes.body[0]).toHaveProperty('roleName', 'Senior Software Engineer');
+			expect(rolesRes.body[0]).toHaveProperty(
+				'roleName',
+				'Senior Software Engineer',
+			);
 			expect(rolesRes.body[0]).toHaveProperty('capabilityName', 'Data and AI');
 
 			// 4. View job role details
@@ -194,7 +204,10 @@ describe('API Workflow Tests', () => {
 
 			expect(roleDetailsRes.status).toBe(200);
 			expect(roleDetailsRes.body).toHaveProperty('id', 1);
-			expect(roleDetailsRes.body).toHaveProperty('description', 'Lead backend development.');
+			expect(roleDetailsRes.body).toHaveProperty(
+				'description',
+				'Lead backend development.',
+			);
 
 			// 5. Apply for job role
 			const applyRes = await request(app)
@@ -305,7 +318,9 @@ describe('API Workflow Tests', () => {
 				});
 
 			expect(applyRes.status).toBe(409);
-			expect(applyRes.body).toEqual({ error: 'Job role is not open for applications' });
+			expect(applyRes.body).toEqual({
+				error: 'Job role is not open for applications',
+			});
 		});
 
 		it('applying for a job role with invalid file type returns 400', async () => {
@@ -370,4 +385,3 @@ describe('API Workflow Tests', () => {
 		});
 	});
 });
-
