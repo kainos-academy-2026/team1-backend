@@ -1,0 +1,76 @@
+[
+	{
+		"description": "  As an authenticated user\n  I want to browse and view job role listings\n  So that I can find and apply for roles",
+		"elements": [
+			{
+				"description": "",
+				"id": "job-roles;authenticated-user-can-retrieve-all-job-roles",
+				"keyword": "Scenario",
+				"line": 9,
+				"name": "Authenticated user can retrieve all job roles",
+				"steps": [
+					{
+						"result": {
+							"status": "passed",
+							"duration": 74119583
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 7,
+						"name": "I am authenticated as a user",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:5"
+						}
+					},
+					{
+						"result": {
+							"status": "passed",
+							"duration": 10938000
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 10,
+						"name": "I send a GET request to \"/job-roles\"",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:30"
+						}
+					},
+					{
+						"result": {
+							"status": "passed",
+							"duration": 66416
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 11,
+						"name": "the response status should be 200",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:37"
+						}
+					},
+					{
+						"result": {
+							"status": "passed",
+							"duration": 32791
+						},
+						"arguments": [],
+						"keyword": "And ",
+						"line": 12,
+						"name": "the response body should be a paginated list",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:48"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			}
+		],
+		"id": "job-roles",
+		"line": 1,
+		"keyword": "Feature",
+		"name": "Job Roles",
+		"tags": [],
+		"uri": "tests/bdd/features/jobRoles.feature"
+	}
+]

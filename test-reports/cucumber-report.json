@@ -1,0 +1,496 @@
+[
+	{
+		"description": "",
+		"elements": [
+			{
+				"description": "",
+				"id": "authentication;user-can-sign-up-with-valid-credentials",
+				"keyword": "Scenario",
+				"line": 3,
+				"name": "User can sign up with valid credentials",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1597707,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/authSteps.ts:25:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 4,
+						"name": "I sign up with a unique email and password \"Password1!\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:22"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 5,
+						"name": "the response status should be 201",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "authentication;user-cannot-sign-up-with-an-invalid-password",
+				"keyword": "Scenario",
+				"line": 7,
+				"name": "User cannot sign up with an invalid password",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1507124,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/authSteps.ts:25:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 8,
+						"name": "I sign up with a unique email and password \"weak\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:22"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 9,
+						"name": "the response status should be 400",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "authentication;user-cannot-sign-up-with-a-duplicate-email",
+				"keyword": "Scenario",
+				"line": 11,
+				"name": "User cannot sign up with a duplicate email",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1239374,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/authSteps.ts:13:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 12,
+						"name": "a user already exists with email \"bdd_duplicate@example.com\" and password \"Password1!\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:10"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 13,
+						"name": "I sign up with email \"bdd_duplicate@example.com\" and password \"Password1!\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:32"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 14,
+						"name": "the response status should be 409",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "authentication;user-can-log-in-with-valid-credentials",
+				"keyword": "Scenario",
+				"line": 16,
+				"name": "User can log in with valid credentials",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1298624,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/authSteps.ts:13:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 17,
+						"name": "a user already exists with email \"bdd_login@example.com\" and password \"Password1!\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:10"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 18,
+						"name": "I log in with email \"bdd_login@example.com\" and password \"Password1!\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:39"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 19,
+						"name": "the response status should be 200",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "And ",
+						"line": 20,
+						"name": "the response body should contain a \"token\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:57"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "authentication;user-cannot-log-in-with-incorrect-password",
+				"keyword": "Scenario",
+				"line": 22,
+				"name": "User cannot log in with incorrect password",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 2073374,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/authSteps.ts:42:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 23,
+						"name": "I log in with email \"bdd_login@example.com\" and password \"WrongPass1!\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:39"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 24,
+						"name": "the response status should be 401",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			}
+		],
+		"id": "authentication",
+		"line": 1,
+		"keyword": "Feature",
+		"name": "Authentication",
+		"tags": [],
+		"uri": "tests/bdd/features/auth.feature"
+	},
+	{
+		"description": "",
+		"elements": [
+			{
+				"description": "",
+				"id": "job-roles;authenticated-user-can-retrieve-all-job-roles",
+				"keyword": "Scenario",
+				"line": 6,
+				"name": "Authenticated user can retrieve all job roles",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1879209,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/jobRoleSteps.ts:11:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 4,
+						"name": "I am authenticated as a user",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:5"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 7,
+						"name": "I send a GET request to \"/job-roles\"",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:34"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 8,
+						"name": "the response status should be 200",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "And ",
+						"line": 9,
+						"name": "the response body should be a paginated list",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:41"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "job-roles;authenticated-user-can-retrieve-a-job-role-by-id",
+				"keyword": "Scenario",
+				"line": 11,
+				"name": "Authenticated user can retrieve a job role by ID",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1050250,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/jobRoleSteps.ts:11:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 4,
+						"name": "I am authenticated as a user",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:5"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 12,
+						"name": "I send a GET request to \"/job-roles/1\"",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:34"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 13,
+						"name": "the response status should be 200",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "And ",
+						"line": 14,
+						"name": "the response body should contain a \"roleName\"",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:57"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "job-roles;request-for-a-non-existent-job-role-returns-404",
+				"keyword": "Scenario",
+				"line": 16,
+				"name": "Request for a non-existent job role returns 404",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1026291,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/jobRoleSteps.ts:11:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 4,
+						"name": "I am authenticated as a user",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:5"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 17,
+						"name": "I send a GET request to \"/job-roles/999999\"",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:34"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 18,
+						"name": "the response status should be 404",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			},
+			{
+				"description": "",
+				"id": "job-roles;unauthenticated-request-to-job-roles-is-rejected",
+				"keyword": "Scenario",
+				"line": 20,
+				"name": "Unauthenticated request to job roles is rejected",
+				"steps": [
+					{
+						"result": {
+							"status": "failed",
+							"duration": 1054500,
+							"error_message": "TypeError: fetch failed\n    at node:internal/deps/undici/undici:15141:13\n    at async CustomWorld.makeRequest (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/support/world.ts:39:15)\n    at async CustomWorld.<anonymous> (/Users/ellie.shevlin/projects/mini_project/team1-backend/tests/bdd/steps/jobRoleSteps.ts:11:3)\nCaused by: SocketError: other side closed\n    at Socket.<anonymous> (node:internal/deps/undici/undici:6497:28)\n    at Socket.emit (node:events:531:35)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 4,
+						"name": "I am authenticated as a user",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:5"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Given ",
+						"line": 21,
+						"name": "I clear my authentication token",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:30"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "When ",
+						"line": 22,
+						"name": "I send a GET request to \"/job-roles\"",
+						"match": {
+							"location": "tests/bdd/steps/jobRoleSteps.ts:34"
+						}
+					},
+					{
+						"result": {
+							"status": "skipped",
+							"duration": 0
+						},
+						"arguments": [],
+						"keyword": "Then ",
+						"line": 23,
+						"name": "the response status should be 401",
+						"match": {
+							"location": "tests/bdd/steps/authSteps.ts:46"
+						}
+					}
+				],
+				"tags": [],
+				"type": "scenario"
+			}
+		],
+		"id": "job-roles",
+		"line": 1,
+		"keyword": "Feature",
+		"name": "Job Roles",
+		"tags": [],
+		"uri": "tests/bdd/features/jobRoles.feature"
+	}
+]
