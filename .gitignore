@@ -37,3 +37,6 @@ coverage/
 /src/generated/prisma
 
 compose.yaml
+
+# Test reports
+test-reports/
