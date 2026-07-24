@@ -14,7 +14,7 @@ describe('JobRoleController', () => {
 			findAll: vi.fn().mockResolvedValue(jobRoles),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
-		const req = { query: {} } as unknown as Request;
+		const req = { query: { limit: '10', offset: '0' } } as unknown as Request;
 		const res = {
 			set: vi.fn().mockReturnThis(),
 			status: vi.fn().mockReturnThis(),
@@ -102,7 +102,7 @@ describe('JobRoleController', () => {
 			findAll: vi.fn().mockRejectedValue(new Error('database failed')),
 		};
 		const controller = new JobRoleController(jobRoleService as never);
-		const req = { query: {} } as unknown as Request;
+		const req = { query: { limit: '10', offset: '0' } } as unknown as Request;
 		const res = {
 			set: vi.fn().mockReturnThis(),
 			status: vi.fn().mockReturnThis(),
@@ -287,5 +287,194 @@ describe('JobRoleController', () => {
 		);
 		expect(res.status).toHaveBeenCalledWith(200);
 		expect(res.json).toHaveBeenCalledWith(presignedUpload);
+	});
+
+	it('returns 400 when job role ID is invalid for getApplicationsForJobRole', async () => {
+		const jobRoleService = { getApplicationsForJobRole: vi.fn() };
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = { params: { jobRoleId: 'invalid' } } as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getApplicationsForJobRole(req, res);
+
+		expect(jobRoleService.getApplicationsForJobRole).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(400);
+	});
+
+	it('returns 200 with applications list', async () => {
+		const applications = [
+			{
+				applicationId: 1,
+				userId: 7,
+				userEmail: 'alice@example.com',
+				status: 'IN_PROGRESS',
+				dateApplied: new Date(),
+				cvPresignedUrl: 'https://s3.example.com/download',
+			},
+		];
+		const jobRoleService = {
+			getApplicationsForJobRole: vi.fn().mockResolvedValue(applications),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = { params: { jobRoleId: '2' } } as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.getApplicationsForJobRole(req, res);
+
+		expect(jobRoleService.getApplicationsForJobRole).toHaveBeenCalledWith(2);
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith(applications);
+	});
+
+	it('returns 400 when application ID is invalid for hireApplicant', async () => {
+		const jobRoleService = { hireApplicant: vi.fn() };
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1', applicationId: 'invalid' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.hireApplicant(req, res);
+
+		expect(jobRoleService.hireApplicant).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(400);
+	});
+
+	it('returns 404 when hireApplicant throws ApplicationNotFoundError', async () => {
+		const { ApplicationNotFoundError } = await import(
+			'../../src/errors/applicationNotFoundError.js'
+		);
+		const jobRoleService = {
+			hireApplicant: vi.fn().mockRejectedValue(new ApplicationNotFoundError()),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1', applicationId: '99' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.hireApplicant(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(404);
+		expect(res.json).toHaveBeenCalledWith({ error: 'Application not found' });
+	});
+
+	it('returns 409 when hireApplicant throws ApplicationNotInProgressError', async () => {
+		const { ApplicationNotInProgressError } = await import(
+			'../../src/errors/applicationNotInProgressError.js'
+		);
+		const jobRoleService = {
+			hireApplicant: vi
+				.fn()
+				.mockRejectedValue(new ApplicationNotInProgressError()),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '1', applicationId: '1' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.hireApplicant(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(409);
+		expect(res.json).toHaveBeenCalledWith({
+			error: 'Application is not in progress',
+		});
+	});
+
+	it('returns 200 when hireApplicant succeeds', async () => {
+		const jobRoleService = {
+			hireApplicant: vi.fn().mockResolvedValue(undefined),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { jobRoleId: '2', applicationId: '1' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.hireApplicant(req, res);
+
+		expect(jobRoleService.hireApplicant).toHaveBeenCalledWith(1, 2);
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith({ message: 'Applicant hired' });
+	});
+
+	it('returns 400 when application ID is invalid for rejectApplicant', async () => {
+		const jobRoleService = { rejectApplicant: vi.fn() };
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { applicationId: 'invalid' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.rejectApplicant(req, res);
+
+		expect(jobRoleService.rejectApplicant).not.toHaveBeenCalled();
+		expect(res.status).toHaveBeenCalledWith(400);
+	});
+
+	it('returns 404 when rejectApplicant throws ApplicationNotFoundError', async () => {
+		const { ApplicationNotFoundError } = await import(
+			'../../src/errors/applicationNotFoundError.js'
+		);
+		const jobRoleService = {
+			rejectApplicant: vi
+				.fn()
+				.mockRejectedValue(new ApplicationNotFoundError()),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { applicationId: '99' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.rejectApplicant(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(404);
+		expect(res.json).toHaveBeenCalledWith({ error: 'Application not found' });
+	});
+
+	it('returns 200 when rejectApplicant succeeds', async () => {
+		const jobRoleService = {
+			rejectApplicant: vi.fn().mockResolvedValue(undefined),
+		};
+		const controller = new JobRoleController(jobRoleService as never);
+		const req = {
+			params: { applicationId: '1' },
+		} as unknown as Request;
+		const res = {
+			status: vi.fn().mockReturnThis(),
+			json: vi.fn(),
+		} as unknown as Response;
+
+		await controller.rejectApplicant(req, res);
+
+		expect(jobRoleService.rejectApplicant).toHaveBeenCalledWith(1);
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(res.json).toHaveBeenCalledWith({ message: 'Applicant rejected' });
 	});
 });

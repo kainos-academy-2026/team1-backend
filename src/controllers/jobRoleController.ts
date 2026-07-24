@@ -1,5 +1,7 @@
 import type { Request, Response } from 'express';
 import type { ApplyJobRoleRequest } from '../dtos/ApplyJobRoleRequest.js';
+import { ApplicationNotFoundError } from '../errors/applicationNotFoundError.js';
+import { ApplicationNotInProgressError } from '../errors/applicationNotInProgressError.js';
 import { JobRoleNotOpenError } from '../errors/jobRoleNotOpenError.js';
 import type { JobRoleService } from '../services/jobRoleService.js';
 
@@ -11,10 +13,8 @@ export class JobRoleController {
 			const limitRaw = req.query.limit;
 			const offsetRaw = req.query.offset;
 
-			const limit =
-				typeof limitRaw === 'string' ? Number.parseInt(limitRaw, 10) : 10;
-			const offset =
-				typeof offsetRaw === 'string' ? Number.parseInt(offsetRaw, 10) : 0;
+			const limit = parseInt(limitRaw as string);
+			const offset = parseInt(offsetRaw as string);
 
 			if (
 				!Number.isInteger(limit) ||
@@ -38,7 +38,7 @@ export class JobRoleController {
 
 	async getById(req: Request, res: Response) {
 		try {
-			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			const jobRoleId = parseInt(req.params.jobRoleId);
 			if (Number.isNaN(jobRoleId)) {
 				return res.status(400).json({ error: 'Invalid job role ID' });
 			}
@@ -57,12 +57,12 @@ export class JobRoleController {
 
 	async applyForJobRole(req: Request, res: Response) {
 		try {
-			const jobRoleId = parseInt(req.params.jobRoleId, 10);
+			const jobRoleId = parseInt(req.params.jobRoleId);
 			if (Number.isNaN(jobRoleId)) {
 				return res.status(400).json({ error: 'Invalid job role ID' });
 			}
 
-			const userId = Number.parseInt(req.user?.sub ?? '', 10);
+			const userId = parseInt(req.user?.sub ?? '');
 			if (Number.isNaN(userId)) {
 				return res.status(401).json({ error: 'Invalid authentication token' });
 			}
@@ -82,6 +82,62 @@ export class JobRoleController {
 			return res.status(200).json(application);
 		} catch (error) {
 			if (error instanceof JobRoleNotOpenError) {
+				return res.status(409).json({ error: error.message });
+			}
+			return res.status(500).json({ error: 'Internal server error' });
+		}
+	}
+
+	async getApplicationsForJobRole(req: Request, res: Response) {
+		try {
+			const jobRoleId = parseInt(req.params.jobRoleId);
+			if (Number.isNaN(jobRoleId)) {
+				return res.status(400).json({ error: 'Invalid job role ID' });
+			}
+
+			const applications =
+				await this.jobRoleService.getApplicationsForJobRole(jobRoleId);
+			return res.status(200).json(applications);
+		} catch {
+			return res.status(500).json({ error: 'Internal server error' });
+		}
+	}
+
+	async hireApplicant(req: Request, res: Response) {
+		try {
+			const jobRoleId = parseInt(req.params.jobRoleId);
+			const applicationId = parseInt(req.params.applicationId);
+			if (Number.isNaN(jobRoleId) || Number.isNaN(applicationId)) {
+				return res.status(400).json({ error: 'Invalid ID' });
+			}
+
+			await this.jobRoleService.hireApplicant(applicationId, jobRoleId);
+			return res.status(200).json({ message: 'Applicant hired' });
+		} catch (error) {
+			if (error instanceof ApplicationNotFoundError) {
+				return res.status(404).json({ error: error.message });
+			}
+			if (error instanceof ApplicationNotInProgressError) {
+				return res.status(409).json({ error: error.message });
+			}
+			return res.status(500).json({ error: 'Internal server error' });
+		}
+	}
+
+	async rejectApplicant(req: Request, res: Response) {
+		try {
+			const applicationId = parseInt(req.params.applicationId);
+			if (Number.isNaN(applicationId)) {
+				return res.status(400).json({ error: 'Invalid application ID' });
+			}
+
+			await this.jobRoleService.rejectApplicant(applicationId);
+			return res.status(200).json({ message: 'Applicant rejected' });
+		} catch (error) {
+			if (error instanceof ApplicationNotFoundError) {
+				return res.status(404).json({ error: error.message });
+			}
+			if (error instanceof ApplicationNotInProgressError) {
 				return res.status(409).json({ error: error.message });
 			}
 			return res.status(500).json({ error: 'Internal server error' });
