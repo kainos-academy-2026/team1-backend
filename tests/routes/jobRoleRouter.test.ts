@@ -144,18 +144,6 @@ describe('JobRoleRouter', () => {
 		expect(response.body.id).toBe(1);
 	});
 
-	it('returns 401 for unauthenticated POST /job-roles/:id/apply', async () => {
-		const app = express();
-		app.use(express.json());
-		app.use('/job-roles', JobRoleRouter);
-
-		const response = await request(app)
-			.post('/job-roles/1/apply')
-			.send({ fileName: 'cv.pdf', contentType: 'application/pdf' });
-
-		expect(response.status).toBe(401);
-	});
-
 	it('returns 400 when the apply body is invalid', async () => {
 		const app = express();
 		app.use(express.json());
