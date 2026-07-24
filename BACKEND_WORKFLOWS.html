@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Workflows</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .diagram-container {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .section {
+            margin: 40px 0;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .section h3 {
+            color: #764ba2;
+            margin: 20px 0 10px 0;
+            font-size: 1.1em;
+        }
+        .endpoint-group {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        .method {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .get { color: #61affe; }
+        .post { color: #49cc90; }
+        .path { color: #333; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .priority-high {
+            background: #fff3cd;
+        }
+        .priority-medium {
+            background: #e7f3ff;
+        }
+        footer {
+            background: #f5f7fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9em;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔌 Backend API Workflows</h1>
+            <p>Visual guide for backend API testing with Playwright</p>
+        </div>
+        
+        <div class="content">
+            <p style="margin-bottom: 30px; font-size: 1.05em; color: #555; line-height: 1.8;">
+                This diagram shows the main API workflows in the team1-backend. 
+                Use this as a reference when selecting API endpoints to test with Playwright.
+            </p>
+
+            <div class="diagram-container">
+                <div class="mermaid">
+                    graph TD
+                        A["🌐 API Request"] --> B{Endpoint Type?}
+                        
+                        B -->|Auth| C["🔐 Authentication"]
+                        C --> C1["POST /auth/signup"]
+                        C1 --> C1A["Validate Input<br/>Schema Check"]
+                        C1A --> C1B{Valid?}
+                        C1B -->|Yes| C1C["✅ Create User<br/>Hash Password<br/>Save to DB"]
+                        C1B -->|No| C1D["❌ Return 400<br/>Validation Error"]
+                        
+                        C --> C2["POST /auth/login"]
+                        C2 --> C2A["Validate Credentials<br/>Schema Check"]
+                        C2A --> C2B{Credentials Valid?}
+                        C2B -->|Yes| C2C["✅ Generate JWT<br/>Return Token"]
+                        C2B -->|No| C2D["❌ Return 401<br/>Invalid Credentials"]
+                        
+                        B -->|Job Roles| D["💼 Job Roles"]
+                        D --> D1["GET /job-roles"]
+                        D1 --> D1A["Authorize Token<br/>Check User Role"]
+                        D1A --> D1B{Role Valid?}
+                        D1B -->|Yes| D1C["✅ Query Database<br/>Return All Roles"]
+                        D1B -->|No| D1D["❌ Return 403<br/>Unauthorized"]
+                        
+                        D --> D2["GET /job-roles/:id"]
+                        D2 --> D2A["Authorize Token<br/>Validate ID"]
+                        D2A --> D2B{Valid?}
+                        D2B -->|Yes| D2C["✅ Query Database<br/>Return Details"]
+                        D2B -->|No| D2D["❌ Return 404<br/>Not Found"]
+                        
+                        D --> D3["POST /job-roles/:id/apply"]
+                        D3 --> D3A["Authorize Token<br/>Validate Payload"]
+                        D3A --> D3B{Valid?}
+                        D3B -->|Yes| D3C["✅ Save Application<br/>Return 201 Created"]
+                        D3B -->|No| D3D["❌ Return 400<br/>Invalid Data"]
+                        
+                        C1C --> A
+                        C2C --> A
+                        D1C --> A
+                        D2C --> A
+                        D3C --> A
+                        C1D --> A
+                        C2D --> A
+                        D1D --> A
+                        D2D --> A
+                        D3D --> A
+                        
+                        style A fill:#e1f5ff
+                        style C fill:#fff3e0
+                        style D fill:#f3e5f5
+                        style C1C fill:#c8e6c9
+                        style C2C fill:#c8e6c9
+                        style D1C fill:#c8e6c9
+                        style D2C fill:#c8e6c9
+                        style D3C fill:#c8e6c9
+                        style C1D fill:#ffcdd2
+                        style C2D fill:#ffcdd2
+                        style D1D fill:#ffcdd2
+                        style D2D fill:#ffcdd2
+                        style D3D fill:#ffcdd2
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📡 API Endpoints</h2>
+                
+                <h3>Authentication</h3>
+                <div class="endpoint-group">
+                    <div class="method"><span class="post">POST</span> <span class="path">/auth/signup</span></div>
+                    <p>Create new user account</p>
+                    <p>Validates: email, password, name</p>
+                    <p>Returns: User ID, created timestamp</p>
+                </div>
+                <div class="endpoint-group">
+                    <div class="method"><span class="post">POST</span> <span class="path">/auth/login</span></div>
+                    <p>Authenticate user and generate JWT</p>
+                    <p>Validates: email, password</p>
+                    <p>Returns: JWT token</p>
+                </div>
+
+                <h3>Job Roles</h3>
+                <div class="endpoint-group">
+                    <div class="method"><span class="get">GET</span> <span class="path">/job-roles</span></div>
+                    <p>Retrieve all job roles (paginated)</p>
+                    <p>Authorization: Admin, User</p>
+                    <p>Returns: Array of job role objects</p>
+                </div>
+                <div class="endpoint-group">
+                    <div class="method"><span class="get">GET</span> <span class="path">/job-roles/:jobRoleId</span></div>
+                    <p>Get specific job role details</p>
+                    <p>Authorization: Admin, User</p>
+                    <p>Returns: Single job role object</p>
+                </div>
+                <div class="endpoint-group">
+                    <div class="method"><span class="post">POST</span> <span class="path">/job-roles/:jobRoleId/apply</span></div>
+                    <p>Submit application for a job role</p>
+                    <p>Authorization: Admin, User</p>
+                    <p>Validates: application payload</p>
+                    <p>Returns: Application ID, confirmation</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🧪 Test Coverage Recommendations</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Test Scenario</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="priority-high">
+                            <td>POST /auth/signup</td>
+                            <td>Valid signup - user created</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>POST /auth/signup</td>
+                            <td>Invalid input - validation error</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>POST /auth/signup</td>
+                            <td>Duplicate email - conflict error</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>POST /auth/login</td>
+                            <td>Valid credentials - JWT token returned</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>POST /auth/login</td>
+                            <td>Invalid credentials - 401 error</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>GET /job-roles</td>
+                            <td>Authenticated request - list returned</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-medium">
+                            <td>GET /job-roles</td>
+                            <td>Missing auth token - 401 error</td>
+                            <td><strong>Medium</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>GET /job-roles/:id</td>
+                            <td>Valid ID - details returned</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-medium">
+                            <td>GET /job-roles/:id</td>
+                            <td>Invalid ID - 404 error</td>
+                            <td><strong>Medium</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>POST /job-roles/:id/apply</td>
+                            <td>Valid application - 201 created</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td>POST /job-roles/:id/apply</td>
+                            <td>Invalid payload - 400 error</td>
+                            <td><strong>High</strong></td>
+                        </tr>
+                        <tr class="priority-medium">
+                            <td>POST /job-roles/:id/apply</td>
+                            <td>Unauthorized user - 403 error</td>
+                            <td><strong>Medium</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>🔐 Key Testing Points</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Authentication</h3>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li>JWT token generation</li>
+                            <li>Token validation in requests</li>
+                            <li>Password hashing</li>
+                            <li>Duplicate email handling</li>
+                            <li>Invalid credential responses</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Authorization</h3>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li>Role-based access control</li>
+                            <li>Token expiration</li>
+                            <li>Missing/invalid token handling</li>
+                            <li>Admin vs User permissions</li>
+                            <li>Protected route access</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📊 Response Codes Reference</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status Code</th>
+                            <th>Meaning</th>
+                            <th>Common Scenarios</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="priority-high">
+                            <td><strong>200</strong></td>
+                            <td>OK - Request successful</td>
+                            <td>GET requests return data</td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><strong>201</strong></td>
+                            <td>Created - Resource created</td>
+                            <td>POST /auth/signup, POST /apply</td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><strong>400</strong></td>
+                            <td>Bad Request - Invalid input</td>
+                            <td>Failed validation, malformed payload</td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><strong>401</strong></td>
+                            <td>Unauthorized - Auth failed</td>
+                            <td>Invalid credentials, missing token</td>
+                        </tr>
+                        <tr class="priority-high">
+                            <td><strong>403</strong></td>
+                            <td>Forbidden - No permission</td>
+                            <td>Insufficient user role</td>
+                        </tr>
+                        <tr class="priority-medium">
+                            <td><strong>404</strong></td>
+                            <td>Not Found - Resource missing</td>
+                            <td>Invalid job role ID</td>
+                        </tr>
+                        <tr class="priority-medium">
+                            <td><strong>500</strong></td>
+                            <td>Server Error - Internal error</td>
+                            <td>Database connection issues</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>Backend API Workflows • Created for team1-backend Playwright Testing Framework</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+        mermaid.contentLoaded();
+    </script>
+</body>
+</html>
