@@ -41,6 +41,71 @@ Kainos Job Roles API: a Node.js/Express backend using Prisma with PostgreSQL.
    npm run seed
    ```
 
+## Docker
+
+This project includes a multi-stage Docker build in `Dockerfile`.
+
+### Prerequisites
+
+- Docker Desktop (or Docker Engine)
+- A local corporate CA chain file named `corporate-ca.crt` in the project root
+
+The Docker build copies `corporate-ca.crt` into both build and runtime images so Prisma and Node HTTPS requests trust your corporate TLS inspection chain.
+
+### Create `corporate-ca.crt`
+
+Export the required certificates from macOS Keychain and concatenate them into one PEM file:
+
+```bash
+security find-certificate -c "KAINOS-ZSCALER G2" -p > corporate-ca.crt
+security find-certificate -c "KAINOS-INSPECTION G2" -p >> corporate-ca.crt
+security find-certificate -c "KAINOS-ROOT-CA G2" -p >> corporate-ca.crt
+```
+
+Validate the file:
+
+```bash
+openssl x509 -in corporate-ca.crt -noout -subject -issuer
+```
+
+### Build the image
+
+```bash
+docker build --progress=plain -t team1-backend:secure .
+```
+
+### Run with Postgres from `compose.yml`
+
+Start Postgres:
+
+```bash
+docker compose up -d postgres
+```
+
+Run the API container:
+
+```bash
+docker run --rm -d \
+   --name team1-backend-local \
+   -p 3001:3001 \
+   --env-file .env \
+   -e DATABASE_URL='postgresql://academy_user:academy_password@host.docker.internal:5432/academy_db' \
+   team1-backend:secure
+```
+
+Check health:
+
+```bash
+curl -i http://localhost:3001/health
+```
+
+### Troubleshooting
+
+- `COPY corporate-ca.crt ... not found`: ensure `corporate-ca.crt` exists in the project root.
+- `unable to get local issuer certificate` during `prisma generate`: update `corporate-ca.crt` with the full corporate chain.
+- `Missing authentication token` from `/job-roles`: call `/auth/login` first, then send `Authorization: Bearer <token>`.
+- Login/API 500 errors in Docker: verify `DATABASE_URL` points to a reachable host from inside the container (for local Postgres on macOS use `host.docker.internal`).
+
 ## Git Hook Setup
 
 This repository includes a pre-commit hook at `.githooks/pre-commit` that runs `npm run lint:fix` before each commit.

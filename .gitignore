@@ -12,6 +12,11 @@ dist/
 team1.env
 *.env
 
+# Local corporate certificates for Docker trust setup
+corporate-ca.crt
+corporate-ca.cer
+corporate-ca.pem
+
 # IDE
 .vscode/
 .idea/
