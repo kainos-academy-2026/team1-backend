@@ -7,3 +7,13 @@ output "resource_group_id" {
   description = "ID of the created Azure Resource Group."
   value       = azurerm_resource_group.this.id
 }
+
+output "resource_group_location" {
+  description = "Location of the created Azure Resource Group."
+  value       = azurerm_resource_group.this.location
+}
+
+output "resource_group_tags" {
+  description = "Tags applied to the Resource Group."
+  value       = azurerm_resource_group.this.tags
+}

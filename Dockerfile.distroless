@@ -27,17 +27,16 @@ FROM base AS prod-deps
 COPY package*.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
-FROM base AS runner
+FROM gcr.io/distroless/nodejs22-debian12:nonroot AS runner
+
+WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN useradd --create-home --shell /usr/sbin/nologin appuser
-
 COPY --from=build /app/package*.json ./
-COPY --from=build --chown=appuser:appuser /app/dist ./dist
-COPY --from=prod-deps --chown=appuser:appuser /app/node_modules ./node_modules
+COPY --from=build --chown=nonroot:nonroot /app/dist ./dist
+COPY --from=prod-deps --chown=nonroot:nonroot /app/node_modules ./node_modules
 
-USER appuser
 EXPOSE 3001
 
-CMD ["node", "dist/index.js"]
+CMD ["dist/index.js"]

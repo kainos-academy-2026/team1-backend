@@ -10,5 +10,10 @@ output "resource_group_id" {
 
 output "resource_group_location" {
   description = "Azure region of the Resource Group."
-  value       = var.location
+  value       = module.resource_group.resource_group_location
+}
+
+output "resource_group_tags" {
+  description = "Tags applied to the Resource Group."
+  value       = module.resource_group.resource_group_tags
 }

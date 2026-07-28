@@ -43,14 +43,14 @@ Kainos Job Roles API: a Node.js/Express backend using Prisma with PostgreSQL.
 
 ## Docker
 
-This project includes a multi-stage Docker build in `Dockerfile`.
+This project includes two multi-stage Docker builds: `Dockerfile` for the standard Node runtime and `Dockerfile.distroless` for the distroless runtime.
 
 ### Prerequisites
 
 - Docker Desktop (or Docker Engine)
-- A local corporate CA chain file named `corporate-ca.crt` in the project root
+- A local corporate CA chain file named `corporate-ca.crt` in the project root, if your environment needs it
 
-The Docker build copies `corporate-ca.crt` into both build and runtime images so Prisma and Node HTTPS requests trust your corporate TLS inspection chain.
+Both Docker builds install the packages needed for Prisma generation. If you have a local `corporate-ca.crt`, you can still mount or copy it in your own environment, but it is not required for the default build here.
 
 ### Create `corporate-ca.crt`
 
@@ -71,7 +71,8 @@ openssl x509 -in corporate-ca.crt -noout -subject -issuer
 ### Build the image
 
 ```bash
-docker build --progress=plain -t team1-backend:secure .
+docker build --progress=plain -t team1-backend:local .
+docker build --progress=plain -f Dockerfile.distroless -t team1-backend:distroless .
 ```
 
 ### Run with Postgres from `compose.yml`
@@ -90,7 +91,7 @@ docker run --rm -d \
    -p 3001:3001 \
    --env-file .env \
    -e DATABASE_URL='postgresql://academy_user:academy_password@host.docker.internal:5432/academy_db' \
-   team1-backend:secure
+   team1-backend:local
 ```
 
 Check health:

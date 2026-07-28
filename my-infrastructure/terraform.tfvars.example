@@ -1,0 +1,40 @@
+# Terraform Variables Example
+# Copy this file to terraform.tfvars and update with your values
+
+# Azure region for resource deployment
+# Examples: uksouth, westeurope, eastus
+location = "uksouth"
+
+# Deployment environment: dev, test, or prod
+environment = "dev"
+
+# Optional: Explicit resource group name
+# If left empty, will auto-generate as: {name_prefix}-{project_name}-{environment}
+# resource_group_name = ""
+
+# Project identifier for naming convention
+project_name = "team1-backend"
+
+# Naming prefix for auto-generated resource group names
+name_prefix = "rg"
+
+# Custom tags to apply to resources (merged with default_tags)
+tags = {
+  # Example additional tags:
+  # cost_center = "engineering"
+  # team        = "platform"
+}
+
+# Optional: Override default tags
+# Uncomment to customize, otherwise uses defaults (owner, managed_by, project)
+# default_tags = {
+#   owner      = "team1"
+#   managed_by = "terraform"
+#   project    = "team1-backend"
+# }
+
+# Backend configuration variables (usually set via -backend-config flags)
+# backend_resource_group_name  = "rg-team1-tfstate-dev"
+# backend_storage_account_name = "stteam1tfstate260728"
+# backend_container_name       = "tfstate"
+# backend_state_key            = "team1-backend-dev.tfstate"

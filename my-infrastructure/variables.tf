@@ -54,11 +54,41 @@ variable "name_prefix" {
 }
 
 variable "tags" {
-  description = "Optional custom tags to apply to resources."
+  description = "Optional custom tags to apply to resources (will merge with default_tags)."
+  type        = map(string)
+  default     = {}
+}
+
+variable "default_tags" {
+  description = "Default tags to apply to all resources if not overridden."
   type        = map(string)
   default = {
     owner      = "team1"
     managed_by = "terraform"
     project    = "team1-backend"
   }
+}
+
+variable "backend_resource_group_name" {
+  description = "Resource group name for Terraform state backend storage."
+  type        = string
+  default     = "rg-team1-tfstate-dev"
+}
+
+variable "backend_storage_account_name" {
+  description = "Storage account name for Terraform state backend."
+  type        = string
+  default     = "stteam1tfstate260728"
+}
+
+variable "backend_container_name" {
+  description = "Container name in storage account for Terraform state."
+  type        = string
+  default     = "tfstate"
+}
+
+variable "backend_state_key" {
+  description = "Key/path for the Terraform state file in backend storage."
+  type        = string
+  default     = "team1-backend-dev.tfstate"
 }

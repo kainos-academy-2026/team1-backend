@@ -1,0 +1,43 @@
+# Terraform files
+.terraform/
+.terraform.tfstate*
+.terraformrc
+terraform.rc
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude sensitive .tfvars files, but track environment-specific and example files
+*.tfvars
+!*.example.tfvars
+!dev.tfvars
+!test.tfvars
+!prod.tfvars
+*.tfvars.json
+
+# Ignore override files, as they are usually used for local modifications
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore plan files
+*.tfplan
+*.tfplan.json
+
+# Ignore lock files for infrastructure changes
+.terraform.lock.hcl
+
+# IDE and editor files
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+*.iml
+
+# OS-specific files
+Thumbs.db
+
