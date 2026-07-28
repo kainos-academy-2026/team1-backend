@@ -48,6 +48,7 @@ test-reports/
 
 # Terraform
 .terraform/
+my-infrastructure/.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 crash.log
