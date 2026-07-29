@@ -1,12 +1,14 @@
 name: Backend CI
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
   push:
     branches:
       - main
+      - 000-test-pipeline
 
 env:
   IMAGE_NAME: team1-backend
