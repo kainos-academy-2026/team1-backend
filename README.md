@@ -48,13 +48,14 @@ This project includes two multi-stage Docker builds: `Dockerfile` for the standa
 ### Prerequisites
 
 - Docker Desktop (or Docker Engine)
-- A local corporate CA chain file named `corporate-ca.crt` in the project root, if your environment needs it
 
-Both Docker builds install the packages needed for Prisma generation. If you have a local `corporate-ca.crt`, you can still mount or copy it in your own environment, but it is not required for the default build here.
+### Certificate Handling
 
-### Create `corporate-ca.crt`
+A placeholder `corporate-ca.crt` file is tracked in the repository. This ensures Docker builds work in any environment (local, CI/CD, cloned machines) without certificate configuration friction.
 
-Export the required certificates from macOS Keychain and concatenate them into one PEM file:
+**For local development with corporate certificates:**
+
+1. Replace the placeholder with your actual certificate chain:
 
 ```bash
 security find-certificate -c "KAINOS-ZSCALER G2" -p > corporate-ca.crt
@@ -62,11 +63,17 @@ security find-certificate -c "KAINOS-INSPECTION G2" -p >> corporate-ca.crt
 security find-certificate -c "KAINOS-ROOT-CA G2" -p >> corporate-ca.crt
 ```
 
-Validate the file:
+2. Validate the certificate:
 
 ```bash
 openssl x509 -in corporate-ca.crt -noout -subject -issuer
 ```
+
+Your certificate will be used during build; the repo's `.gitignore` prevents it from being committed.
+
+**For CI/CD and other environments:**
+
+The placeholder file ensures `COPY corporate-ca.cr[t]` succeeds without errors, and `NODE_EXTRA_CA_CERTS` environment variable is set in the base stage to point Node.js to the certificate location.
 
 ### Build the image
 
@@ -102,8 +109,7 @@ curl -i http://localhost:3001/health
 
 ### Troubleshooting
 
-- `COPY corporate-ca.crt ... not found`: ensure `corporate-ca.crt` exists in the project root.
-- `unable to get local issuer certificate` during `prisma generate`: update `corporate-ca.crt` with the full corporate chain.
+- `unable to get local issuer certificate` during `prisma generate`: replace the placeholder `corporate-ca.crt` with your actual corporate certificate chain.
 - `Missing authentication token` from `/job-roles`: call `/auth/login` first, then send `Authorization: Bearer <token>`.
 - Login/API 500 errors in Docker: verify `DATABASE_URL` points to a reachable host from inside the container (for local Postgres on macOS use `host.docker.internal`).
 

@@ -9,14 +9,11 @@ RUN apt-get update \
 
 # Optional: Install corporate CA certificate if present in build context
 # To use: place corporate-ca.crt in the project root and build normally
-# The certificate will be automatically detected and installed
-COPY corporate-ca.crt* /tmp/certs/
-RUN if [ -f /tmp/certs/corporate-ca.crt ]; then \
-	cp /tmp/certs/corporate-ca.crt /usr/local/share/ca-certificates/ && \
-	update-ca-certificates && \
-	echo "Corporate CA certificate installed"; \
-	fi; \
-	rm -rf /tmp/certs
+COPY corporate-ca.cr[t] /usr/local/share/ca-certificates/corporate-ca.crt
+RUN update-ca-certificates
+
+# Tell Node.js where to find additional CA certificates
+ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/corporate-ca.crt
 
 FROM base AS deps
 
