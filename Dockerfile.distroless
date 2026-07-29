@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci
 FROM deps AS build
 
 COPY prisma ./prisma
-RUN NODE_TLS_REJECT_UNAUTHORIZED=0 npm run prisma:generate
+RUN npm run prisma:generate
 
 COPY tsconfig.json ./
 COPY src ./src
