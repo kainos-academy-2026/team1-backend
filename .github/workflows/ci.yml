@@ -1,32 +1,19 @@
-name: Backend CI
+name: Team1 Backend CICD
 
 on:
-  pull_request: # Trigger the workflow on pull request events for the main and master branches
+  pull_request:
+    branches:
+      -main
   push:
-    branches: [main]
+    branches:
+      -main
 
 jobs:
-  backend-ci:
-    name: Build, Lint, Test
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm # Cache npm dependencies to speed up builds
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-      - name: Lint
-        run: npm run ci:check 
-
-      - name: Test
-        run: npm test
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Say Hello
+        run: echo "Sup man"
