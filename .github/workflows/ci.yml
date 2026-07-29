@@ -32,6 +32,9 @@ jobs:
       - name: Ensure Biome and Rolldown Linux binaries are present
         run: npm install --include=optional --no-save @biomejs/cli-linux-x64@2.5.2 @rolldown/binding-linux-x64-gnu@1.1.5
 
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
       - name: Lint
         run: npm run ci:check
 
