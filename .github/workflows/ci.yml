@@ -36,6 +36,9 @@ jobs:
       - name: Ensure Biome Linux binary is present
         run: npm install --no-save @biomejs/cli-linux-x64@2.5.2
 
+      - name: Ensure Rolldown Linux binding is present
+        run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.5
+
       - name: Lint
         run: npm run ci:check
 
