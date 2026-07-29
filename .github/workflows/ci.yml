@@ -3,10 +3,10 @@ name: Team1 Backend CICD
 on:
   pull_request:
     branches:
-      -main
+      - main
   push:
     branches:
-      -main
+      - main
 
 jobs:
   build:
