@@ -18,7 +18,7 @@ ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/corporate-ca.crt
 FROM base AS deps
 
 COPY package*.json ./
-RUN --mount=type=cache,target=/root/.npm npm ci
+RUN --mount=type=cache,target=/root/.npm npm install --include=optional
 
 FROM deps AS build
 
@@ -33,7 +33,7 @@ RUN npx tsc
 FROM base AS prod-deps
 
 COPY package*.json ./
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm install --omit=dev --include=optional
 
 FROM gcr.io/distroless/nodejs22-debian12:nonroot AS runner
 
