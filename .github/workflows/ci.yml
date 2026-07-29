@@ -28,8 +28,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Setup Biome CLI
+        uses: biomejs/setup-biome@v2
+        with:
+          version: 2.5.2
+
       - name: Lint
-        run: npm run ci:check
+        run: biome ci .
 
       - name: Test
         run: npm test
