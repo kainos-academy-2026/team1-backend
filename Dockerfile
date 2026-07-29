@@ -7,6 +7,17 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends ca-certificates openssl \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Optional: Install corporate CA certificate if present in build context
+# To use: place corporate-ca.crt in the project root and build normally
+# The certificate will be automatically detected and installed
+COPY corporate-ca.crt* /tmp/certs/
+RUN if [ -f /tmp/certs/corporate-ca.crt ]; then \
+	cp /tmp/certs/corporate-ca.crt /usr/local/share/ca-certificates/ && \
+	update-ca-certificates && \
+	echo "Corporate CA certificate installed"; \
+	fi; \
+	rm -rf /tmp/certs
+
 FROM base AS deps
 
 COPY package*.json ./
@@ -33,7 +44,6 @@ ENV NODE_ENV=production
 
 RUN useradd --create-home --shell /usr/sbin/nologin appuser
 
-COPY --from=build /app/package*.json ./
 COPY --from=build --chown=appuser:appuser /app/dist ./dist
 COPY --from=prod-deps --chown=appuser:appuser /app/node_modules ./node_modules
 
