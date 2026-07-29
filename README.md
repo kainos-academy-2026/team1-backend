@@ -117,7 +117,13 @@ curl -i http://localhost:3001/health
 
 This repository includes a pre-commit hook at `.githooks/pre-commit` that runs `npm run lint:fix` before each commit.
 
-Run these commands once after cloning:
+Run this once after cloning:
+
+```bash
+npm run setup:hooks
+```
+
+Manual equivalent:
 
 ```bash
 chmod +x .githooks/pre-commit
