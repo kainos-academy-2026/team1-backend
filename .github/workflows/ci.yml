@@ -24,7 +24,7 @@ jobs:
           node-version: 22
 
       - name: install dependencies
-        run: npm ci
+        run: npm ci --include=optional
 
       - name: lint
         run: npm run lint
