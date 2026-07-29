@@ -16,4 +16,4 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Say Hello
-        run: echo "Sup man"
+        run: echo "Sup man" >> $GITHUB_STEP_SUMMARY
