@@ -164,3 +164,5 @@ Expected output:
 | `DATABASE_URL` | PostgreSQL connection string | —       |
 | `PORT`         | Server port                  | `3001`  |
 | `JWT_SECRET_KEY` | Secret key used to sign JWTs | —       |
+
+readme edit for commit test
