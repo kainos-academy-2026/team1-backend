@@ -5,18 +5,11 @@ on:
   push:
     branches: [main]
 
-    # Source - https://stackoverflow.com/a/75939407
-# Posted by jessehouwing, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-07-29, License - CC BY-SA 4.0
-
 jobs:
   test:
-    name: Build, Lint, Test
+    name: Stage 1 - Test and Quality Checks
     runs-on: ubuntu-latest
     steps:
-      - name: Print Text
-        run: echo "Hello World!" >> $GITHUB_STEP_SUMMARY
-        
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -27,7 +20,7 @@ jobs:
           cache: npm # Cache npm dependencies to speed up builds
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
@@ -39,7 +32,7 @@ jobs:
         run: npm test
 
   docker-build:
-    name: Build Docker Image
+    name: Stage 2 - Build Container Image
     runs-on: ubuntu-latest
     needs: test
     steps:
