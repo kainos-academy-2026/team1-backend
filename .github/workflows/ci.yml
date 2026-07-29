@@ -1,7 +1,7 @@
 name: Backend CI
 
 on:
-  pull_request: # Trigger the workflow on pull request events for the main and master branches
+  pull_request:
   push:
     branches: [main]
 
@@ -10,7 +10,7 @@ on:
 # Retrieved 2026-07-29, License - CC BY-SA 4.0
 
 jobs:
-  backend-ci:
+  test:
     name: Build, Lint, Test
     runs-on: ubuntu-latest
     steps:
@@ -37,3 +37,35 @@ jobs:
 
       - name: Test
         run: npm test
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag from commit SHA
+        id: image_tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "value=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: docker build --progress=plain -t team1-backend:${IMAGE_TAG} .
+
+      - name: Verify image exists
+        run: |
+          docker image inspect team1-backend:${IMAGE_TAG}
+          docker image ls team1-backend:${IMAGE_TAG}
+
+      - name: Save image as artifact
+        run: docker save team1-backend:${IMAGE_TAG} -o team1-backend-${IMAGE_TAG}.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: team1-backend-image-${{ steps.image_tag.outputs.value }}
+          path: team1-backend-${{ steps.image_tag.outputs.value }}.tar
+          retention-days: 3
