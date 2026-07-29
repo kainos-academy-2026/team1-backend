@@ -2,11 +2,7 @@ name: Team1 Backend CICD
 
 on:
   pull_request:
-    branches:
-      - main
   push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -17,3 +13,18 @@ jobs:
         
       - name: Say Hello
         run: echo "Sup man" >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup Docker Image
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: |
+            team1-backend:latest
+            team1-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
