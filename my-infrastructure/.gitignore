@@ -14,6 +14,9 @@ crash.*.log
 !dev.tfvars
 !test.tfvars
 !prod.tfvars
+!backends/backend-dev.tfvars
+!backends/backend-test.tfvars
+!backends/backend-prod.tfvars
 *.tfvars.json
 
 # Ignore override files, as they are usually used for local modifications

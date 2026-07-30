@@ -21,6 +21,36 @@ terraform init -backend-config=backends/backend-test.tfvars
 terraform init -backend-config=backends/backend-prod.tfvars
 ```
 
+For CI/CD, use non-interactive flags:
+
+```bash
+terraform init -input=false -reconfigure -backend-config=backends/backend-dev.tfvars
+```
+
+## Service Principal Authentication (Pipeline)
+
+The `azurerm` backend and provider can authenticate with a service principal. In GitHub Actions, set these environment variables from secrets:
+
+```bash
+ARM_CLIENT_ID
+ARM_CLIENT_SECRET
+ARM_TENANT_ID
+ARM_SUBSCRIPTION_ID
+```
+
+Optional, if using OIDC instead of a client secret:
+
+```bash
+ARM_USE_OIDC=true
+```
+
+## Branch Behaviour
+
+- Feature/pull request branches: run `terraform plan -input=false`
+- `main`: run `terraform apply -input=false -auto-approve`
+
+This repository includes [scripts/terraform-ci.sh](../../scripts/terraform-ci.sh) to enforce this behaviour consistently.
+
 ## Configuration Files
 
 - **backend-dev.tfvars** - Development environment state storage
