@@ -8,7 +8,6 @@ on:
   push:
     branches:
       - main
-      - 000-test-pipeline
 
 env:
   IMAGE_NAME: team1-backend
@@ -45,7 +44,6 @@ jobs:
     name: Terraform Plan (Dev)
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
     concurrency:
       group: terraform-dev-state
       cancel-in-progress: false
@@ -84,7 +82,7 @@ jobs:
   terraform-deploy:
     name: Terraform Deploy (Dev)
     runs-on: ubuntu-latest
-    needs: build-container
+    needs: [build-container, terraform-plan]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     concurrency:
       group: terraform-dev-state
