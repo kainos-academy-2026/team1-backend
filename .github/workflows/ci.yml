@@ -6,7 +6,7 @@ on:
     branches: ['**']
 
 concurrency:
-  group: backend-ci-${{ github.workflow }}-${{ github.ref }}
+  group: backend-ci-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -157,6 +157,9 @@ jobs:
   terraform-plan:
     name: Stage 4 - Terraform Plan (Branches)
     runs-on: ubuntu-latest
+    concurrency:
+      group: terraform-state-dev
+      cancel-in-progress: false
     needs: docker-build
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
     permissions:
@@ -183,6 +186,16 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Login to Azure (Service Principal)
+        if: steps.azure_creds.outputs.ready == 'true'
+        uses: azure/login@v2
+        with:
+          auth-type: SERVICE_PRINCIPAL
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Terraform plan (non-interactive)
         if: steps.azure_creds.outputs.ready == 'true'
         run: ./scripts/terraform-ci.sh
@@ -195,6 +208,9 @@ jobs:
   terraform-apply:
     name: Stage 5 - Terraform Apply (Main)
     runs-on: ubuntu-latest
+    concurrency:
+      group: terraform-state-dev
+      cancel-in-progress: false
     needs: push-to-acr
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
@@ -211,6 +227,22 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Validate Azure credentials are present
+        run: |
+          if [ -z "${ARM_CLIENT_ID}" ] || [ -z "${ARM_CLIENT_SECRET}" ] || [ -z "${ARM_TENANT_ID}" ] || [ -z "${ARM_SUBSCRIPTION_ID}" ]; then
+            echo "One or more Azure credentials are missing for Terraform apply (ARM_CLIENT_ID / ARM_CLIENT_SECRET / ARM_TENANT_ID / ARM_SUBSCRIPTION_ID)."
+            exit 1
+          fi
+
+      - name: Login to Azure (Service Principal)
+        uses: azure/login@v2
+        with:
+          auth-type: SERVICE_PRINCIPAL
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform apply (non-interactive)
         run: ./scripts/terraform-ci.sh

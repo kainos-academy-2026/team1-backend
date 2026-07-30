@@ -4,6 +4,7 @@ set -euo pipefail
 INFRA_DIR="my-infrastructure"
 ENVIRONMENT="${TF_ENVIRONMENT:-dev}"
 BRANCH_REF="${GITHUB_REF:-}"
+LOCK_TIMEOUT="${TF_LOCK_TIMEOUT:-5m}"
 
 case "$ENVIRONMENT" in
   dev|test|prod)
@@ -33,7 +34,7 @@ terraform init -input=false -reconfigure -backend-config="$BACKEND_CONFIG"
 terraform validate
 
 if [[ "$BRANCH_REF" == "refs/heads/main" ]]; then
-  terraform apply -input=false -auto-approve -var-file="$VAR_FILE"
+  terraform apply -input=false -auto-approve -lock-timeout="$LOCK_TIMEOUT" -var-file="$VAR_FILE"
 else
-  terraform plan -input=false -var-file="$VAR_FILE" -out=tfplan
+  terraform plan -input=false -lock-timeout="$LOCK_TIMEOUT" -var-file="$VAR_FILE" -out=tfplan
 fi
