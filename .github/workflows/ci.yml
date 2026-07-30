@@ -96,6 +96,13 @@ jobs:
           echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "value=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
+      - name: Validate Azure credentials are present
+        run: |
+          if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_TENANT_ID }}" ] || [ -z "${{ secrets.AZURE_SUBSCRIPTION_ID }}" ]; then
+            echo "One or more Azure secrets are missing (AZURE_CLIENT_ID / AZURE_CLIENT_SECRET / AZURE_TENANT_ID / AZURE_SUBSCRIPTION_ID)."
+            exit 1
+          fi
+
       - name: Login to Azure (Service Principal)
         uses: azure/login@v2
         with:
@@ -167,17 +174,23 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Login to Azure (Service Principal)
-        uses: azure/login@v2
-        with:
-          auth-type: SERVICE_PRINCIPAL
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Check Azure credentials availability
+        id: azure_creds
+        run: |
+          if [ -n "${ARM_CLIENT_ID}" ] && [ -n "${ARM_CLIENT_SECRET}" ] && [ -n "${ARM_TENANT_ID}" ] && [ -n "${ARM_SUBSCRIPTION_ID}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Terraform plan (non-interactive)
+        if: steps.azure_creds.outputs.ready == 'true'
         run: ./scripts/terraform-ci.sh
+
+      - name: Skip plan when Azure secrets are unavailable
+        if: steps.azure_creds.outputs.ready != 'true'
+        run: |
+          echo "Skipping Terraform plan: Azure service principal secrets are unavailable for this event."
 
   terraform-apply:
     name: Stage 5 - Terraform Apply (Main)
@@ -198,15 +211,6 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Login to Azure (Service Principal)
-        uses: azure/login@v2
-        with:
-          auth-type: SERVICE_PRINCIPAL
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform apply (non-interactive)
         run: ./scripts/terraform-ci.sh
