@@ -1,13 +1,17 @@
 name: Backend CI
 
 on:
-  pull_request: # Trigger the workflow on pull request events for the main and master branches
+  pull_request:
   push:
-    branches: [main]
+    branches: ['**']
+
+concurrency:
+  group: backend-ci-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
-  backend-ci:
-    name: Build, Lint, Test
+  test:
+    name: Stage 1 - Test and Quality Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,7 +24,7 @@ jobs:
           cache: npm # Cache npm dependencies to speed up builds
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
@@ -30,3 +34,215 @@ jobs:
 
       - name: Test
         run: npm test
+
+  docker-build:
+    name: Stage 2 - Build Container Image
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set image tag from commit SHA
+        id: image_tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "value=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image (cached)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: team1-backend:${{ steps.image_tag.outputs.value }}
+          load: true
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+      - name: Verify image exists
+        run: |
+          docker image inspect team1-backend:${IMAGE_TAG}
+          docker image ls team1-backend:${IMAGE_TAG}
+
+      - name: Save image as artifact
+        run: docker save team1-backend:${IMAGE_TAG} -o team1-backend-${IMAGE_TAG}.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: team1-backend-image-${{ steps.image_tag.outputs.value }}
+          path: team1-backend-${{ steps.image_tag.outputs.value }}.tar
+          retention-days: 3
+
+  push-to-acr:
+    name: Stage 3 - Push to Azure Container Registry
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      ACR_NAME: ${{ vars.ACR_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag from commit SHA
+        id: image_tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "value=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Validate Azure credentials are present
+        run: |
+          if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] || [ -z "${{ secrets.AZURE_CLIENT_SECRET }}" ] || [ -z "${{ secrets.AZURE_TENANT_ID }}" ] || [ -z "${{ secrets.AZURE_SUBSCRIPTION_ID }}" ]; then
+            echo "One or more Azure secrets are missing (AZURE_CLIENT_ID / AZURE_CLIENT_SECRET / AZURE_TENANT_ID / AZURE_SUBSCRIPTION_ID)."
+            exit 1
+          fi
+
+      - name: Login to Azure (Service Principal)
+        uses: azure/login@v2
+        with:
+          auth-type: SERVICE_PRINCIPAL
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Validate ACR configuration
+        run: |
+          if [ -z "${ACR_NAME}" ]; then
+            echo "ACR_NAME GitHub variable is not set."
+            exit 1
+          fi
+
+      - name: Login to Azure Container Registry
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Resolve ACR login server
+        id: acr_meta
+        run: |
+          ACR_LOGIN_SERVER=$(az acr show --name "${ACR_NAME}" --query loginServer -o tsv)
+          echo "login_server=${ACR_LOGIN_SERVER}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image to ACR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.acr_meta.outputs.login_server }}/team1-backend:${{ steps.image_tag.outputs.value }}
+            ${{ steps.acr_meta.outputs.login_server }}/team1-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+      - name: Verify image in ACR
+        run: |
+          az acr repository show \
+            --name ${{ env.ACR_NAME }} \
+            --repository team1-backend
+          az acr repository show-tags \
+            --name ${{ env.ACR_NAME }} \
+            --repository team1-backend \
+            --top 10
+
+  terraform-plan:
+    name: Stage 4 - Terraform Plan (Branches)
+    runs-on: ubuntu-latest
+    concurrency:
+      group: terraform-state-dev
+      cancel-in-progress: false
+    needs: docker-build
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
+    permissions:
+      contents: read
+    env:
+      TF_ENVIRONMENT: dev
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Check Azure credentials availability
+        id: azure_creds
+        run: |
+          if [ -n "${ARM_CLIENT_ID}" ] && [ -n "${ARM_CLIENT_SECRET}" ] && [ -n "${ARM_TENANT_ID}" ] && [ -n "${ARM_SUBSCRIPTION_ID}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Login to Azure (Service Principal)
+        if: steps.azure_creds.outputs.ready == 'true'
+        uses: azure/login@v2
+        with:
+          auth-type: SERVICE_PRINCIPAL
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform plan (non-interactive)
+        if: steps.azure_creds.outputs.ready == 'true'
+        run: ./scripts/terraform-ci.sh
+
+      - name: Skip plan when Azure secrets are unavailable
+        if: steps.azure_creds.outputs.ready != 'true'
+        run: |
+          echo "Skipping Terraform plan: Azure service principal secrets are unavailable for this event."
+
+  terraform-apply:
+    name: Stage 5 - Terraform Apply (Main)
+    runs-on: ubuntu-latest
+    concurrency:
+      group: terraform-state-dev
+      cancel-in-progress: false
+    needs: push-to-acr
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+    env:
+      TF_ENVIRONMENT: dev
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Validate Azure credentials are present
+        run: |
+          if [ -z "${ARM_CLIENT_ID}" ] || [ -z "${ARM_CLIENT_SECRET}" ] || [ -z "${ARM_TENANT_ID}" ] || [ -z "${ARM_SUBSCRIPTION_ID}" ]; then
+            echo "One or more Azure credentials are missing for Terraform apply (ARM_CLIENT_ID / ARM_CLIENT_SECRET / ARM_TENANT_ID / ARM_SUBSCRIPTION_ID)."
+            exit 1
+          fi
+
+      - name: Login to Azure (Service Principal)
+        uses: azure/login@v2
+        with:
+          auth-type: SERVICE_PRINCIPAL
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform apply (non-interactive)
+        run: ./scripts/terraform-ci.sh

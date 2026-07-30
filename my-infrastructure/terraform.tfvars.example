@@ -33,8 +33,6 @@ tags = {
 #   project    = "team1-backend"
 # }
 
-# Backend configuration variables (usually set via -backend-config flags)
-# backend_resource_group_name  = "rg-team1-tfstate-dev"
-# backend_storage_account_name = "stteam1tfstate260728"
-# backend_container_name       = "tfstate"
-# backend_state_key            = "team1-backend-dev.tfstate"
+# Backend settings are not read from terraform.tfvars.
+# Use one of the files in backends/ during init, for example:
+# terraform init -backend-config=backends/backend-dev.tfvars -reconfigure

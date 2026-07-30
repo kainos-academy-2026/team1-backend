@@ -136,6 +136,22 @@ Expected output:
 .githooks
 ```
 
+## Terraform Automation
+
+Infrastructure code lives in [my-infrastructure](my-infrastructure) and is prepared for CI/CD automation with remote state.
+
+- Environment naming is driven by `environment`, `project_name`, and `name_prefix` in the environment tfvars files.
+- Remote state backend values are stored in [my-infrastructure/backends](my-infrastructure/backends).
+- CI runner script [scripts/terraform-ci.sh](scripts/terraform-ci.sh) runs non-interactively:
+   - Branches/pull requests: `terraform plan -input=false`
+   - Main branch pushes: `terraform apply -input=false -auto-approve`
+
+Example local run:
+
+```bash
+TF_ENVIRONMENT=dev GITHUB_REF=refs/heads/feature/my-branch ./scripts/terraform-ci.sh
+```
+
 ## Scripts
 
 | Command                | Description                          |
