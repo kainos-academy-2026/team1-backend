@@ -41,6 +41,64 @@ Kainos Job Roles API: a Node.js/Express backend using Prisma with PostgreSQL.
    npm run seed
    ```
 
+## Terraform Infrastructure
+
+Terraform configuration for Azure infrastructure is in `my-infrastructure/`.
+
+### Prerequisites
+
+- Terraform >= 1.5.0
+- Azure CLI authenticated to the target tenant/subscription
+
+### Environment files
+
+- Deployment variables:
+   - `my-infrastructure/dev.tfvars`
+   - `my-infrastructure/test.tfvars`
+   - `my-infrastructure/prod.tfvars`
+- Remote state backend configuration:
+   - `my-infrastructure/backends/backend-dev.tfvars`
+   - `my-infrastructure/backends/backend-test.tfvars`
+   - `my-infrastructure/backends/backend-prod.tfvars`
+
+### Run Terraform (no npm script)
+
+From the project root:
+
+```bash
+cd my-infrastructure
+```
+
+For development:
+
+```bash
+terraform init -backend-config=backends/backend-dev.tfvars
+terraform plan -var-file=dev.tfvars
+terraform apply -var-file=dev.tfvars
+```
+
+For test:
+
+```bash
+terraform init -backend-config=backends/backend-test.tfvars
+terraform plan -var-file=test.tfvars
+terraform apply -var-file=test.tfvars
+```
+
+For production:
+
+```bash
+terraform init -backend-config=backends/backend-prod.tfvars
+terraform plan -var-file=prod.tfvars
+terraform apply -var-file=prod.tfvars
+```
+
+### Notes
+
+- This repository does not define npm scripts for Terraform. Use the Terraform CLI directly.
+- Resource group names are auto-generated as `{name_prefix}-{project_name}-{environment}` unless `resource_group_name` is explicitly set.
+- Tags are merged from `default_tags` and environment-specific `tags`.
+
 ## Docker
 
 This project includes two multi-stage Docker builds: `Dockerfile` for the standard Node runtime and `Dockerfile.distroless` for the distroless runtime.
