@@ -2,11 +2,8 @@ terraform {
   required_version = ">= 1.5.0"
 
   backend "azurerm" {
-    resource_group_name  = "rg-team1-tfstate-dev"
-    storage_account_name = "stteam1tfstate260728"
-    container_name       = "tfstate"
-    key                  = "team1-backend-dev.tfstate"
-    use_azuread_auth     = true
+    # Backend settings are supplied via -backend-config for each environment,
+    # for example backends/backend-dev.tfvars or backends/backend-prod.tfvars.
   }
 
   required_providers {
