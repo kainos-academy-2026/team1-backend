@@ -34,7 +34,8 @@
 		"zod": "^4.4.3"
 	},
 	"optionalDependencies": {
-		"@biomejs/cli-linux-x64": "^2.5.2"
+		"@biomejs/cli-linux-x64": "^2.5.2",
+		"@rolldown/binding-linux-x64-gnu": "*"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.2",

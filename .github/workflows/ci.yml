@@ -10,7 +10,6 @@ on:
   push:
     branches:
       - main
-      - CICD-Test
 
 jobs:
   build:
