@@ -17,7 +17,7 @@ resource "azurerm_container_app" "app" {
   }
 
   registry {
-    server   = azurerm_container_registry.app.login_server
+    server   = data.azurerm_container_registry.app.login_server
     identity = azurerm_user_assigned_identity.app.id
   }
 
@@ -33,7 +33,7 @@ resource "azurerm_container_app" "app" {
   template {
     container {
       name   = "team1-backend"
-      image  = "${azurerm_container_registry.app.login_server}/team1-backend:${var.image_tag}"
+      image  = "${data.azurerm_container_registry.app.login_server}/team1-backend:${var.image_tag}"
       cpu    = 0.5
       memory = "1Gi"
     }
