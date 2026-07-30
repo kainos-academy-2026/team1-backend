@@ -99,6 +99,7 @@ jobs:
       - name: Login to Azure (Service Principal)
         uses: azure/login@v2
         with:
+          auth-type: SERVICE_PRINCIPAL
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -152,7 +153,6 @@ jobs:
     needs: docker-build
     if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
     permissions:
-      id-token: write
       contents: read
     env:
       TF_ENVIRONMENT: dev
@@ -170,6 +170,7 @@ jobs:
       - name: Login to Azure (Service Principal)
         uses: azure/login@v2
         with:
+          auth-type: SERVICE_PRINCIPAL
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -184,7 +185,6 @@ jobs:
     needs: push-to-acr
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
-      id-token: write
       contents: read
     env:
       TF_ENVIRONMENT: dev
@@ -202,6 +202,7 @@ jobs:
       - name: Login to Azure (Service Principal)
         uses: azure/login@v2
         with:
+          auth-type: SERVICE_PRINCIPAL
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
