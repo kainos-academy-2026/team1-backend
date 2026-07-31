@@ -13,6 +13,8 @@ env:
   IMAGE_NAME: team1-backend
   TF_WORKING_DIR: my-infrastructure
   TF_ENV: dev
+  ACR_NAME: acraiacademy26
+  ACR_LOGIN_SERVER: acraiacademy26.azurecr.io
 
 jobs:
   test:
@@ -140,24 +142,24 @@ jobs:
 
       - name: Login to Azure Container Registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: az acr login --name ${{ secrets.ACR_NAME }}
+        run: az acr login --name ${{ env.ACR_NAME }}
 
       - name: Tag image for ACR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:main
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:main
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push image tags to ACR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:main
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:main
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Verify pushed tags in ACR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: az acr repository show-tags --name ${{ secrets.ACR_NAME }} --repository ${{ env.IMAGE_NAME }} --orderby time_desc --top 10
+        run: az acr repository show-tags --name ${{ env.ACR_NAME }} --repository ${{ env.IMAGE_NAME }} --orderby time_desc --top 10
