@@ -140,7 +140,7 @@ jobs:
 
       - name: Login to Azure Container Registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: az acr login --name ${{ secrets.ACR_NAME }}
+        run: az acr login --name ${{ vars.ACR_NAME || secrets.ACR_NAME }}
 
       - name: Tag image for ACR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -160,4 +160,4 @@ jobs:
 
       - name: Verify pushed tags in ACR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: az acr repository show-tags --name ${{ secrets.ACR_NAME }} --repository ${{ env.IMAGE_NAME }} --orderby time_desc --top 10
+        run: az acr repository show-tags --name ${{ vars.ACR_NAME || secrets.ACR_NAME }} --repository ${{ env.IMAGE_NAME }} --orderby time_desc --top 10
