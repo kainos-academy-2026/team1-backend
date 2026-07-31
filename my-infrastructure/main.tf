@@ -18,3 +18,59 @@ moved {
   from = azurerm_resource_group.main
   to   = module.resource_group.azurerm_resource_group.this
 }
+
+removed {
+  from = azurerm_role_assignment.kv_secrets_officer
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = azurerm_container_app_environment.app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = azurerm_key_vault.app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = azurerm_log_analytics_workspace.app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = azurerm_role_assignment.kv_secrets_user
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = azurerm_user_assigned_identity.app
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = random_password.db_admin
+
+  lifecycle {
+    destroy = false
+  }
+}

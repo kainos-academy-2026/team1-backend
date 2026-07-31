@@ -1,0 +1,7 @@
+flowchart TB
+T[Terraform templates] --> D[Development]
+T --> E[Test]
+T --> P[Production]
+D --> S[(Shared standards)]
+E --> S
+P --> S
