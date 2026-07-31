@@ -48,4 +48,22 @@ router.post(
 	jobRoleController.applyForJobRole.bind(jobRoleController),
 );
 
+router.get(
+	'/:jobRoleId/applications',
+	authorize(tokenService, [UserRole.ADMIN]),
+	jobRoleController.getApplicationsForJobRole.bind(jobRoleController),
+);
+
+router.patch(
+	'/:jobRoleId/applications/:applicationId/hire',
+	authorize(tokenService, [UserRole.ADMIN]),
+	jobRoleController.hireApplicant.bind(jobRoleController),
+);
+
+router.patch(
+	'/:jobRoleId/applications/:applicationId/reject',
+	authorize(tokenService, [UserRole.ADMIN]),
+	jobRoleController.rejectApplicant.bind(jobRoleController),
+);
+
 export default router;

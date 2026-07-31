@@ -1,5 +1,9 @@
-import type { Application } from '../generated/prisma/client.js';
-import type { JobRoleWithDetails } from './prismaJobRoleDao.js';
+import type { Application, JobRole } from '../generated/prisma/client.js';
+import type { Status } from '../generated/prisma/enums.js';
+import type {
+	ApplicationWithUser,
+	JobRoleWithDetails,
+} from './prismaJobRoleDao.js';
 
 export interface CreateApplicationData {
 	userId: number;
@@ -12,4 +16,13 @@ export interface JobRoleDao {
 	count(): Promise<number>;
 	findById(jobRoleId: number): Promise<JobRoleWithDetails | null>;
 	createApplication(data: CreateApplicationData): Promise<Application>;
+	findApplicationsByJobRoleId(
+		jobRoleId: number,
+	): Promise<ApplicationWithUser[]>;
+	findApplicationById(applicationId: number): Promise<Application | null>;
+	updateApplicationStatus(
+		applicationId: number,
+		status: Status,
+	): Promise<Application>;
+	decrementOpenPositions(jobRoleId: number): Promise<JobRole>;
 }
