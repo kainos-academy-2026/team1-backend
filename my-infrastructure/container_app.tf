@@ -19,13 +19,13 @@ module "backend_container_app" {
   tags                         = local.merged_tags
 
   key_vault_secrets = {
-    database-url          = "${azurerm_key_vault.app.vault_uri}secrets/database-url"
-    jwt-secret-key        = "${azurerm_key_vault.app.vault_uri}secrets/jwt-secret-key"
-    aws-region            = "${azurerm_key_vault.app.vault_uri}secrets/aws-region"
-    s3-bucket-name        = "${azurerm_key_vault.app.vault_uri}secrets/s3-bucket-name"
-    aws-access-key-id     = "${azurerm_key_vault.app.vault_uri}secrets/aws-access-key-id"
-    aws-secret-access-key = "${azurerm_key_vault.app.vault_uri}secrets/aws-secret-access-key"
-    aws-iam-user-name     = "${azurerm_key_vault.app.vault_uri}secrets/aws-iam-user-name"
+    "database-url"          = "${azurerm_key_vault.app.vault_uri}secrets/database-url"
+    "jwt-secret-key"        = "${azurerm_key_vault.app.vault_uri}secrets/jwt-secret-key"
+    "aws-region"            = "${azurerm_key_vault.app.vault_uri}secrets/aws-region"
+    "s3-bucket-name"        = "${azurerm_key_vault.app.vault_uri}secrets/s3-bucket-name"
+    "aws-access-key-id"     = "${azurerm_key_vault.app.vault_uri}secrets/aws-access-key-id"
+    "aws-secret-access-key" = "${azurerm_key_vault.app.vault_uri}secrets/aws-secret-access-key"
+    "aws-iam-user-name"     = "${azurerm_key_vault.app.vault_uri}secrets/aws-iam-user-name"
   }
 
   environment_variables = {
