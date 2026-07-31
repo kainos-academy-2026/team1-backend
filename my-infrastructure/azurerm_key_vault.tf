@@ -12,10 +12,12 @@ resource "azurerm_key_vault" "app" {
   public_network_access_enabled = true
 }
 
-resource "azurerm_role_assignment" "kv_secrets_officer" {
-  scope                = azurerm_key_vault.app.id
-  role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = azurerm_user_assigned_identity.app.principal_id
-}
-
 data "azurerm_client_config" "current" {}
+
+removed {
+  from = azurerm_role_assignment.kv_secrets_officer
+
+  lifecycle {
+    destroy = false
+  }
+}
