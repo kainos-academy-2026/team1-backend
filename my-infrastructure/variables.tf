@@ -92,3 +92,14 @@ variable "backend_state_key" {
   type        = string
   default     = "team1-backend-dev.tfstate"
 }
+
+variable "db_admin_password" {
+  description = "Administrator password for the Azure PostgreSQL server."
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = length(var.db_admin_password) >= 8
+    error_message = "db_admin_password must be at least 8 characters."
+  }
+}

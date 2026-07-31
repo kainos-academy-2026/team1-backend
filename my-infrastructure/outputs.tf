@@ -22,3 +22,8 @@ output "frontend_url" {
   description = "Public URL of the frontend Container App."
   value       = "https://${module.frontend_container_app.fqdn}"
 }
+
+output "postgres_fqdn" {
+  description = "Fully qualified domain name of the Azure PostgreSQL server."
+  value       = azurerm_postgresql_flexible_server.app.fqdn
+}
