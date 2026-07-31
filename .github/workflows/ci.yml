@@ -146,9 +146,9 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           SHORT_SHA="${GITHUB_SHA::7}"
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:main
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:sha-${SHORT_SHA}
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:main
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push image tags to ACR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
