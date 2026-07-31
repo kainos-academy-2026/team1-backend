@@ -30,12 +30,89 @@ resource "azurerm_container_app" "app" {
     }
   }
 
+  secret {
+    name                = "database-url"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/database-url"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
+  secret {
+    name                = "jwt-secret-key"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/jwt-secret-key"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
+  secret {
+    name                = "aws-region"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/aws-region"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
+  secret {
+    name                = "s3-bucket-name"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/s3-bucket-name"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
+  secret {
+    name                = "aws-access-key-id"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/aws-access-key-id"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
+  secret {
+    name                = "aws-secret-access-key"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/aws-secret-access-key"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
+  secret {
+    name                = "aws-iam-user-name"
+    key_vault_secret_id = "${azurerm_key_vault.app.vault_uri}secrets/aws-iam-user-name"
+    identity            = azurerm_user_assigned_identity.app.id
+  }
+
   template {
     container {
       name   = "team1-backend"
       image  = "${data.azurerm_container_registry.app.login_server}/team1-backend:${var.image_tag}"
       cpu    = 0.5
       memory = "1Gi"
+
+      env {
+        name        = "DATABASE_URL"
+        secret_name = "database-url"
+      }
+
+      env {
+        name        = "JWT_SECRET_KEY"
+        secret_name = "jwt-secret-key"
+      }
+
+      env {
+        name        = "AWS_REGION"
+        secret_name = "aws-region"
+      }
+
+      env {
+        name        = "S3_BUCKET_NAME"
+        secret_name = "s3-bucket-name"
+      }
+
+      env {
+        name        = "AWS_ACCESS_KEY_ID"
+        secret_name = "aws-access-key-id"
+      }
+
+      env {
+        name        = "AWS_SECRET_ACCESS_KEY"
+        secret_name = "aws-secret-access-key"
+      }
+
+      env {
+        name        = "AWS_IAM_USER_NAME"
+        secret_name = "aws-iam-user-name"
+      }
     }
   }
 }
